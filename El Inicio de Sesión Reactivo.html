@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Inicio de Sesión Reactivo - Closure & State Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --water-light: #e0f7fa;
+            --water-medium: #4fc3f7;
+            --water-deep: #0288d1;
+            --water-dark: #01579b;
+            --foam: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --shadow-water: rgba(1, 87, 155, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(180deg, #e0f7fa 0%, #b3e5fc 50%, #81d4fa 100%);
+            position: relative;
+        }
+
+        /* SVG Waterfall Background */
+        .waterfall-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .waterfall-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Glassmorphism Login Card */
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 
+                0 25px 50px -12px var(--shadow-water),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            width: 100%;
+            max-width: 480px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: shimmer 10s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--water-medium), var(--water-deep));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(2, 136, 209, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .login-icon i {
+            font-size: 2rem;
+            color: white;
+            z-index: 1;
+        }
+
+        .login-title {
+            color: var(--water-dark);
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--water-deep);
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-wrapper {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid rgba(2, 136, 209, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            color: var(--water-dark);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--water-medium);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(79, 195, 247, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .input-field.valid {
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .input-field.invalid {
+            border-color: #f44336;
+            background: rgba(244, 67, 54, 0.05);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--water-medium);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus + .input-icon {
+            color: var(--water-deep);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .validation-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .validation-icon.show {
+            opacity: 1;
+        }
+
+        .validation-icon.valid {
+            color: #4caf50;
+        }
+
+        .validation-icon.invalid {
+            color: #f44336;
+        }
+
+        .validation-message {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            margin-left: 0.5rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            height: 0;
+        }
+
+        .validation-message.show {
+            opacity: 1;
+            transform: translateY(0);
+            height: auto;
+        }
+
+        .validation-message.valid {
+            color: #4caf50;
+        }
+
+        .validation-message.invalid {
+            color: #f44336;
+        }
+
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--water-medium);
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--water-deep);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Submit Button */
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--water-medium), var(--water-deep));
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(2, 136, 209, 0.3);
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(2, 136, 209, 0.4);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #b0bec5, #78909c);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login.loading {
+            color: transparent;
+        }
+
+        .btn-login.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Data Flow Visualization Panel */
+        .data-flow-panel {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 60px rgba(1, 87, 155, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 100;
+            max-height: 80vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .data-flow-panel.collapsed {
+            transform: translateY(-50%) translateX(120%);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--water-light);
+        }
+
+        .panel-title {
+            color: var(--water-dark);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .btn-toggle-panel {
+            background: none;
+            border: none;
+            color: var(--water-deep);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .btn-toggle-panel:hover {
+            transform: scale(1.1);
+        }
+
+        .flow-step {
+            background: var(--water-light);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--water-medium);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .flow-step.active {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-left-color: var(--water-deep);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(2, 136, 209, 0.2);
+        }
+
+        .flow-step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--water-dark);
+            font-size: 0.9rem;
+        }
+
+        .flow-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--water-medium);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        .flow-step-content {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #546e7a;
+            background: rgba(255,255,255,0.7);
+            padding: 0.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .state-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .state-badge.dirty {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .state-badge.valid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .state-badge.touched {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* Closure Explanation Modal */
+        .closure-visual {
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .closure-box {
+            background: white;
+            border: 2px solid var(--water-medium);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .closure-box::before {
+            content: 'Closure Scope';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--water-medium);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .scope-variable {
+            display: inline-block;
+            background: #e3f2fd;
+            color: var(--water-dark);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin: 0.25rem;
+            border: 1px solid var(--water-medium);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .data-flow-panel {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                max-width: 480px;
+                margin: 2rem auto 0;
+                max-height: none;
+            }
+            
+            .data-flow-panel.collapsed {
+                transform: translateX(0);
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 1.5rem;
+                margin: 0 0.5rem;
+            }
+            
+            .login-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Success Animation */
+        .success-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+            border-radius: 30px;
+        }
+
+        .success-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4caf50, #81c784);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(79, 195, 247, 0.4);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- SVG Waterfall Background -->
+    <div class="waterfall-container">
+        <svg class="waterfall-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+            <defs>
+                <linearGradient id="waterGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#e0f7fa;stop-opacity:0.8" />
+                    <stop offset="50%" style="stop-color:#81d4fa;stop-opacity:0.6" />
+                    <stop offset="100%" style="stop-color:#4fc3f7;stop-opacity:0.4" />
+                </linearGradient>
+                <linearGradient id="waterGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#b3e5fc;stop-opacity:0.7" />
+                    <stop offset="100%" style="stop-color:#0288d1;stop-opacity:0.3" />
+                </linearGradient>
+                <filter id="turbulence">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" />
+                </filter>
+            </defs>
+            
+            <!-- Background Water Layers -->
+            <path id="waterLayer1" fill="url(#waterGradient1)" d="" opacity="0.6" />
+            <path id="waterLayer2" fill="url(#waterGradient2)" d="" opacity="0.4" />
+            <path id="waterLayer3" fill="#e1f5fe" d="" opacity="0.3" />
+            
+            <!-- Foam particles -->
+            <g id="foamGroup"></g>
+        </svg>
+    </div>
+
+    <!-- Floating Particles Container -->
+    <div id="particlesContainer"></div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    
+                    <!-- Login Card -->
+                    <div class="login-card" id="loginCard">
+                        <div class="success-overlay" id="successOverlay">
+                            <div class="success-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h3 class="text-success mb-2">¡Bienvenido!</h3>
+                            <p class="text-muted">Inicio de sesión exitoso</p>
+                            <button class="btn btn-outline-primary mt-3" onclick="resetLogin()">
+                                <i class="fas fa-redo me-2"></i>Intentar de nuevo
+                            </button>
+                        </div>
+
+                        <div class="login-header">
+                            <div class="login-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <h1 class="login-title">Acceso Reactivo</h1>
+                            <p class="login-subtitle">Validación en tiempo real con closures</p>
+                        </div>
+
+                        <form id="loginForm" novalidate>
+                            <!-- Email Field -->
+                            <div class="form-group">
+                                <div class="input-wrapper">
+                                    <input 
+                                        type="email" 
+                                        id="emailInput" 
+                                        class="input-field" 
+                                        placeholder="correo@ejemplo.com"
+                                        autocomplete="email"
+                                    >
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <i class="fas fa-check-circle validation-icon valid" id="emailValidIcon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid" id="emailInvalidIcon"></i>
+                                </div>
+                                <div class="validation-message" id="emailMessage"></div>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="form-group">
+                                <div class="input-wrapper">
+                                    <input 
+                                        type="password" 
+                                        id="passwordInput" 
+                                        class="input-field" 
+                                        placeholder="Contraseña segura"
+                                        autocomplete="current-password"
+                                    >
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <button type="button" class="password-toggle" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <i class="fas fa-check-circle validation-icon valid" id="passValidIcon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid" id="passInvalidIcon"></i>
+                                </div>
+                                <div class="validation-message" id="passwordMessage"></div>
+                                <!-- Password Strength Indicator -->
+                                <div class="mt-2" id="strengthContainer" style="display: none;">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-muted" style="font-size: 0.75rem;">Fortaleza:</small>
+                                        <small class="text-muted" id="strengthText" style="font-size: 0.75rem;">Débil</small>
+                                    </div>
+                                    <div class="progress" style="height: 4px; background: rgba(0,0,0,0.1);">
+                                        <div class="progress-bar" id="strengthBar" role="progressbar" style="width: 0%; background: #f44336; transition: all 0.3s ease;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn-login" id="submitBtn" disabled>
+                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                            </button>
+                        </form>
+
+                        <div class="mt-4 text-center">
+                            <button class="btn btn-sm btn-link text-decoration-none" onclick="showClosureExplanation()" style="color: var(--water-deep);">
+                                <i class="fas fa-code me-1"></i>¿Cómo funciona el closure?
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Data Flow Panel (Mobile: Below, Desktop: Right Side) -->
+            <div class="data-flow-panel" id="dataFlowPanel">
+                <div class="panel-header">
+                    <h5 class="panel-title"><i class="fas fa-project-diagram me-2"></i>Flujo de Datos</h5>
+                    <button class="btn-toggle-panel" onclick="togglePanel()">
+                        <i class="fas fa-chevron-right" id="panelToggleIcon"></i>
+                    </button>
+                </div>
+
+                <div class="flow-step active" id="step1">
+                    <div class="flow-step-header">
+                        <div class="flow-step-number">1</div>
+                        <span>Evento Input</span>
+                    </div>
+                    <div class="flow-step-content">
+                        <span class="text-primary">textChanged</span>(value)
+                    </div>
+                    <span class="state-badge touched">Field Touched</span>
+                </div>
+
+                <div class="flow-step" id="step2">
+                    <div class="flow-step-header">
+                        <div class="flow-step-number">2</div>
+                        <span>Closure Execution</span>
+                    </div>
+                    <div class="flow-step-content">
+                        <div class="closure-box">
+                            <span class="scope-variable">fieldName</span>
+                            <span class="scope-variable">validators[]</span>
+                            <span class="scope-variable">state</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-step" id="step3">
+                    <div class="flow-step-header">
+                        <div class="flow-step-number">3</div>
+                        <span>Validación</span>
+                    </div>
+                    <div class="flow-step-content" id="validationCode">
+                        validators.forEach(v => v(value))
+                    </div>
+                    <span class="state-badge dirty" id="dirtyBadge">Dirty</span>
+                </div>
+
+                <div class="flow-step" id="step4">
+                    <div class="flow-step-header">
+                        <div class="flow-step-number">4</div>
+                        <span>Update State</span>
+                    </div>
+                    <div class="flow-step-content" id="stateUpdate">
+                        setState({ valid: true })
+                    </div>
+                    <span class="state-badge valid" id="validBadge">Valid</span>
+                </div>
+
+                <div class="flow-step" id="step5">
+                    <div class="flow-step-header">
+                        <div class="flow-step-number">5</div>
+                        <span>Re-render UI</span>
+                    </div>
+                    <div class="flow-step-content">
+                        updateDOM(state)
+                    </div>
+                </div>
+
+                <div class="mt-3 p-2 bg-light rounded">
+                    <small class="text-muted d-block mb-1"><strong>Estado Actual:</strong></small>
+                    <pre id="currentStateDisplay" style="font-size: 0.75rem; margin: 0; color: var(--water-dark);">{
+  "email": { "value": "", "valid": false, "touched": false },
+  "password": { "value": "", "valid": false, "touched": false }
+}</pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Closure Explanation Modal -->
+    <div class="modal fade" id="closureModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-code me-2"></i>El Closure textChanged</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="mb-3">El patrón <strong>textChanged</strong> utiliza un closure para encapsular el estado de cada campo de formulario:</p>
+                    
+                    <div class="closure-visual">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="text-center">
+                                <div class="bg-white p-3 rounded shadow-sm mb-2">
+                                    <code class="text-primary">createFieldValidator(fieldName)</code>
+                                </div>
+                                <i class="fas fa-arrow-down text-muted"></i>
+                                <div class="mt-2">
+                                    <span class="badge bg-info">Retorna función closure</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="closure-box">
+                            <h6 class="text-primary mb-2">Variables encapsuladas en el closure:</h6>
+                            <div class="mb-2">
+                                <span class="scope-variable">fieldName</span>
+                                <small class="text-muted">- Identifica el campo ('email' | 'password')</small>
+                            </div>
+                            <div class="mb-2">
+                                <span class="scope-variable">validators</span>
+                                <small class="text-muted">- Array de funciones de validación</small>
+                            </div>
+                            <div class="mb-2">
+                                <span class="scope-variable">state</span>
+                                <small class="text-muted">- { value, valid, touched, dirty }</small>
+                            </div>
+                            <div>
+                                <span class="scope-variable">listeners</span>
+                                <small class="text-muted">- Callbacks suscritos a cambios</small>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <h6 class="text-dark mb-2">Cada instancia mantiene su propio estado:</h6>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="bg-white p-2 rounded border border-primary">
+                                        <small class="text-muted d-block">Closure Email</small>
+                                        <code class="text-success">state = { valid: true }</code>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="bg-white p-2 rounded border border-secondary">
+                                        <small class="text-muted d-block">Closure Password</small>
+                                        <code class="text-danger">state = { valid: false }</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-3 mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Ventaja:</strong> Cada campo tiene su propio estado independiente sin necesidad de clases o objetos globales. El closure "recuerda" el contexto en que fue creado.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ==========================================
+        // SISTEMA DE VALIDACIÓN REACTIVA CON CLOSURES
+        // ==========================================
+
+        /**
+         * Factory function que crea un closure para manejar el estado
+         * de un campo de formulario específico.
+         * 
+         * @param {string} fieldName - Nombre del campo (email, password)
+         * @param {Array} validators - Array de funciones de validación
+         * @returns {Function} Closure que maneja el estado del campo
+         */
+        function createFieldValidator(fieldName, validators = []) {
+            // Estado encapsulado en el closure (privado)
+            let state = {
+                value: '',
+                valid: false,
+                touched: false,
+                dirty: false,
+                errors: []
+            };
+
+            // Lista de suscriptores para el patrón Observer
+            const listeners = [];
+
+            /**
+             * Función principal del closure - textChanged
+             * Se ejecuta cada vez que el usuario escribe
+             */
+            function textChanged(newValue) {
+                // Actualizar estado
+                const previousValue = state.value;
+                state.value = newValue;
+                state.dirty = true;
+                state.touched = true;
+
+                // Ejecutar validadores
+                state.errors = [];
+                state.valid = validators.every(validator => {
+                    const result = validator(newValue);
+                    if (result !== true) {
+                        state.errors.push(result);
+                        return false;
+                    }
+                    return true;
+                });
+
+                // Notificar a todos los suscriptores (UI, logs, etc.)
+                listeners.forEach(listener => listener(state, fieldName));
+
+                // Logging para visualización del flujo
+                logDataFlow(fieldName, newValue, state);
+
+                return state; // Retornar estado para chaining si es necesario
+            }
+
+            // API pública del closure
+            textChanged.subscribe = function(callback) {
+                listeners.push(callback);
+                return () => {
+                    const index = listeners.indexOf(callback);
+                    if (index > -1) listeners.splice(index, 1);
+                };
+            };
+
+            textChanged.getState = () => ({ ...state }); // Copia inmutable
+            textChanged.validate = () => textChanged(state.value); // Re-validar
+
+            return textChanged;
+        }
+
+        // ==========================================
+        // VALIDADORES ESPECÍFICOS
+        // ==========================================
+
+        const validators = {
+            email: [
+                value => value.length > 0 || "El email es requerido",
+                value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || "Formato de email inválido",
+                value => value.length <= 50 || "Email demasiado largo"
+            ],
+            password: [
+                value => value.length > 0 || "La contraseña es requerida",
+                value => value.length >= 8 || "Mínimo 8 caracteres",
+                value => /[A-Z]/.test(value) || "Debe contener mayúscula",
+                value => /[0-9]/.test(value) || "Debe contener número",
+                value => /[^A-Za-z0-9]/.test(value) || "Debe contener símbolo"
+            ]
+        };
+
+        // ==========================================
+        // INICIALIZACIÓN DE CAMPOS REACTIVOS
+        // ==========================================
+
+        const emailValidator = createFieldValidator('email', validators.email);
+        const passwordValidator = createFieldValidator('password', validators.password);
+
+        // Estado global del formulario (combinación de estados individuales)
+        let formState = {
+            email: emailValidator.getState(),
+            password: passwordValidator.getState(),
+            isSubmitting: false
+        };
+
+        // ==========================================
+        // SUSCRIPTORES A CAMBIOS DE ESTADO (UI UPDATES)
+        // ==========================================
+
+        emailValidator.subscribe((state, fieldName) => {
+            updateUI(fieldName, state);
+            updateFormState(fieldName, state);
+        });
+
+        passwordValidator.subscribe((state, fieldName) => {
+            updateUI(fieldName, state);
+            updateFormState(fieldName, state);
+            updatePasswordStrength(state.value);
+        });
+
+        // ==========================================
+        // FUNCIONES DE UI
+        // ==========================================
+
+        function updateUI(fieldName, state) {
+            const input = document.getElementById(fieldName === 'email' ? 'emailInput' : 'passwordInput');
+            const validIcon = document.getElementById(fieldName === 'email' ? 'emailValidIcon' : 'passValidIcon');
+            const invalidIcon = document.getElementById(fieldName === 'email' ? 'emailInvalidIcon' : 'passInvalidIcon');
+            const message = document.getElementById(fieldName === 'email' ? 'emailMessage' : 'passwordMessage');
+
+            // Actualizar clases de validación
+            input.classList.remove('valid', 'invalid');
+            validIcon.classList.remove('show');
+            invalidIcon.classList.remove('show');
+            message.classList.remove('show', 'valid', 'invalid');
+
+            if (state.touched && state.dirty) {
+                if (state.valid) {
+                    input.classList.add('valid');
+                    validIcon.classList.add('show');
+                    message.textContent = fieldName === 'email' ? 'Email válido' : 'Contraseña segura';
+                    message.classList.add('show', 'valid');
+                } else {
+                    input.classList.add('invalid');
+                    invalidIcon.classList.add('show');
+                    message.textContent = state.errors[0] || 'Campo inválido';
+                    message.classList.add('show', 'invalid');
+                }
+            }
+
+            updateSubmitButton();
+            highlightDataFlowStep(state);
+        }
+
+        function updatePasswordStrength(password) {
+            const container = document.getElementById('strengthContainer');
+            const bar = document.getElementById('strengthBar');
+            const text = document.getElementById('strengthText');
+
+            if (password.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            const colors = ['#f44336', '#ff9800', '#ffc107', '#4caf50'];
+            const labels = ['Débil', 'Regular', 'Buena', 'Fuerte'];
+            const widths = ['25%', '50%', '75%', '100%'];
+
+            bar.style.width = widths[strength - 1] || '0%';
+            bar.style.background = colors[strength - 1] || '#f44336';
+            text.textContent = labels[strength - 1] || 'Débil';
+            text.style.color = colors[strength - 1] || '#f44336';
+        }
+
+        function updateFormState(fieldName, state) {
+            formState[fieldName] = state;
+            
+            // Actualizar display de estado
+            document.getElementById('currentStateDisplay').textContent = JSON.stringify({
+                email: { 
+                    value: formState.email.value, 
+                    valid: formState.email.valid, 
+                    touched: formState.email.touched,
+                    dirty: formState.email.dirty
+                },
+                password: { 
+                    value: formState.password.value, 
+                    valid: formState.password.valid, 
+                    touched: formState.password.touched,
+                    dirty: formState.password.dirty
+                }
+            }, null, 2);
+        }
+
+        function updateSubmitButton() {
+            const btn = document.getElementById('submitBtn');
+            const isValid = formState.email.valid && formState.password.valid;
+            btn.disabled = !isValid || formState.isSubmitting;
+        }
+
+        function highlightDataFlowStep(state) {
+            // Reset all steps
+            document.querySelectorAll('.flow-step').forEach(step => step.classList.remove('active'));
+            
+            // Highlight based on state
+            if (state.touched) document.getElementById('step1').classList.add('active');
+            if (state.dirty) document.getElementById('step3').classList.add('active');
+            if (state.valid) document.getElementById('step4').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('step5').classList.add('active');
+            }, 100);
+        }
+
+        function logDataFlow(fieldName, value, state) {
+            const step2 = document.querySelector('#step2 .closure-box');
+            step2.innerHTML = `
+                <span class="scope-variable">fieldName: "${fieldName}"</span>
+                <span class="scope-variable">value: "${value.substring(0, 10)}${value.length > 10 ? '...' : ''}"</span>
+                <span class="scope-variable">valid: ${state.valid}</span>
+            `;
+
+            document.getElementById('validationCode').textContent = 
+                `validators.forEach(v => v("${value.substring(0, 15)}..."))\n// Result: ${state.valid ? '✓' : '✗'}`;
+
+            document.getElementById('stateUpdate').textContent = 
+                `setState({\n  value: "${value.substring(0, 10)}...",\n  valid: ${state.valid},\n  dirty: true\n})`;
+
+            // Update badges
+            document.getElementById('dirtyBadge').style.display = state.dirty ? 'inline-block' : 'none';
+            document.getElementById('validBadge').style.display = state.valid ? 'inline-block' : 'none';
+        }
+
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+
+        document.getElementById('emailInput').addEventListener('input', function(e) {
+            emailValidator(e.target.value);
+        });
+
+        document.getElementById('passwordInput').addEventListener('input', function(e) {
+            passwordValidator(e.target.value);
+        });
+
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const input = document.getElementById('passwordInput');
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            formState.isSubmitting = true;
+
+            // Simular API call
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                document.getElementById('successOverlay').classList.add('show');
+                
+                // Crear partículas de celebración
+                createCelebrationParticles();
+            }, 2000);
+        });
+
+        function resetLogin() {
+            document.getElementById('successOverlay').classList.remove('show');
+            document.getElementById('loginForm').reset();
+            
+            // Resetear validadores
+            emailValidator('');
+            passwordValidator('');
+            
+            formState.isSubmitting = false;
+            updateSubmitButton();
+        }
+
+        function showClosureExplanation() {
+            new bootstrap.Modal(document.getElementById('closureModal')).show();
+        }
+
+        function togglePanel() {
+            const panel = document.getElementById('dataFlowPanel');
+            const icon = document.getElementById('panelToggleIcon');
+            panel.classList.toggle('collapsed');
+            icon.classList.toggle('fa-chevron-right');
+            icon.classList.toggle('fa-chevron-left');
+        }
+
+        // ==========================================
+        // ANIMACIONES SVG WATERFALL
+        // ==========================================
+
+        function initWaterfall() {
+            const svg = document.querySelector('.waterfall-svg');
+            const layer1 = document.getElementById('waterLayer1');
+            const layer2 = document.getElementById('waterLayer2');
+            const layer3 = document.getElementById('waterLayer3');
+            const foamGroup = document.getElementById('foamGroup');
+            
+            let time = 0;
+
+            function animate() {
+                time += 0.01;
+                
+                // Generar paths ondulantes para cada capa
+                const width = 1920;
+                const height = 1080;
+                
+                function generateWavePath(amplitude, frequency, speed, yOffset) {
+                    let path = `M 0 ${height}`;
+                    for (let x = 0; x <= width; x += 40) {
+                        const y = yOffset + Math.sin(x * frequency + time * speed) * amplitude;
+                        path += ` L ${x} ${y}`;
+                    }
+                    path += ` L ${width} ${height} Z`;
+                    return path;
+                }
+
+                layer1.setAttribute('d', generateWavePath(30, 0.003, 1, 200));
+                layer2.setAttribute('d', generateWavePath(40, 0.002, 1.5, 350));
+                layer3.setAttribute('d', generateWavePath(50, 0.0015, 2, 500));
+
+                // Actualizar espuma
+                if (Math.random() > 0.95) {
+                    createFoamParticle(foamGroup);
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        function createFoamParticle(container) {
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            const x = Math.random() * 1920;
+            const r = 5 + Math.random() * 15;
+            
+            circle.setAttribute('cx', x);
+            circle.setAttribute('cy', -50);
+            circle.setAttribute('r', r);
+            circle.setAttribute('fill', 'rgba(255,255,255,0.6)');
+            circle.style.animation = `float ${10 + Math.random() * 10}s linear forwards`;
+            
+            container.appendChild(circle);
+            
+            // Animación manual para SVG
+            let y = -50;
+            const speed = 2 + Math.random() * 3;
+            const wobble = Math.random() * 2;
+            
+            function fall() {
+                y += speed;
+                const currentX = parseFloat(circle.getAttribute('cx')) + Math.sin(y * 0.01) * wobble;
+                circle.setAttribute('cy', y);
+                circle.setAttribute('cx', currentX);
+                
+                if (y < 1200) {
+                    requestAnimationFrame(fall);
+                } else {
+                    circle.remove();
+                }
+            }
+            
+            fall();
+        }
+
+        // ==========================================
+        // PARTÍCULAS DE CELEBRACIÓN
+        // ==========================================
+
+        function createCelebrationParticles() {
+            const colors = ['#4fc3f7', '#0288d1', '#81d4fa', '#e1f5fe', '#ffffff'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.style.cssText = `
+                        position: fixed;
+                        width: ${Math.random() * 10 + 5}px;
+                        height: ${Math.random() * 10 + 5}px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 9999;
+                        left: 50%;
+                        top: 50%;
+                    `;
+                    
+                    const angle = (Math.random() * Math.PI * 2);
+                    const velocity = Math.random() * 300 + 100;
+                    const tx = Math.cos(angle) * velocity;
+                    const ty = Math.sin(angle) * velocity;
+                    
+                    particle.style.animation = `none`;
+                    particle.style.transform = 'translate(-50%, -50%)';
+                    
+                    document.body.appendChild(particle);
+                    
+                    // Animación con Web Animations API
+                    particle.animate([
+                        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                        { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 1000 + Math.random() * 1000,
+                        easing: 'cubic-bezier(0, .9, .57, 1)',
+                    }).onfinish = () => particle.remove();
+                    
+                }, i * 30);
+            }
+        }
+
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initWaterfall();
+            
+            // Crear partículas flotantes de fondo
+            const particlesContainer = document.getElementById('particlesContainer');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = (Math.random() * 10 + 5) + 'px';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+
+            // Efecto ripple en botón
+            document.querySelector('.btn-login').addEventListener('click', function(e) {
+                if (this.disabled) return;
+                
+                const rect = this.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top = (e.clientY - rect.top) + 'px';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
+</body>
+</html>

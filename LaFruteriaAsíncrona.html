@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frutería Asíncrona · SwiftyAlert (corregido)</title>
+    <!-- Bootstrap 5 + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding-bottom: 3rem;
+        }
+        .header {
+            background: linear-gradient(145deg, #2d3e50, #1f2a36);
+            color: white;
+            border-radius: 0 0 2.5rem 2.5rem;
+            padding: 2.5rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.2);
+        }
+        .card-fruta {
+            border: none;
+            border-radius: 1.8rem;
+            background: white;
+            box-shadow: 0 12px 30px -8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+            height: 100%;                /* para que las dos tarjetas tengan la misma altura */
+            display: flex;
+            flex-direction: column;
+        }
+        .card-fruta:hover {
+            transform: scale(1.01);
+        }
+        .card-body-fruta {
+            flex: 1;                     /* ocupa todo el espacio disponible */
+            display: flex;
+            flex-direction: column;
+        }
+        .btn-fruta {
+            border-radius: 3rem;
+            padding: 0.8rem 2rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .btn-async {
+            background-color: #0b3b5c;
+            color: white;
+        }
+        .btn-async:hover {
+            background-color: #0e4b73;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .btn-trad {
+            background-color: #8b5a2b;
+            color: white;
+        }
+        .btn-trad:hover {
+            background-color: #a06e3a;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .modal-fruta .modal-content {
+            border-radius: 2.2rem;
+            border: none;
+            background: #ffffffdd;
+            backdrop-filter: blur(8px);
+        }
+        .list-group-fruta .list-group-item {
+            border: none;
+            padding: 1.2rem 1.5rem;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .list-group-fruta .list-group-item:hover {
+            background-color: #f1f5f9;
+        }
+        .result-box {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 20px -8px #cdd9e6;
+            margin-top: 1rem;
+            word-wrap: break-word;        /* rompe palabras largas */
+            overflow-wrap: break-word;
+            min-height: 5rem;              /* altura mínima para consistencia */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .result-box .contenido-resultado {
+            width: 100%;
+        }
+        .badge-async {
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+        .badge-trad {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        footer {
+            color: #6b7280;
+            margin-top: 3rem;
+        }
+        /* Ajuste para el contenido del resultado (emoji + texto) */
+        .resultado-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .resultado-flex span.fs-1 {
+            font-size: 2.5rem !important;  /* un poco más pequeño en móvil */
+        }
+        @media (max-width: 480px) {
+            .resultado-flex {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabecera -->
+    <div class="header text-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold mb-3">🍍 Frutería Asíncrona</h1>
+            <p class="lead fs-5 mx-auto" style="max-width: 700px; color: #e0f2fe;">
+                Simulación de <strong>async/await</strong> + <strong>enums con datos asociados</strong> vs. enfoque tradicional (closures). 
+                Inspirado en SwiftyAlert para iOS.
+            </p>
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <span class="badge bg-light text-dark px-4 py-2 rounded-pill"><i class="bi bi-arrow-repeat me-1"></i>Async/Await</span>
+                <span class="badge bg-light text-dark px-4 py-2 rounded-pill"><i class="bi bi-diagram-3 me-1"></i>Closures</span>
+                <span class="badge bg-light text-dark px-4 py-2 rounded-pill"><i class="bi bi-tag me-1"></i>Datos asociados</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Explicación teórica breve -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10">
+                <div class="alert alert-light border-0 bg-white shadow-sm rounded-4 p-4">
+                    <h5 class="fw-bold">🎯 Objetivo del ejercicio</h5>
+                    <p class="mb-0">Comprender la diferencia entre programación asíncrona con <code>async/await</code> (lineal, legible) y el enfoque tradicional basado en closures o delegados. Además, ver cómo un <strong>enum con datos asociados</strong> (simulado con objetos JavaScript) aporta seguridad y expresividad.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dos tarjetas: método tradicional y async/await -->
+        <div class="row g-4">
+            <!-- Tarjeta Tradicional (closures) -->
+            <div class="col-md-6 d-flex">
+                <div class="card-fruta p-4 w-100">
+                    <div class="card-body-fruta">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="badge-trad badge px-3 py-2 rounded-pill fw-bold">📞 Tradicional</span>
+                            <i class="bi bi-diagram-3 fs-2 text-warning"></i>
+                        </div>
+                        <h4 class="fw-bold">Selección con Closures</h4>
+                        <p class="text-secondary">Uso de callbacks anidados. La lógica se dispersa y es difícil de seguir.</p>
+                        <button id="btnTradicional" class="btn btn-trad btn-fruta w-100 py-3 mt-auto">
+                            <i class="bi bi-arrow-right-circle me-2"></i>Elegir fruta (tradicional)
+                        </button>
+                        <div class="result-box mt-3" id="resultadoTradicional">
+                            <span class="text-muted">⬅️ Pulsa el botón para seleccionar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Async/Await (moderno) -->
+            <div class="col-md-6 d-flex">
+                <div class="card-fruta p-4 w-100">
+                    <div class="card-body-fruta">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="badge-async badge px-3 py-2 rounded-pill fw-bold">⚡ Async/Await</span>
+                            <i class="bi bi-lightning-charge fs-2 text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold">Selección con Async/Await</h4>
+                        <p class="text-secondary">Código lineal que parece síncrono. La promesa se resuelve con la fruta elegida.</p>
+                        <button id="btnAsync" class="btn btn-async btn-fruta w-100 py-3 mt-auto">
+                            <i class="bi bi-stars me-2"></i>Elegir fruta (async/await)
+                        </button>
+                        <div class="result-box mt-3" id="resultadoAsync">
+                            <span class="text-muted">⬅️ Pulsa el botón para seleccionar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reflexión sobre seguridad de tipos y datos asociados -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="bg-white p-4 rounded-4 shadow-sm">
+                    <h5 class="fw-bold"><i class="bi bi-shield-shaded me-2"></i> Seguridad de tipos (simulada)</h5>
+                    <p>En Swift, los <strong>enums con valores asociados</strong> garantizan que cada caso lleve los datos correctos. Aquí lo simulamos con objetos JavaScript que tienen una propiedad <code>tipo</code> y <code>datos</code> (precio, emoji). Al usar <code>async/await</code>, obtenemos un objeto bien definido; en el enfoque tradicional, podríamos recibir cualquier cosa o perder el contexto.</p>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-4">
+                                <span class="badge bg-secondary mb-2">Ejemplo enum (Swift)</span>
+                                <code class="d-block">enum Fruta {<br>&nbsp;&nbsp;case manzana(precio: Double)<br>&nbsp;&nbsp;case banana(oro: Bool)<br>&nbsp;&nbsp;case naranja(vitaminaC: Int)<br>}</code>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-4">
+                                <span class="badge bg-secondary mb-2">Simulación en JS</span>
+                                <code class="d-block">{ tipo: 'manzana', datos: { precio: 1.2 } }</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL (Action Sheet simulado) -->
+    <div class="modal fade modal-fruta" id="frutaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-2">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle">🍏 Elige una fruta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group list-group-fruta" id="frutaList">
+                        <!-- Las opciones se generarán dinámicamente con JS -->
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center container">
+        <hr class="opacity-25">
+        <p class="small">Ejemplo didáctico · BootStrap 5 · JavaScript moderno · SwiftyAlert concept</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Código JavaScript de la simulación (corregido para manejo de promesas) -->
+    <script>
+        (function() {
+            // --- Definición de las frutas (simulando enum con datos asociados) ---
+            const FRUTAS = [
+                { tipo: 'manzana',  nombre: 'Manzana',  emoji: '🍎', datos: { precio: 1.20, color: 'roja' } },
+                { tipo: 'banana',   nombre: 'Banana',   emoji: '🍌', datos: { oro: true, origen: 'Ecuador' } },
+                { tipo: 'naranja',  nombre: 'Naranja',  emoji: '🍊', datos: { vitaminaC: 53, variedad: 'valencia' } },
+                { tipo: 'fresa',    nombre: 'Fresa',    emoji: '🍓', datos: { precio: 2.50, temporada: 'primavera' } }
+            ];
+
+            // Referencias
+            const modalEl = document.getElementById('frutaModal');
+            const modal = new bootstrap.Modal(modalEl);
+            const frutaList = document.getElementById('frutaList');
+            const modalTitle = document.getElementById('modalTitle');
+            const resultadoTrad = document.getElementById('resultadoTradicional');
+            const resultadoAsync = document.getElementById('resultadoAsync');
+
+            // Variable para controlar la promesa actual (evitar múltiples modales)
+            let currentReject = null;
+
+            // Función moderna: devuelve una promesa que se resuelve con la fruta seleccionada o se rechaza si se cancela
+            function mostrarActionSheet(titulo = 'Selecciona una fruta') {
+                // Si ya hay un modal abierto, rechazamos la promesa anterior (opcional)
+                if (currentReject) {
+                    currentReject(new Error('Nueva selección iniciada'));
+                    currentReject = null;
+                }
+
+                return new Promise((resolve, reject) => {
+                    currentReject = reject;  // guardamos reject para cancelación
+
+                    // Configurar título
+                    modalTitle.textContent = titulo;
+
+                    // Generar lista de frutas
+                    frutaList.innerHTML = '';
+                    FRUTAS.forEach(fruta => {
+                        const item = document.createElement('button');
+                        item.className = 'list-group-item list-group-item-action d-flex align-items-center';
+                        item.innerHTML = `<span class="fs-3 me-3">${fruta.emoji}</span>
+                                          <div class="flex-grow-1">
+                                              <strong>${fruta.nombre}</strong>
+                                              <small class="text-secondary d-block">${JSON.stringify(fruta.datos)}</small>
+                                          </div>`;
+                        item.addEventListener('click', () => {
+                            modal.hide();
+                            resolve(fruta);
+                            currentReject = null;  // limpiar
+                        });
+                        frutaList.appendChild(item);
+                    });
+
+                    // Mostrar modal
+                    modal.show();
+
+                    // Manejar cierre del modal sin selección (click fuera, botón cancelar, tecla ESC)
+                    const cancelHandler = () => {
+                        if (currentReject) {
+                            currentReject(new Error('Selección cancelada'));
+                            currentReject = null;
+                        }
+                    };
+                    modalEl.addEventListener('hidden.bs.modal', cancelHandler, { once: true });
+                });
+            }
+
+            // --- ENFOQUE TRADICIONAL (CLOSURES) ---
+            document.getElementById('btnTradicional').addEventListener('click', function() {
+                // Implementación tradicional: recibe un callback
+                function mostrarActionSheetTradicional(titulo, callback) {
+                    modalTitle.textContent = titulo;
+                    frutaList.innerHTML = '';
+                    FRUTAS.forEach(fruta => {
+                        const item = document.createElement('button');
+                        item.className = 'list-group-item list-group-item-action d-flex align-items-center';
+                        item.innerHTML = `<span class="fs-3 me-3">${fruta.emoji}</span>
+                                          <div class="flex-grow-1">
+                                              <strong>${fruta.nombre}</strong>
+                                              <small class="text-secondary d-block">${JSON.stringify(fruta.datos)}</small>
+                                          </div>`;
+                        item.addEventListener('click', () => {
+                            modal.hide();
+                            callback(fruta);
+                        });
+                        frutaList.appendChild(item);
+                    });
+                    modal.show();
+                }
+
+                // Uso tradicional
+                mostrarActionSheetTradicional('🍏 Elige (tradicional)', function(fruta) {
+                    resultadoTrad.innerHTML = `
+                        <div class="resultado-flex">
+                            <span class="fs-1">${fruta.emoji}</span>
+                            <div>
+                                <strong>${fruta.nombre}</strong><br>
+                                <span class="text-secondary small">${JSON.stringify(fruta.datos)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+
+            // --- ENFOQUE MODERNO (ASYNC/AWAIT) ---
+            document.getElementById('btnAsync').addEventListener('click', async function() {
+                try {
+                    const fruta = await mostrarActionSheet('🍏 Elige (async/await)');
+                    resultadoAsync.innerHTML = `
+                        <div class="resultado-flex">
+                            <span class="fs-1">${fruta.emoji}</span>
+                            <div>
+                                <strong>${fruta.nombre}</strong><br>
+                                <span class="text-secondary small">${JSON.stringify(fruta.datos)}</span>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    resultadoAsync.innerHTML = '<span class="text-muted">❌ Selección cancelada</span>';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

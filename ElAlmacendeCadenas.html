@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Almacén de Cadenas - Method Chaining Exercise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text-light: #e94560;
+        }
+
+        body {
+            background: var(--dark-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            background: var(--primary-gradient);
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(20px, 20px); }
+        }
+
+        .recipe-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        .step-badge {
+            background: var(--secondary-gradient);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .code-block {
+            background: #0f0f1a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            border-left: 4px solid #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-block::before {
+            content: 'JS';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-gradient);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .method-chain {
+            color: #4facfe;
+        }
+
+        .string-content {
+            color: #f093fb;
+        }
+
+        .keyword {
+            color: #ff6b6b;
+        }
+
+        .output-display {
+            background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            min-height: 200px;
+            border: 2px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .output-display::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--success-gradient);
+        }
+
+        .btn-chain {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-chain:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 2px solid #e94560;
+            color: #e94560;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            background: #e94560;
+            color: white;
+        }
+
+        .ingredient-tag {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            font-size: 0.9rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-gradient);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            border: 3px solid var(--card-bg);
+        }
+
+        .floating-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--success-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-icon:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 0;
+            }
+            
+            .code-block {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+            
+            .btn-chain, .btn-reset {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        .highlight-step {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem;
+            transition: background 0.3s ease;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container position-relative">
+            <h1 class="display-4 fw-bold mb-3"><i class="fas fa-bread-slice me-3"></i>El Almacén de Cadenas</h1>
+            <p class="lead mb-0">Ejercicio de Method Chaining: Construyendo la Receta del Pan Perfecto</p>
+        </div>
+    </section>
+
+    <div class="container mb-5">
+        <div class="row g-4">
+            
+            <!-- Left Column: Interactive Builder -->
+            <div class="col-12 col-lg-7">
+                <div class="recipe-card p-4">
+                    <h3 class="mb-4"><i class="fas fa-code me-2 text-info"></i>Constructor de Recetas</h3>
+                    
+                    <div id="builderSteps" class="timeline mb-4">
+                        <div class="timeline-item" id="step1">
+                            <div class="step-badge">1</div>
+                            <h5>Inicializar Receta</h5>
+                            <p class="text-muted small">Creamos el objeto Receta con el nombre del pan</p>
+                            <button class="btn btn-sm btn-outline-info" onclick="executeStep(1)">
+                                <i class="fas fa-play me-1"></i> new Receta("Pan Artesanal")
+                            </button>
+                        </div>
+
+                        <div class="timeline-item" id="step2" style="opacity: 0.5;">
+                            <div class="step-badge">2</div>
+                            <h5>Agregar Ingredientes</h5>
+                            <p class="text-muted small">Añadimos ingredientes mediante chaining</p>
+                            <button class="btn btn-sm btn-outline-info" onclick="executeStep(2)" disabled>
+                                <i class="fas fa-plus me-1"></i> .agregarIngrediente()
+                            </button>
+                        </div>
+
+                        <div class="timeline-item" id="step3" style="opacity: 0.5;">
+                            <div class="step-badge">3</div>
+                            <h5>Configurar Tiempo</h5>
+                            <p class="text-muted small">Establecemos tiempo de horneado</p>
+                            <button class="btn btn-sm btn-outline-info" onclick="executeStep(3)" disabled>
+                                <i class="fas fa-clock me-1"></i> .setTiempo(30)
+                            </button>
+                        </div>
+
+                        <div class="timeline-item" id="step4" style="opacity: 0.5;">
+                            <div class="step-badge">4</div>
+                            <h5>Agregar Instrucciones</h5>
+                            <p class="text-muted small">Añadimos pasos de preparación</p>
+                            <button class="btn btn-sm btn-outline-info" onclick="executeStep(4)" disabled>
+                                <i class="fas fa-list-ol me-1"></i> .agregarPaso()
+                            </button>
+                        </div>
+
+                        <div class="timeline-item" id="step5" style="opacity: 0.5;">
+                            <div class="step-badge">5</div>
+                            <h5>Generar Receta Final</h5>
+                            <p class="text-muted small">Obtenemos el resultado completo</p>
+                            <button class="btn btn-sm btn-outline-success" onclick="executeStep(5)" disabled>
+                                <i class="fas fa-bread-slice me-1"></i> .build()
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-chain" onclick="runFullChain()">
+                            <i class="fas fa-magic me-2"></i>Ejecutar Cadena Completa
+                        </button>
+                        <button class="btn btn-reset" onclick="resetRecipe()">
+                            <i class="fas fa-redo me-2"></i>Reiniciar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Code Display -->
+                <div class="recipe-card p-4 mt-4">
+                    <h4 class="mb-3"><i class="fas fa-terminal me-2 text-warning"></i>Código JavaScript</h4>
+                    <div class="code-block">
+                        <div id="codeDisplay">
+<span class="keyword">class</span> <span class="method-chain">Receta</span> {
+  <span class="keyword">constructor</span>(nombre) {
+    <span class="keyword">this</span>.nombre = nombre;
+    <span class="keyword">this</span>.ingredientes = [];
+    <span class="keyword">this</span>.tiempo = 0;
+    <span class="keyword">this</span>.pasos = [];
+    <span class="keyword">return this</span>; <span class="text-muted">// Enable chaining</span>
+  }
+
+  <span class="method-chain">agregarIngrediente</span>(item, cantidad) {
+    <span class="keyword">this</span>.ingredientes.push({item, cantidad});
+    <span class="keyword">return this</span>; <span class="text-muted">// Key for chaining!</span>
+  }
+
+  <span class="method-chain">setTiempo</span>(minutos) {
+    <span class="keyword">this</span>.tiempo = minutos;
+    <span class="keyword">return this</span>;
+  }
+
+  <span class="method-chain">agregarPaso</span>(instruccion) {
+    <span class="keyword">this</span>.pasos.push(instruccion);
+    <span class="keyword">return this</span>;
+  }
+
+  <span class="method-chain">build</span>() {
+    <span class="keyword">return</span> <span class="string-content">`Receta: ${this.nombre}...`</span>;
+  }
+}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Live Output -->
+            <div class="col-12 col-lg-5">
+                <div class="recipe-card p-4 h-100">
+                    <h3 class="mb-4"><i class="fas fa-eye me-2 text-success"></i>Resultado en Vivo</h3>
+                    
+                    <div class="output-display mb-4">
+                        <div id="recipeOutput" class="text-center text-muted">
+                            <i class="fas fa-bread-slice fa-3x mb-3 opacity-25"></i>
+                            <p>La receta aparecerá aquí...</p>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3">Estado del Objeto:</h5>
+                    <div class="bg-dark p-3 rounded mb-3" style="font-family: monospace; font-size: 0.85rem;">
+                        <div id="objectState" class="text-info">
+// Objeto no inicializado
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info d-none d-md-block" role="alert">
+                        <h6 class="alert-heading"><i class="fas fa-lightbulb me-2"></i>Discusión: Orden de Métodos</h6>
+                        <p class="mb-0 small">
+                            Observa cómo cada método retorna <code>this</code>, permitiendo encadenar 
+                            llamadas. El orden importa: primero inicializamos, luego configuramos, 
+                            finalmente construimos.
+                        </p>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6>Preguntas de Análisis:</h6>
+                        <ul class="list-unstyled small text-muted">
+                            <li class="mb-2"><i class="fas fa-question-circle me-2 text-warning"></i>¿Qué pasa si omitimos <code>return this</code>?</li>
+                            <li class="mb-2"><i class="fas fa-question-circle me-2 text-warning"></i>¿Podríamos reordenar los métodos?</li>
+                            <li class="mb-2"><i class="fas fa-question-circle me-2 text-warning"></i>¿Cómo validarías ingredientes duplicados?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="recipe-card p-4">
+                    <h4 class="mb-4"><i class="fas fa-chart-line me-2 text-primary"></i>Análisis del API Flexible</h4>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded h-100 border-info border-opacity-25">
+                                <h6 class="text-info">Ventajas del Chaining</h6>
+                                <ul class="small text-muted mb-0">
+                                    <li>Código más limpio y legible</li>
+                                    <li>Reducción de variables temporales</li>
+                                    <li>Flujo de trabajo intuitivo</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded h-100 border-warning border-opacity-25">
+                                <h6 class="text-warning">Consideraciones</h6>
+                                <ul class="small text-muted mb-0">
+                                    <li>Debugging puede ser más difícil</li>
+                                    <li>Errores en cadena afectan todo</li>
+                                    <li>Acoplamiento de métodos</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded h-100 border-success border-opacity-25">
+                                <h6 class="text-success">Casos de Uso</h6>
+                                <ul class="small text-muted mb-0">
+                                    <li>Constructores de consultas (Query Builders)</li>
+                                    <li>Configuración de objetos complejos</li>
+                                    <li>Manipulación del DOM (jQuery style)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Help Button -->
+    <div class="floating-icon" onclick="showHelp()" title="Ayuda">
+        <i class="fas fa-question text-white fa-lg"></i>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal fade" id="helpModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">¿Cómo funciona Method Chaining?</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>El <strong>Method Chaining</strong> es un patrón donde cada método retorna el objeto (<code>this</code>), permitiendo llamar métodos secuencialmente.</p>
+                    <div class="code-block mt-3 mb-3" style="font-size: 0.8rem;">
+<span class="text-muted">// Sin chaining:</span>
+<span class="keyword">const</span> receta = <span class="keyword">new</span> Receta();
+receta.agregarIngrediente(<span class="string-content">"Harina"</span>);
+receta.agregarIngrediente(<span class="string-content">"Agua"</span>);
+receta.setTiempo(30);
+
+<span class="text-muted">// Con chaining:</span>
+<span class="keyword">const</span> receta = <span class="keyword">new</span> Receta()
+  .agregarIngrediente(<span class="string-content">"Harina"</span>)
+  .agregarIngrediente(<span class="string-content">"Agua"</span>)
+  .setTiempo(30);
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Receta Builder Class
+        class Receta {
+            constructor(nombre) {
+                this.nombre = nombre;
+                this.ingredientes = [];
+                this.tiempo = 0;
+                this.pasos = [];
+                this.currentChain = `new Receta("${nombre}")`;
+                return this;
+            }
+
+            agregarIngrediente(item, cantidad) {
+                this.ingredientes.push({item, cantidad});
+                this.currentChain += `\n  .agregarIngrediente("${item}", "${cantidad}")`;
+                return this;
+            }
+
+            setTiempo(minutos) {
+                this.tiempo = minutos;
+                this.currentChain += `\n  .setTiempo(${minutos})`;
+                return this;
+            }
+
+            agregarPaso(instruccion) {
+                this.pasos.push(instruccion);
+                this.currentChain += `\n  .agregarPaso("${instruccion}")`;
+                return this;
+            }
+
+            build() {
+                this.currentChain += `\n  .build()`;
+                return this.generarHTML();
+            }
+
+            generarHTML() {
+                let html = `
+                    <div class="text-start animate__animated animate__fadeIn">
+                        <h4 class="text-warning mb-3"><i class="fas fa-bread-slice me-2"></i>${this.nombre}</h4>
+                        <div class="mb-3">
+                            <h6 class="text-info"><i class="fas fa-shopping-basket me-2"></i>Ingredientes:</h6>
+                            <div class="d-flex flex-wrap">
+                `;
+                
+                this.ingredientes.forEach(ing => {
+                    html += `<span class="ingredient-tag"><i class="fas fa-check me-1"></i>${ing.cantidad} ${ing.item}</span>`;
+                });
+                
+                html += `
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="text-info"><i class="fas fa-clock me-2"></i>Tiempo: <span class="text-white">${this.tiempo} minutos</span></h6>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="text-info"><i class="fas fa-list-ol me-2"></i>Preparación:</h6>
+                            <ol class="text-light small">
+                `;
+                
+                this.pasos.forEach((paso, idx) => {
+                    html += `<li class="mb-1">${paso}</li>`;
+                });
+                
+                html += `
+                            </ol>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-secondary">
+                            <small class="text-muted">Receta generada mediante Method Chaining</small>
+                        </div>
+                    </div>
+                `;
+                return html;
+            }
+        }
+
+        let recetaActual = null;
+        let pasoActual = 0;
+
+        function executeStep(step) {
+            const btn = document.querySelector(`#step${step} button`);
+            const timelineItem = document.getElementById(`step${step}`);
+            
+            // Highlight current step
+            timelineItem.classList.add('highlight-step');
+            
+            switch(step) {
+                case 1:
+                    recetaActual = new Receta("Pan Artesanal de Masa Madre");
+                    updateObjectState();
+                    document.getElementById('recipeOutput').innerHTML = `
+                        <div class="text-info">
+                            <i class="fas fa-play-circle fa-2x mb-2"></i>
+                            <p>Objeto Receta creado</p>
+                        </div>
+                    `;
+                    enableStep(2);
+                    break;
+                    
+                case 2:
+                    if (recetaActual) {
+                        recetaActual
+                            .agregarIngrediente("Harina de trigo", "500g")
+                            .agregarIngrediente("Agua tibia", "350ml")
+                            .agregarIngrediente("Sal", "10g")
+                            .agregarIngrediente("Masa madre", "100g");
+                        updateObjectState();
+                        showNotification("Ingredientes agregados mediante chaining");
+                        enableStep(3);
+                    }
+                    break;
+                    
+                case 3:
+                    if (recetaActual) {
+                        recetaActual.setTiempo(45);
+                        updateObjectState();
+                        showNotification("Tiempo configurado: 45 minutos");
+                        enableStep(4);
+                    }
+                    break;
+                    
+                case 4:
+                    if (recetaActual) {
+                        recetaActual
+                            .agregarPaso("Mezclar harina y agua, dejar reposar 30min (autólisis)")
+                            .agregarPaso("Añadir masa madre y saltar, amasar 10 minutos")
+                            .agregarPaso("Fermentación bulk durante 4 horas con pliegues")
+                            .agregarPaso("Preformar y banco de 30 minutos")
+                            .agregarPaso("Hornear a 230°C con vapor");
+                        updateObjectState();
+                        showNotification("Pasos de preparación añadidos");
+                        enableStep(5);
+                    }
+                    break;
+                    
+                case 5:
+                    if (recetaActual) {
+                        const resultado = recetaActual.build();
+                        document.getElementById('recipeOutput').innerHTML = resultado;
+                        updateObjectState(true);
+                        showNotification("¡Receta completada exitosamente!", "success");
+                        
+                        // Mostrar cadena completa en consola
+                        console.log("Method Chain ejecutado:", recetaActual.currentChain);
+                    }
+                    break;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i> Completado';
+            btn.classList.remove('btn-outline-info', 'btn-outline-success');
+            btn.classList.add('btn-success');
+        }
+
+        function enableStep(step) {
+            const nextStep = document.getElementById(`step${step}`);
+            if (nextStep) {
+                nextStep.style.opacity = '1';
+                const btn = nextStep.querySelector('button');
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        function runFullChain() {
+            resetRecipe();
+            setTimeout(() => executeStep(1), 100);
+            setTimeout(() => executeStep(2), 800);
+            setTimeout(() => executeStep(3), 1600);
+            setTimeout(() => executeStep(4), 2400);
+            setTimeout(() => executeStep(5), 3200);
+        }
+
+        function resetRecipe() {
+            recetaActual = null;
+            pasoActual = 0;
+            
+            // Reset UI
+            document.getElementById('recipeOutput').innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-bread-slice fa-3x mb-3 opacity-25"></i>
+                    <p>La receta aparecerá aquí...</p>
+                </div>
+            `;
+            
+            document.getElementById('objectState').innerHTML = '// Objeto no inicializado';
+            
+            // Reset steps
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById(`step${i}`);
+                const btn = step.querySelector('button');
+                
+                step.classList.remove('highlight-step');
+                if (i > 1) step.style.opacity = '0.5';
+                
+                btn.disabled = i > 1;
+                btn.classList.remove('btn-success');
+                
+                // Restore original button text
+                const texts = [
+                    '<i class="fas fa-play me-1"></i> new Receta("Pan Artesanal")',
+                    '<i class="fas fa-plus me-1"></i> .agregarIngrediente()',
+                    '<i class="fas fa-clock me-1"></i> .setTiempo(30)',
+                    '<i class="fas fa-list-ol me-1"></i> .agregarPaso()',
+                    '<i class="fas fa-bread-slice me-1"></i> .build()'
+                ];
+                
+                btn.innerHTML = texts[i-1];
+                btn.classList.add(i === 5 ? 'btn-outline-success' : 'btn-outline-info');
+            }
+        }
+
+        function updateObjectState(final = false) {
+            if (!recetaActual) return;
+            
+            const state = {
+                nombre: recetaActual.nombre,
+                ingredientes: recetaActual.ingredientes.length,
+                tiempo: recetaActual.tiempo,
+                pasos: recetaActual.pasos.length
+            };
+            
+            let html = `<span class="text-success">// Estado actual del objeto:</span>\n`;
+            html += `<span class="method-chain">Receta</span> {\n`;
+            html += `  nombre: <span class="string-content">"${state.nombre}"</span>,\n`;
+            html += `  ingredientes: <span class="text-warning">Array(${state.ingredientes})</span>,\n`;
+            html += `  tiempo: <span class="text-warning">${state.tiempo}</span>,\n`;
+            html += `  pasos: <span class="text-warning">Array(${state.pasos})</span>\n}`;
+            
+            if (final) {
+                html += `\n\n<span class="text-success">// Cadena ejecutada:</span>\n`;
+                html += `<span class="text-muted">${recetaActual.currentChain.replace(/\n/g, '<br>')}</span>`;
+            }
+            
+            document.getElementById('objectState').innerHTML = html;
+        }
+
+        function showNotification(message, type = 'info') {
+            // Simple notification implementation
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'info'} position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; animation: slideIn 0.3s ease;';
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'info'}-circle me-2"></i>${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function showHelp() {
+            new bootstrap.Modal(document.getElementById('helpModal')).show();
+        }
+
+        // Add slide-in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

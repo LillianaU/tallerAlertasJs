@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ejercicio 5 — El Artefacto Universal</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink:       #0d0d0f;
+    --paper:     #f5f3ee;
+    --accent:    #ff4d1c;
+    --accent2:   #0057ff;
+    --accent3:   #ffd600;
+    --mid:       #7a7a8a;
+    --border:    #d4d0c8;
+    --card-bg:   #ffffff;
+    --shadow:    0 2px 24px rgba(13,13,15,.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    font-family: 'Space Mono', monospace;
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: relative; z-index: 10;
+    border-bottom: 2px solid var(--ink);
+    padding: 0 2rem;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap;
+    min-height: 64px;
+  }
+  header .ex-tag {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: 800; letter-spacing: -.02em;
+  }
+  .badge-time {
+    background: var(--accent3);
+    color: var(--ink);
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem; font-weight: 700;
+    padding: .2rem .7rem;
+    border-radius: 100px;
+    letter-spacing: .05em;
+    white-space: nowrap;
+  }
+
+  /* ─── MAIN LAYOUT ─── */
+  main { position: relative; z-index: 1; padding: 2.5rem 1.5rem 4rem; }
+
+  /* ─── SECTION TITLES ─── */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: .65rem; font-weight: 700;
+    letter-spacing: .25em; text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: .5rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -.03em;
+    margin-bottom: 1.5rem;
+  }
+  .accent-line {
+    display: inline-block;
+    border-bottom: 4px solid var(--accent);
+    padding-bottom: 2px;
+  }
+
+  /* ─── OBJECTIVE CARD ─── */
+  .objective-card {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2rem;
+    position: relative; overflow: hidden;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .objective-card svg.deco {
+    position: absolute; right: -20px; top: -20px;
+    opacity: .12; width: 140px; height: 140px;
+  }
+  .objective-card .label {
+    font-size: .65rem; letter-spacing: .2em;
+    text-transform: uppercase; opacity: .85;
+    margin-bottom: .4rem;
+  }
+  .objective-card p {
+    font-size: .95rem; line-height: 1.6;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── CONCEPT GRID ─── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .concept-card {
+    background: var(--card-bg);
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    padding: 1.4rem;
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .concept-card:hover {
+    transform: translate(-2px,-3px);
+    box-shadow: 6px 7px 0 var(--ink);
+  }
+  .concept-card .icon-wrap {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem; margin-bottom: .9rem;
+    border: 2px solid var(--ink);
+  }
+  .concept-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: .95rem; font-weight: 700; margin-bottom: .45rem;
+  }
+  .concept-card p {
+    font-size: .78rem; line-height: 1.65; color: #444;
+  }
+  .ic-orange { background: #fff0eb; }
+  .ic-blue   { background: #ebf0ff; }
+  .ic-yellow { background: #fffbe0; }
+  .ic-green  { background: #e8faf0; }
+
+  /* ─── SIMULATOR SECTION ─── */
+  .simulator-wrap {
+    background: var(--card-bg);
+    border: 2px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 6px 6px 0 var(--ink);
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .simulator-toolbar {
+    background: var(--ink); color: var(--paper);
+    padding: .75rem 1.4rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .simulator-toolbar span {
+    font-family: 'Syne', sans-serif;
+    font-size: .8rem; font-weight: 700;
+    letter-spacing: .06em;
+  }
+  .device-btns { display: flex; gap: .5rem; margin-left: auto; }
+  .device-btn {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,.3);
+    color: var(--paper);
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; padding: .3rem .75rem;
+    border-radius: 6px; cursor: pointer;
+    transition: background .15s, border-color .15s;
+    letter-spacing: .05em;
+  }
+  .device-btn:hover, .device-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .sim-viewport {
+    padding: 2rem;
+    min-height: 420px;
+    display: flex; align-items: center; justify-content: center;
+    background: #f8f7f3;
+    transition: background .3s;
+    position: relative;
+  }
+
+  /* ─── PHONE FRAME ─── */
+  .phone-frame {
+    width: 320px;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 36px;
+    box-shadow: 10px 10px 0 var(--ink);
+    overflow: hidden;
+    position: relative;
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+  }
+  .phone-frame .phone-notch {
+    height: 28px;
+    background: var(--ink);
+    border-radius: 0 0 16px 16px;
+    width: 120px;
+    margin: 0 auto 0;
+    position: relative; left: 0; right: 0;
+  }
+  .phone-screen {
+    padding: 1.2rem 1rem 1.5rem;
+    min-height: 480px;
+    display: flex; flex-direction: column;
+  }
+  .phone-screen-header {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: .6rem;
+    border-bottom: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .phone-list-item {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .65rem .5rem;
+    border-bottom: 1px solid var(--border);
+    font-size: .8rem; cursor: pointer;
+    border-radius: 8px; transition: background .15s;
+  }
+  .phone-list-item:hover { background: #f3f3f8; }
+  .phone-list-item .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .trigger-btn {
+    margin-top: auto;
+    background: var(--accent2);
+    color: #fff;
+    border: none; border-radius: 12px;
+    padding: .75rem 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .85rem;
+    cursor: pointer;
+    width: 100%;
+    letter-spacing: .04em;
+    transition: transform .12s, opacity .12s;
+    box-shadow: 0 4px 12px rgba(0,87,255,.25);
+  }
+  .trigger-btn:hover { transform: translateY(-2px); opacity: .92; }
+
+  /* ─── ACTION SHEET ─── */
+  .action-sheet-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(3px);
+    display: none; align-items: flex-end;
+    z-index: 50;
+    border-radius: 33px;
+    animation: fadein .2s ease;
+  }
+  .action-sheet-backdrop.visible { display: flex; }
+  .action-sheet {
+    width: 100%;
+    background: #fff;
+    border-radius: 18px 18px 0 0;
+    padding: 1rem;
+    animation: slideup .28s cubic-bezier(.4,0,.2,1);
+  }
+  .action-sheet-handle {
+    width: 40px; height: 4px; background: #ccc;
+    border-radius: 4px; margin: 0 auto .9rem;
+  }
+  .as-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: .9rem;
+    text-align: center; margin-bottom: .1rem;
+  }
+  .as-subtitle {
+    font-size: .7rem; color: var(--mid);
+    text-align: center; margin-bottom: .9rem;
+  }
+  .as-item {
+    display: flex; align-items: center; gap: .7rem;
+    padding: .65rem .6rem;
+    border-radius: 10px;
+    font-size: .8rem; cursor: pointer;
+    transition: background .15s;
+    font-family: 'Space Mono', monospace;
+  }
+  .as-item:hover { background: #f3f3f8; }
+  .as-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+  .as-cancel {
+    background: #f3f3f8; border-radius: 10px;
+    padding: .65rem; text-align: center;
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: .82rem; cursor: pointer; margin-top: .5rem;
+    color: var(--accent);
+    transition: background .15s;
+  }
+  .as-cancel:hover { background: #ebebf0; }
+
+  /* ─── IPAD / POPOVER ─── */
+  .ipad-frame {
+    width: 580px; max-width: 100%;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    box-shadow: 10px 10px 0 var(--ink);
+    overflow: visible;
+    position: relative;
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+  }
+  .ipad-screen {
+    padding: 1.4rem 1.6rem 1.8rem;
+    min-height: 440px;
+    display: flex; flex-direction: column;
+    border-radius: 17px;
+    overflow: hidden;
+  }
+  .ipad-screen-header {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.15rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: .7rem;
+    border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ipad-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: .7rem; flex: 1;
+  }
+  .ipad-grid-item {
+    background: #f7f7fb;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: .9rem;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: background .15s, transform .12s;
+  }
+  .ipad-grid-item:hover { background: #eeeef8; transform: scale(1.01); }
+  .ipad-grid-item strong {
+    display: block; font-family: 'Syne', sans-serif;
+    font-size: .82rem; margin-bottom: .2rem;
+  }
+  .ipad-trigger-row {
+    display: flex; gap: .7rem;
+    margin-top: 1.1rem; justify-content: flex-end;
+  }
+  .ipad-btn {
+    background: var(--accent2);
+    color: #fff; border: none; border-radius: 10px;
+    padding: .55rem 1.1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .8rem;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,87,255,.22);
+    transition: transform .12s, opacity .12s;
+    position: relative;
+  }
+  .ipad-btn:hover { transform: translateY(-2px); opacity: .9; }
+
+  /* ─── POPOVER ─── */
+  .popover-wrap {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    width: 240px;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 6px 6px 0 var(--ink);
+    z-index: 100;
+    display: none;
+    animation: popin .22s cubic-bezier(.4,0,.2,1);
+  }
+  .popover-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; right: 20px;
+    width: 16px; height: 10px;
+    background: var(--ink);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+  .popover-wrap::before {
+    content: '';
+    position: absolute;
+    bottom: -7px; right: 21px;
+    width: 14px; height: 9px;
+    background: #fff;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    z-index: 1;
+  }
+  .popover-wrap.visible { display: block; }
+  .popover-header {
+    padding: .75rem .9rem .4rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: .82rem;
+    border-bottom: 1.5px solid var(--border);
+    margin-bottom: .3rem;
+    color: var(--mid);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    font-size: .65rem;
+  }
+  .popover-item {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .5rem .9rem;
+    font-size: .8rem; cursor: pointer;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    transition: background .13s;
+  }
+  .popover-item:hover { background: #f3f3f8; }
+  .popover-item:last-child { margin-bottom: .4rem; }
+  .popover-sep { height: 1px; background: var(--border); margin: .25rem .9rem; }
+  .popover-item.danger { color: var(--accent); }
+
+  /* ─── COMPARISON TABLE ─── */
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    font-size: .78rem;
+  }
+  .compare-table th {
+    background: var(--ink); color: var(--paper);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .72rem;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: .7rem 1rem; text-align: left;
+  }
+  .compare-table td {
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top; line-height: 1.55;
+  }
+  .compare-table tr:hover td { background: #f7f7f7; }
+  .tag-iphone {
+    display: inline-block;
+    background: var(--accent); color: #fff;
+    font-size: .6rem; font-weight: 700;
+    border-radius: 4px; padding: .1rem .4rem;
+    letter-spacing: .06em; text-transform: uppercase;
+    margin-right: .3rem;
+  }
+  .tag-ipad {
+    display: inline-block;
+    background: var(--accent2); color: #fff;
+    font-size: .6rem; font-weight: 700;
+    border-radius: 4px; padding: .1rem .4rem;
+    letter-spacing: .06em; text-transform: uppercase;
+    margin-right: .3rem;
+  }
+
+  /* ─── CODE BLOCK ─── */
+  .code-wrap {
+    background: var(--ink); color: #e8e8e2;
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 6px 6px 0 var(--border);
+    margin-bottom: 2rem;
+  }
+  .code-header {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .6rem 1.1rem;
+    background: #1a1a22;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .code-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .cd1 { background: #ff5f57; }
+  .cd2 { background: #febc2e; }
+  .cd3 { background: #28c840; }
+  .code-lang {
+    margin-left: auto;
+    font-size: .65rem; color: rgba(255,255,255,.4);
+    letter-spacing: .12em; text-transform: uppercase;
+  }
+  .code-body { padding: 1.2rem 1.4rem; }
+  .code-body pre {
+    font-family: 'Space Mono', monospace;
+    font-size: .72rem; line-height: 1.75;
+    white-space: pre; overflow-x: auto;
+  }
+  .tk-kw  { color: #ff79c6; }
+  .tk-fn  { color: #50fa7b; }
+  .tk-str { color: #f1fa8c; }
+  .tk-cm  { color: #6272a4; font-style: italic; }
+  .tk-num { color: #bd93f9; }
+  .tk-ty  { color: #8be9fd; }
+
+  /* ─── DEBATE SECTION ─── */
+  .debate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.1rem; margin-bottom: 2rem;
+  }
+  .debate-card {
+    border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.2rem;
+    transition: border-color .2s, transform .2s;
+    background: var(--card-bg);
+  }
+  .debate-card:hover {
+    border-color: var(--ink);
+    transform: translateY(-3px);
+  }
+  .debate-card .stance {
+    font-family: 'Syne', sans-serif;
+    font-size: .65rem; font-weight: 700;
+    letter-spacing: .15em; text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+  .stance-lib  { color: var(--accent2); }
+  .stance-app  { color: var(--accent); }
+  .stance-des  { color: #8b5cf6; }
+  .debate-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .9rem;
+    margin-bottom: .5rem;
+  }
+  .debate-card p { font-size: .77rem; line-height: 1.6; color: #555; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes slideup {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  @keyframes fadein {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes popin {
+    from { transform: scale(.85) translateY(8px); opacity: 0; }
+    to   { transform: scale(1)   translateY(0);   opacity: 1; }
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline { position: relative; padding-left: 2rem; margin-bottom: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: .6rem; top: .5rem; bottom: .5rem;
+    width: 2px; background: var(--border);
+  }
+  .tl-item {
+    position: relative; margin-bottom: 1.3rem;
+  }
+  .tl-dot {
+    position: absolute; left: -1.55rem; top: .25rem;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent2);
+    border: 2px solid var(--ink);
+    box-shadow: 0 0 0 3px var(--paper);
+  }
+  .tl-item h5 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .85rem; margin-bottom: .2rem;
+  }
+  .tl-item p { font-size: .77rem; line-height: 1.6; color: #555; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 2px solid var(--ink);
+    padding: 1rem 2rem;
+    background: var(--ink); color: var(--paper);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap;
+    font-size: .7rem;
+  }
+  footer .brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: .9rem;
+    color: var(--accent3);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .ipad-frame { width: 100%; }
+    .ipad-grid { grid-template-columns: 1fr; }
+    .compare-table { font-size: .7rem; }
+    .code-body pre { font-size: .65rem; }
+    .sim-viewport { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header>
+  <div>
+    <div class="ex-tag">Ejercicio 5</div>
+    <h1>El Artefacto Universal</h1>
+  </div>
+  <span class="badge-time">⏱ 30 min</span>
+</header>
+
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<main class="container-fluid" style="max-width:960px;">
+
+  <!-- OBJETIVO -->
+  <div class="objective-card mt-4">
+    <svg class="deco" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="60" r="55" stroke="white" stroke-width="4"/>
+      <circle cx="60" cy="60" r="35" stroke="white" stroke-width="4"/>
+      <circle cx="60" cy="60" r="15" fill="white"/>
+      <line x1="60" y1="0" x2="60" y2="25" stroke="white" stroke-width="4"/>
+      <line x1="60" y1="95" x2="60" y2="120" stroke="white" stroke-width="4"/>
+      <line x1="0" y1="60" x2="25" y2="60" stroke="white" stroke-width="4"/>
+      <line x1="95" y1="60" x2="120" y2="60" stroke="white" stroke-width="4"/>
+    </svg>
+    <div class="label">🎯 Objetivo</div>
+    <p>Comprender la <strong>adaptabilidad a diferentes dispositivos</strong> (iPhone/iPad) y las convenciones de plataforma iOS, enfocándose en cómo un mismo componente — el action sheet — se transforma en un popover según el contexto de pantalla.</p>
+  </div>
+
+  <!-- CONCEPTOS CLAVE -->
+  <div class="section-label">Conceptos Clave</div>
+  <div class="section-title"><span class="accent-line">Dos Componentes,</span> Una Intención</div>
+
+  <div class="concept-grid mb-4">
+    <div class="concept-card">
+      <div class="icon-wrap ic-orange">📋</div>
+      <h3>Action Sheet (iPhone)</h3>
+      <p>Hoja modal que emerge desde la parte inferior de la pantalla. Ideal para espacios reducidos. El usuario lo descarta deslizando o tocando fuera.</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon-wrap ic-blue">🔲</div>
+      <h3>Popover (iPad)</h3>
+      <p>Ventana flotante anclada al elemento que la disparó. Aprovecha el espacio amplio del iPad y permite interacción sin bloquear el contexto.</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon-wrap ic-yellow">⚙️</div>
+      <h3>popoverPresentationController</h3>
+      <p>API de UIKit que gestiona automáticamente la transición entre estilos de presentación según el tamaño de pantalla (size classes).</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon-wrap ic-green">📐</div>
+      <h3>Size Classes</h3>
+      <p>Sistema de iOS (<code>compact</code> / <code>regular</code>) que permite adaptar layouts sin if/else. iPhone → compact width; iPad → regular width.</p>
+    </div>
+  </div>
+
+  <!-- SIMULADOR -->
+  <div class="section-label">Simulador Interactivo</div>
+  <div class="section-title">Toca el botón en <span class="accent-line">cada dispositivo</span></div>
+
+  <div class="simulator-wrap mb-4">
+    <div class="simulator-toolbar">
+      <span>Vista Previa de Dispositivo</span>
+      <div class="device-btns">
+        <button class="device-btn active" id="btn-iphone" onclick="setDevice('iphone')">iPhone</button>
+        <button class="device-btn"        id="btn-ipad"   onclick="setDevice('ipad')">iPad</button>
+      </div>
+    </div>
+
+    <div class="sim-viewport">
+
+      <!-- ── PHONE ── -->
+      <div class="phone-frame" id="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-screen-header">
+            <span>Mis Archivos</span>
+            <span style="font-size:.75rem;color:var(--mid)">iPhone</span>
+          </div>
+          <div class="phone-list-item"><span class="dot" style="background:#ff4d1c"></span> Proyecto_Final.fig</div>
+          <div class="phone-list-item"><span class="dot" style="background:#0057ff"></span> Assets_v3.zip</div>
+          <div class="phone-list-item"><span class="dot" style="background:#ffd600"></span> Presentación.key</div>
+          <div class="phone-list-item"><span class="dot" style="background:#28c840"></span> README.md</div>
+          <div class="phone-list-item"><span class="dot" style="background:#8b5cf6"></span> Wireframes.pdf</div>
+
+          <button class="trigger-btn mt-3" onclick="toggleActionSheet()">
+            ＋ Agregar Archivo
+          </button>
+
+          <!-- ACTION SHEET -->
+          <div class="action-sheet-backdrop" id="action-sheet-backdrop" onclick="closeActionSheet(event)">
+            <div class="action-sheet">
+              <div class="action-sheet-handle"></div>
+              <div class="as-title">Agregar Archivo</div>
+              <div class="as-subtitle">Selecciona una opción</div>
+              <div class="as-item"><span class="as-icon">📷</span> Tomar Foto</div>
+              <div class="as-item"><span class="as-icon">🖼️</span> Elegir de Galería</div>
+              <div class="as-item"><span class="as-icon">📁</span> Explorar Archivos</div>
+              <div class="as-item"><span class="as-icon">🔗</span> Importar Enlace</div>
+              <div class="as-item"><span class="as-icon">☁️</span> Desde iCloud</div>
+              <div class="as-cancel" onclick="closeActionSheetDirect()">Cancelar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── IPAD ── -->
+      <div class="ipad-frame" id="ipad-frame" style="display:none;">
+        <div class="ipad-screen">
+          <div class="ipad-screen-header">
+            <span>Mis Archivos</span>
+            <span style="font-size:.8rem;color:var(--mid)">iPad</span>
+          </div>
+          <div class="ipad-grid">
+            <div class="ipad-grid-item"><strong>Proyecto_Final.fig</strong><span style="color:var(--mid);font-size:.7rem">Figma • 4.2 MB</span></div>
+            <div class="ipad-grid-item"><strong>Assets_v3.zip</strong><span style="color:var(--mid);font-size:.7rem">ZIP • 18.7 MB</span></div>
+            <div class="ipad-grid-item"><strong>Presentación.key</strong><span style="color:var(--mid);font-size:.7rem">Keynote • 9.1 MB</span></div>
+            <div class="ipad-grid-item"><strong>README.md</strong><span style="color:var(--mid);font-size:.7rem">Markdown • 12 KB</span></div>
+          </div>
+          <div class="ipad-trigger-row" style="position:relative;">
+            <button class="ipad-btn" onclick="togglePopover()">
+              ＋ Agregar Archivo
+              <!-- POPOVER -->
+              <div class="popover-wrap" id="popover-wrap">
+                <div class="popover-header">Agregar desde</div>
+                <div class="popover-item" onclick="closePopover(event)"><span>📷</span> Tomar Foto</div>
+                <div class="popover-item" onclick="closePopover(event)"><span>🖼️</span> Galería</div>
+                <div class="popover-item" onclick="closePopover(event)"><span>📁</span> Archivos</div>
+                <div class="popover-sep"></div>
+                <div class="popover-item" onclick="closePopover(event)"><span>☁️</span> iCloud Drive</div>
+                <div class="popover-item danger" onclick="closePopover(event)"><span>🔗</span> Importar URL</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sim-viewport -->
+  </div><!-- /simulator-wrap -->
+
+  <!-- TABLA COMPARATIVA -->
+  <div class="section-label">Comparativa</div>
+  <div class="section-title">Action Sheet <span style="color:var(--mid)">vs</span> <span class="accent-line">Popover</span></div>
+
+  <div class="simulator-wrap mb-4" style="box-shadow:4px 4px 0 var(--ink);">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Característica</th>
+          <th>Action Sheet</th>
+          <th>Popover</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dispositivo típico</strong></td>
+          <td><span class="tag-iphone">iPhone</span> compact width</td>
+          <td><span class="tag-ipad">iPad</span> regular width</td>
+        </tr>
+        <tr>
+          <td><strong>Posición</strong></td>
+          <td>Anclado al borde inferior</td>
+          <td>Flotante, anclado al elemento origen</td>
+        </tr>
+        <tr>
+          <td><strong>Bloqueo de UI</strong></td>
+          <td>Sí — fondo oscurecido</td>
+          <td>No — contexto visible detrás</td>
+        </tr>
+        <tr>
+          <td><strong>Descarte</strong></td>
+          <td>Tap fuera · swipe down · Cancelar</td>
+          <td>Tap fuera del popover</td>
+        </tr>
+        <tr>
+          <td><strong>Scroll interno</strong></td>
+          <td>Sí, si hay muchas opciones</td>
+          <td>Sí, configurable por altura</td>
+        </tr>
+        <tr>
+          <td><strong>API clave</strong></td>
+          <td><code>UIAlertController(.actionSheet)</code></td>
+          <td><code>popoverPresentationController</code></td>
+        </tr>
+        <tr>
+          <td><strong>Flecha indicadora</strong></td>
+          <td>No</td>
+          <td>Sí — señala el anchor</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CÓDIGO -->
+  <div class="section-label">Implementación</div>
+  <div class="section-title">Cómo la librería <span class="accent-line">maneja las diferencias</span></div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-dot cd1"></span>
+      <span class="code-dot cd2"></span>
+      <span class="code-dot cd3"></span>
+      <span class="code-lang">Swift · UIKit</span>
+    </div>
+    <div class="code-body">
+<pre><span class="tk-cm">// ① Crear el action sheet universal</span>
+<span class="tk-kw">let</span> <span class="tk-ty">alert</span> = <span class="tk-fn">UIAlertController</span>(
+    title:   <span class="tk-str">"Agregar Archivo"</span>,
+    message: <span class="tk-kw">nil</span>,
+    preferredStyle: .<span class="tk-fn">actionSheet</span>  <span class="tk-cm">// siempre .actionSheet</span>
+)
+
+<span class="tk-cm">// ② Agregar acciones</span>
+alert.<span class="tk-fn">addAction</span>(<span class="tk-fn">UIAlertAction</span>(title: <span class="tk-str">"📷 Tomar Foto"</span>,     style: .<span class="tk-fn">default</span>) { _ <span class="tk-kw">in</span> })
+alert.<span class="tk-fn">addAction</span>(<span class="tk-fn">UIAlertAction</span>(title: <span class="tk-str">"🖼️ Elegir Galería"</span>,  style: .<span class="tk-fn">default</span>) { _ <span class="tk-kw">in</span> })
+alert.<span class="tk-fn">addAction</span>(<span class="tk-fn">UIAlertAction</span>(title: <span class="tk-str">"📁 Explorar Archivos"</span>,style: .<span class="tk-fn">default</span>) { _ <span class="tk-kw">in</span> })
+alert.<span class="tk-fn">addAction</span>(<span class="tk-fn">UIAlertAction</span>(title: <span class="tk-str">"Cancelar"</span>,            style: .<span class="tk-fn">cancel</span>) { _ <span class="tk-kw">in</span> })
+
+<span class="tk-cm">// ③ Configurar popover para iPad</span>
+<span class="tk-cm">// UIKit lanza NSException si no se configura en iPad</span>
+<span class="tk-kw">if let</span> popover = alert.<span class="tk-ty">popoverPresentationController</span> {
+    popover.<span class="tk-ty">barButtonItem</span>  = addBarButton   <span class="tk-cm">// ← anclar al botón</span>
+    <span class="tk-cm">// — ó alternativamente —</span>
+    popover.<span class="tk-ty">sourceView</span>      = addButton       <span class="tk-cm">// vista origen</span>
+    popover.<span class="tk-ty">sourceRect</span>      = addButton.<span class="tk-ty">bounds</span>
+    popover.<span class="tk-ty">permittedArrowDirections</span> = [.<span class="tk-fn">down</span>, .<span class="tk-fn">up</span>]
+}
+
+<span class="tk-cm">// ④ Presentar — iOS decide automáticamente</span>
+<span class="tk-cm">// iPhone → slide-up action sheet</span>
+<span class="tk-cm">// iPad   → floating popover con flecha</span>
+present(alert, animated: <span class="tk-kw">true</span>)</pre>
+    </div>
+  </div>
+
+  <!-- TIMELINE FLUJO -->
+  <div class="section-label">Flujo en tiempo de ejecución</div>
+  <div class="section-title">¿Qué pasa <span class="accent-line">internamente?</span></div>
+
+  <div class="timeline mb-4">
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--accent3)"></div>
+      <h5>1. present() es llamado</h5>
+      <p>UIKit recibe la petición de presentación y consulta el <strong>traitCollection</strong> del view controller actual.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <h5>2. Evaluación de Size Class</h5>
+      <p>Si <code>horizontalSizeClass == .compact</code> (iPhone) → <strong>action sheet modal</strong>. Si es <code>.regular</code> (iPad) → <strong>popover</strong>.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--accent)"></div>
+      <h5>3. Advertencia en iPad sin anchor</h5>
+      <p>Si <code>popoverPresentationController</code> no tiene <code>sourceView</code> ni <code>barButtonItem</code>, UIKit lanza una excepción en tiempo de ejecución.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#28c840"></div>
+      <h5>4. Renderizado diferenciado</h5>
+      <p>iPhone recibe una hoja modal animada desde abajo. iPad recibe un popover flotante con flecha apuntando al anchor configurado.</p>
+    </div>
+  </div>
+
+  <!-- DEBATE -->
+  <div class="section-label">Debate</div>
+  <div class="section-title">¿De quién es la <span class="accent-line">responsabilidad?</span></div>
+
+  <div class="debate-grid">
+    <div class="debate-card">
+      <div class="stance stance-lib">📦 La Librería</div>
+      <h4>Abstrae la complejidad</h4>
+      <p>Argumenta que una sola API (<code>.actionSheet</code>) debería manejar automáticamente ambos casos. El desarrollador no debería preocuparse por size classes. <strong>Pero</strong>: necesita el anchor en iPad, lo cual exige conocimiento del contexto.</p>
+    </div>
+    <div class="debate-card">
+      <div class="stance stance-app">📱 El Desarrollador</div>
+      <h4>Conoce el contexto</h4>
+      <p>Es quien sabe desde qué elemento se dispara la acción. Debe configurar el anchor del popover. Si no lo hace, la app crashea. La responsabilidad es compartida pero el punto de falla es del desarrollador.</p>
+    </div>
+    <div class="debate-card">
+      <div class="stance stance-des">🎨 El Diseñador UX</div>
+      <h4>Define la experiencia</h4>
+      <p>Debe especificar explícitamente el comportamiento en iPad en los design specs. Un wireframe solo para iPhone es incompleto. La responsabilidad empieza en el diseño, no en el código.</p>
+    </div>
+  </div>
+
+  <!-- CONCLUSIÓN -->
+  <div class="objective-card" style="background:var(--ink); color:var(--paper);">
+    <div class="label" style="color:var(--accent3);">💡 Conclusión del Ejercicio</div>
+    <p style="color:#e8e8e2;">iOS no tiene "una solución universal" — tiene <strong>patrones adaptativos</strong>. El <code>popoverPresentationController</code> es el puente que UIKit ofrece. La responsabilidad de una buena UX es <strong>triangular</strong>: librería + desarrollador + diseño deben alinearse para que el Artefacto Universal funcione en cualquier pantalla.</p>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="brand">Ejercicio 5</span>
+  <span>El Artefacto Universal · Adaptabilidad iOS · Action Sheet ↔ Popover</span>
+  <span style="color:rgba(255,255,255,.35)">UIKit · SwiftUI · 30 min</span>
+</footer>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+<script>
+
+  /* ── Device switcher ── */
+  function setDevice(d) {
+    document.getElementById('phone-frame').style.display = d === 'iphone' ? 'block' : 'none';
+    document.getElementById('ipad-frame').style.display  = d === 'ipad'   ? 'block' : 'none';
+    document.getElementById('btn-iphone').classList.toggle('active', d === 'iphone');
+    document.getElementById('btn-ipad').classList.toggle('active',   d === 'ipad');
+    // reset state
+    closeActionSheetDirect();
+    closePopoverDirect();
+  }
+
+  /* ── Action Sheet ── */
+  function toggleActionSheet() {
+    document.getElementById('action-sheet-backdrop').classList.add('visible');
+  }
+  function closeActionSheet(e) {
+    if (e.target === document.getElementById('action-sheet-backdrop'))
+      closeActionSheetDirect();
+  }
+  function closeActionSheetDirect() {
+    document.getElementById('action-sheet-backdrop').classList.remove('visible');
+  }
+
+  /* ── Popover ── */
+  function togglePopover() {
+    const p = document.getElementById('popover-wrap');
+    p.classList.toggle('visible');
+  }
+  function closePopover(e) {
+    e.stopPropagation();
+    closePopoverDirect();
+  }
+  function closePopoverDirect() {
+    document.getElementById('popover-wrap').classList.remove('visible');
+  }
+
+  // Click outside popover on iPad sim
+  document.addEventListener('click', function(e) {
+    const p = document.getElementById('popover-wrap');
+    if (p.classList.contains('visible')) {
+      if (!p.contains(e.target)) closePopoverDirect();
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftyAlert · Demo Responsive</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts (opcional, para un toque moderno) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+        }
+        .card {
+            border: none;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 35px -8px rgba(0,0,0,0.1), 0 5px 15px -5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            box-shadow: 0 25px 45px -10px rgba(0,0,0,0.15);
+        }
+        .badge-swifty {
+            background: #e2e8f0;
+            color: #1e293b;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        .btn-swifty {
+            background: #0f172a;
+            color: white;
+            border-radius: 2rem;
+            padding: 0.6rem 1.8rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            transition: all 0.15s;
+        }
+        .btn-swifty:hover {
+            background: #1e293b;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .btn-outline-swifty {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+            border-radius: 2rem;
+            padding: 0.6rem 1.8rem;
+            font-weight: 500;
+        }
+        .btn-outline-swifty:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            overflow-x: auto;
+        }
+        footer {
+            margin-top: 4rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Cabecera -->
+        <header class="text-center mb-5">
+            <h1 class="display-4 fw-bold" style="color: #0f172a;">SwiftyAlert</h1>
+            <p class="lead text-secondary">Simplifica <code class="bg-light p-1 rounded">UIAlertController</code> con <strong>Builder Pattern</strong>, <strong>async/await</strong> y <strong>enums</strong>.</p>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <span class="badge-swifty">🎯 Motivación</span>
+                <span class="badge-swifty">⚙️ Method Chaining</span>
+                <span class="badge-swifty">⏳ Async/Await</span>
+                <span class="badge-swifty">🔐 Enums</span>
+            </div>
+        </header>
+
+        <!-- Introducción Teórica (30 min) - grid responsivo -->
+        <div class="row g-4">
+            <!-- Motivación -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">🚀 Motivación</h5>
+                        <p class="text-secondary">Crear alertas en UIKit tradicional implica mucho código repetitivo: inicializar <code>UIAlertController</code>, configurar estilos, añadir acciones con closures. SwiftyAlert envuelve todo en una interfaz fluida y expresiva.</p>
+                        <p class="text-secondary mt-2"><strong>Objetivo:</strong> Pasar de 10+ líneas a una sola llamada encadenada.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Builder Pattern -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">🔨 Builder Pattern (Method Chaining)</h5>
+                        <p class="text-secondary">Cada método (ej. <code>.title()</code>, <code>.message()</code>, <code>.addButton()</code>) retorna <code>self</code>, permitiendo encadenar configuraciones. Internamente se va construyendo un objeto que al final presenta la alerta.</p>
+                        <div class="code-block mt-3">
+<pre>SwiftyAlert()
+    .title("¡Hola!")
+    .message("Mundo")
+    .addButton("Aceptar")
+    .show()</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Async/Await -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">⏳ Async/Await en alertas</h5>
+                        <p class="text-secondary">En lugar de closures anidados, SwiftyAlert usa <code>async</code> para esperar la respuesta del usuario de forma lineal. El código se lee como si fuera síncrono.</p>
+                        <div class="code-block mt-3">
+<pre>let opcion = await SwiftyAlert()
+    .title("Confirmar")
+    .addButton("Eliminar", role: .destructive)
+    .addButton("Cancelar")
+    .show()
+
+if opcion == .eliminar { ... }</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Enums para resultados -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">🔐 Enums para resultados</h5>
+                        <p class="text-secondary">En lugar de índices mágicos, SwiftyAlert devuelve un <code>enum</code> con casos descriptivos: <code>.ok</code>, <code>.cancel</code>, <code>.delete</code>, etc. Esto da seguridad y claridad al manejar la respuesta.</p>
+                        <div class="code-block mt-3">
+<pre>enum AlertResult {
+    case ok, cancel, delete
+    case custom(String)
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demostración rápida: alerta básica simulada -->
+        <section class="mt-5 pt-3">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">⚡ Demostración rápida</h2>
+                <p class="text-secondary">Simulación del comportamiento con JavaScript moderno (async/await y modal personalizado).</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card p-4">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <button id="btnClosure" class="btn btn-outline-swifty w-100 py-2">Estilo closure (tradicional)</button>
+                                <small class="text-muted d-block mt-2 text-center">Usa <code>window.alert</code> (bloqueante)</small>
+                            </div>
+                            <div class="col-sm-6">
+                                <button id="btnAsync" class="btn btn-swifty w-100 py-2">Estilo async/await (SwiftyAlert)</button>
+                                <small class="text-muted d-block mt-2 text-center">Modal + promesa + <code>await</code></small>
+                            </div>
+                        </div>
+
+                        <!-- Resultado de la demo -->
+                        <div id="resultDemo" class="mt-4 p-3 bg-light rounded-4 text-center fw-semibold" style="min-height: 3.5rem;">
+                            👆 Pulsa un botón para ver la simulación
+                        </div>
+
+                        <!-- Explicación del código JS (responsive) -->
+                        <div class="code-block mt-4 small">
+                            <details>
+                                <summary class="text-white-50">Ver código JavaScript de la simulación async/await</summary>
+                                <pre class="mt-3" style="color: #a5f3fc;">// Función que muestra un modal y retorna una promesa
+function showModernAlert(title, message, buttons) {
+  return new Promise((resolve) => {
+    // (Implementación interna: asigna texto al modal y muestra)
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMessage').textContent = message;
+    const btnContainer = document.getElementById('modalButtons');
+    btnContainer.innerHTML = '';
+    buttons.forEach(({ text, value, variant }) => {
+      const btn = document.createElement('button');
+      btn.className = `btn ${variant === 'dark' ? 'btn-swifty' : 'btn-outline-swifty'} mx-1`;
+      btn.textContent = text;
+      btn.onclick = () => {
+        bootstrap.Modal.getInstance(document.getElementById('demoModal')).hide();
+        resolve(value);
+      };
+      btnContainer.appendChild(btn);
+    });
+    new bootstrap.Modal(document.getElementById('demoModal')).show();
+  });
+}
+
+// Uso con async/await
+document.getElementById('btnAsync').addEventListener('click', async () => {
+  const resultado = await showModernAlert('Confirmar', '¿Quieres continuar?', [
+    { text: 'Cancelar', value: 'cancel', variant: 'outline' },
+    { text: 'Aceptar', value: 'ok', variant: 'dark' }
+  ]);
+  document.getElementById('resultDemo').innerText = `Resultado: ${resultado}`;
+});</pre>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center">
+            <p>Ejemplo moderno con Bootstrap 5 · Ajuste responsivo (columnas, flex, espaciado) · Conceptos aplicables a Swift/iOS</p>
+            <p class="small">SwiftyAlert no es una librería real en este HTML, es una simulación didáctica.</p>
+        </footer>
+    </div>
+
+    <!-- Modal personalizado (para simular SwiftyAlert) -->
+    <div class="modal fade" id="demoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 2rem; border: none;">
+                <div class="modal-header border-0 pt-4 px-4">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Título</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body px-4 pb-2">
+                    <p id="modalMessage" class="text-secondary">Mensaje</p>
+                </div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-2" id="modalButtons">
+                    <!-- Los botones se inyectan dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS y Popper (necesario para el modal) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Código JavaScript para la simulación -->
+    <script>
+        (function() {
+            // 1. Simulación estilo closure (tradicional)
+            document.getElementById('btnClosure').addEventListener('click', function() {
+                // Simula el viejo UIAlertController con closure
+                const respuesta = window.confirm('¿Estás seguro? (Aceptar / Cancelar)');
+                document.getElementById('resultDemo').innerText = respuesta ? '✅ Aceptado (closure)' : '❌ Cancelado (closure)';
+            });
+
+            // 2. Función que retorna una promesa (simula el método .show() de SwiftyAlert)
+            function showModernAlert(title, message, buttons) {
+                return new Promise((resolve) => {
+                    // Configurar el modal
+                    document.getElementById('modalTitle').textContent = title;
+                    document.getElementById('modalMessage').textContent = message;
+                    const btnContainer = document.getElementById('modalButtons');
+                    btnContainer.innerHTML = ''; // Limpiar botones previos
+
+                    buttons.forEach(({ text, value, variant }) => {
+                        const btn = document.createElement('button');
+                        btn.className = `btn ${variant === 'dark' ? 'btn-swifty' : 'btn-outline-swifty'} mx-1`;
+                        btn.textContent = text;
+                        btn.onclick = () => {
+                            // Ocultar modal y resolver la promesa con el valor elegido
+                            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('demoModal'));
+                            modalInstance.hide();
+                            resolve(value);
+                        };
+                        btnContainer.appendChild(btn);
+                    });
+
+                    // Mostrar modal
+                    const modal = new bootstrap.Modal(document.getElementById('demoModal'));
+                    modal.show();
+                });
+            }
+
+            // 3. Uso con async/await (SwiftyAlert style)
+            document.getElementById('btnAsync').addEventListener('click', async function() {
+                // Definimos botones como "enums" simulados
+                const resultado = await showModernAlert('Confirmar acción', '¿Quieres continuar con el proceso?', [
+                    { text: 'Cancelar', value: 'cancel', variant: 'outline' },
+                    { text: 'Aceptar', value: 'ok', variant: 'dark' }
+                ]);
+
+                let mensaje;
+                if (resultado === 'ok') {
+                    mensaje = '✅ Aceptado (async/await)';
+                } else if (resultado === 'cancel') {
+                    mensaje = '❌ Cancelado (async/await)';
+                } else {
+                    mensaje = `Resultado: ${resultado}`;
+                }
+                document.getElementById('resultDemo').innerText = mensaje;
+            });
+        })();
+    </script>
+
+    <!-- Nota adicional: el diseño es responsivo gracias a Bootstrap.
+         Las columnas se apilan en móviles (col-md-6 pasa a apilarse).
+         Los botones se adaptan (flex-wrap, w-100 en móviles).
+         Tipografía y espaciado fluyen correctamente. -->
+</body>
+</html>
