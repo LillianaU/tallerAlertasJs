@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Almacén de Cadenas - Method Chaining</title>
+    <title>El Almacén de Cadenas - Interactive Builder</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -20,77 +20,25 @@
             --text-muted: #a0a0a0;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: var(--dark);
             color: var(--light);
             min-height: 100vh;
-            line-height: 1.6;
         }
 
         .header-section {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             padding: 2rem 0;
             margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .header-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .header-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .header-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
         }
 
         .card-custom {
             background: var(--dark-card);
             border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
             padding: 1.5rem;
             height: 100%;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .step-number {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-            flex-shrink: 0;
         }
 
         .step-item {
@@ -98,1184 +46,258 @@
             border-radius: 12px;
             background: rgba(255,255,255,0.03);
             margin-bottom: 1rem;
-            border-left: 3px solid transparent;
+            border-left: 4px solid transparent;
             transition: all 0.3s ease;
             opacity: 0.5;
         }
 
-        .step-item.active {
-            opacity: 1;
-            border-left-color: var(--primary);
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .step-item.completed {
-            opacity: 1;
-            border-left-color: var(--success);
-            background: rgba(0, 242, 254, 0.08);
-        }
-
-        .step-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .step-desc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-        }
+        .step-item.active { opacity: 1; border-left-color: var(--primary); background: rgba(102, 126, 234, 0.1); }
+        .step-item.completed { opacity: 1; border-left-color: var(--success); background: rgba(0, 242, 254, 0.1); }
 
         .btn-step {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            border-radius: 20px;
-            padding: 0.4rem 1rem;
-            font-size: 0.8rem;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            border: none; border-radius: 20px; padding: 0.4rem 1.2rem;
+            color: white; font-size: 0.85rem; transition: 0.3s;
         }
 
-        .btn-step:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-step:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-step.completed {
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-        }
-
-        .code-container {
-            background: #0d0d14;
-            border-radius: 12px;
-            padding: 1.25rem;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.8rem;
-            overflow-x: auto;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .code-keyword { color: #ff6b6b; }
-        .code-method { color: #74b9ff; }
-        .code-string { color: #fdcb6e; }
-        .code-comment { color: #636e72; }
-        .code-property { color: #81ecec; }
+        .btn-step:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .output-box {
-            background: linear-gradient(135deg, #2d3436 0%, #1a1a2e 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            min-height: 280px;
-            border: 1px solid rgba(255,255,255,0.08);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .output-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--success));
-        }
-
-        .output-placeholder {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 2rem;
-        }
-
-        .output-placeholder i {
-            font-size: 2.5rem;
-            opacity: 0.3;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .ingredient-tag {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(102, 126, 234, 0.15);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 20px;
-            padding: 0.35rem 0.85rem;
-            margin: 0.25rem;
-            font-size: 0.8rem;
-            animation: fadeInUp 0.4s ease;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .result-title {
-            color: #fdcb6e;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .result-section {
-            margin-bottom: 1rem;
-        }
-
-        .result-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .result-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .result-list li {
-            padding: 0.4rem 0;
-            font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .result-list li:last-child {
-            border-bottom: none;
+            background: #0d0d14; border-radius: 12px; padding: 1.5rem;
+            min-height: 200px; border: 1px solid var(--primary);
         }
 
         .state-display {
-            background: #0d0d14;
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'Consolas', monospace;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            max-height: 150px;
-            overflow-y: auto;
+            background: #05050a; border-radius: 8px; padding: 1rem;
+            font-family: 'Consolas', monospace; font-size: 0.8rem; color: #00f2fe;
         }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 0.6rem 1.5rem;
-            color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            color: white;
-        }
-
-        .btn-outline-custom {
-            background: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            border-radius: 25px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-custom:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        .info-box {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-        .info-box-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .analysis-card {
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 1rem;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .analysis-card-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .analysis-card-title.positive { color: #00b894; }
-        .analysis-card-title.caution { color: #fdcb6e; }
-        .analysis-card-title.use-case { color: #74b9ff; }
-
-        .analysis-card ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .analysis-card li {
-            padding: 0.25rem 0;
-            padding-left: 1rem;
-            position: relative;
-        }
-
-        .analysis-card li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: var(--text-muted);
-        }
-
-        .questions-list {
-            margin-top: 1rem;
-        }
-
-        .question-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.02);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .question-item i {
-            color: var(--secondary);
-            margin-top: 2px;
-        }
-
-        .question-item code {
-            background: rgba(255,255,255,0.1);
-            padding: 0.15rem 0.4rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 768px) {
-            .header-title {
-                font-size: 1.5rem;
-            }
-            
-            .card-custom {
-                margin-bottom: 1rem;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .btn-primary-custom, .btn-outline-custom {
-                width: 100%;
-                justify-content: center;
-            }
+        
+        .ingredient-badge {
+            background: var(--primary); color: white; padding: 2px 8px;
+            border-radius: 10px; margin-right: 5px; font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="header-section text-center">
-        <div class="container position-relative">
-            <h1 class="header-title">
-                <i class="fas fa-link me-2"></i>El Almacén de Cadenas
-            </h1>
-            <p class="header-subtitle">Ejercicio de Method Chaining: Construyendo una Receta</p>
-        </div>
-    </header>
+<header class="header-section text-center">
+    <h1 class="fw-bold"><i class="fas fa-link me-2"></i>El Almacén de Cadenas</h1>
+    <p>Construye tu receta usando Method Chaining</p>
+</header>
 
-    <div class="container pb-4">
-        <!-- Main Content -->
-        <div class="row g-4">
-            
-            <!-- Builder Column -->
-            <div class="col-12 col-lg-7">
-                <div class="card-custom">
-                    <div class="card-title">
-                        <i class="fas fa-code text-info"></i>
-                        Constructor Interactivo
-                    </div>
-
-                    <!-- Steps -->
-                    <div class="steps-container">
-                        <div class="step-item active" id="step1">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="step-number">1</div>
-                                <div class="flex-grow-1">
-                                    <div class="step-title">Inicializar Receta</div>
-                                    <div class="step-desc">Crear el objeto con return this</div>
-                                    <button class="btn-step" id="btnStep1" onclick="executeStep(1)">
-                                        <i class="fas fa-play me-1"></i> new Receta("Pan")
-                                    </button>
-                                </div>
-                            </div>
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card-custom">
+                <h5 class="mb-4"><i class="fas fa-tasks text-info"></i> Pasos de Construcción</h5>
+                
+                <div id="step-1" class="step-item active">
+                    <div class="d-flex gap-3">
+                        <div class="badge bg-primary rounded-circle" style="width:30px; height:30px; line-height:22px">1</div>
+                        <div>
+                            <h6>Inicializar Receta</h6>
+                            <p class="small text-muted mb-2">new Receta("Nombre")</p>
+                            <button id="btn-1" class="btn-step" onclick="step1()">Configurar Nombre</button>
                         </div>
-
-                        <div class="step-item" id="step2" style="opacity: 0.5;">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="step-number">2</div>
-                                <div class="flex-grow-1">
-                                    <div class="step-title">Agregar Ingredientes</div>
-                                    <div class="step-desc">Encadenar métodos .agregar()</div>
-                                    <button class="btn-step" id="btnStep2" onclick="executeStep(2)" disabled>
-                                        <i class="fas fa-plus me-1"></i> .agregar()
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="step-item" id="step3" style="opacity: 0.5;">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="step-number">3</div>
-                                <div class="flex-grow-1">
-                                    <div class="step-title">Configurar Tiempo</div>
-                                    <div class="step-desc">Establecer .tiempo()</div>
-                                    <button class="btn-step" id="btnStep3" onclick="executeStep(3)" disabled>
-                                        <i class="fas fa-clock me-1"></i> .tiempo()
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="step-item" id="step4" style="opacity: 0.5;">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="step-number">4</div>
-                                <div class="flex-grow-1">
-                                    <div class="step-title">Agregar Pasos</div>
-                                    <div class="step-desc">Encadenar métodos .paso()</div>
-                                    <button class="btn-step" id="btnStep4" onclick="executeStep(4)" disabled>
-                                        <i class="fas fa-list-ol me-1"></i> .paso()
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="step-item" id="step5" style="opacity: 0.5;">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="step-number">5</div>
-                                <div class="flex-grow-1">
-                                    <div class="step-title">Generar Resultado</div>
-                                    <div class="step-desc">Obtener receta con .build()</div>
-                                    <button class="btn-step" id="btnStep5" onclick="executeStep(5)" disabled>
-                                        <i class="fas fa-check me-1"></i> .build()
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <button class="btn-primary-custom" onclick="runFullChain()">
-                            <i class="fas fa-magic"></i> Ejecutar Cadena Completa
-                        </button>
-                        <button class="btn-outline-custom" onclick="resetRecipe()">
-                            <i class="fas fa-redo"></i> Reiniciar
-                        </button>
-                    </div>
-
-                    <!-- Code Display -->
-                    <div class="card-title mt-4">
-                        <i class="fas fa-file-code text-warning"></i>
-                        Código Fuente
-                    </div>
-                    <div class="code-container">
-<pre><span class="code-keyword">class</span> <span class="code-method">Receta</span> {
-  <span class="code-keyword">constructor</span>(nombre) {
-    <span class="code-keyword">this</span>.nombre = nombre;
-    <span class="code-keyword">this</span>.items = [];
-    <span class="code-keyword">this</span>.tiempo = <span class="code-string">0</span>;
-    <span class="code-keyword">return this</span>;
-  }
-
-  <span class="code-method">agregar</span>(item, cant) {
-    <span class="code-keyword">this</span>.items.push({item, cant});
-    <span class="code-keyword">return this</span>;
-  }
-
-  <span class="code-method">tiempo</span>(min) {
-    <span class="code-keyword">this</span>.tiempo = min;
-    <span class="code-keyword">return this</span>;
-  }
-
-  <span class="code-method">build</span>() {
-    <span class="code-keyword">return this</span>;
-  }
-}</pre>
                     </div>
                 </div>
-            </div>
 
-            <!-- Output Column -->
-            <div class="col-12 col-lg-5">
-                <div class="card-custom">
-                    <div class="card-title">
-                        <i class="fas fa-eye text-success"></i>
-                        Resultado en Vivo
-                    </div>
-
-                    <div class="output-box">
-                        <div id="recipeOutput">
-                            <div class="output-placeholder">
-                                <i class="fas fa-bread-slice"></i>
-                                <p>La receta aparecerá aquí...</p>
-                            </div>
+                <div id="step-2" class="step-item">
+                    <div class="d-flex gap-3">
+                        <div class="badge bg-secondary rounded-circle" style="width:30px; height:30px; line-height:22px">2</div>
+                        <div>
+                            <h6>Agregar Ingredientes</h6>
+                            <p class="small text-muted mb-2">Encadenar .agregar(item, cant)</p>
+                            <button id="btn-2" class="btn-step" onclick="step2()" disabled>Añadir Ingrediente</button>
                         </div>
-                    </div>
-
-                    <!-- State Display -->
-                    <div class="card-title mt-3">
-                        <i class="fas fa-database text-secondary"></i>
-                        Estado del Objeto
-                    </div>
-                    <div class="state-display" id="objectState">
-// Objeto no inicializado
-                    </div>
-
-                    <!-- Questions -->
-                    <div class="card-title mt-3">
-                        <i class="fas fa-question-circle text-warning"></i>
-                        Preguntas de Análisis
-                    </div>
-                    <div class="questions-list">
-                        <div class="question-item">
-                            <i class="fas fa-angle-right"></i>
-                            <span>¿Qué pasa si omitimos <code>return this</code>?</span>
-                        </div>
-                        <div class="question-item">
-                            <i class="fas fa-angle-right"></i>
-                            <span>¿Se puede reorderar los métodos?</span>
-                        </div>
-                        <div class="question-item">
-                            <i class="fas fa-angle-right"></i>
-                            <span>¿Cómo validar datos repetidos?</span>
-                        </div>
-                    </div>
-
-                    <!-- Info Box -->
-                    <div class="info-box">
-                        <div class="info-box-title">
-                            <i class="fas fa-lightbulb text-warning"></i>
-                            Concepto Clave
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
-                            Cada método retorna <code>this</code> para permitir el encadenamiento. 
-                            El orden: inicializar → configurar → construir.
-                        </p>
                     </div>
                 </div>
+
+                <div id="step-3" class="step-item">
+                    <div class="d-flex gap-3">
+                        <div class="badge bg-secondary rounded-circle" style="width:30px; height:30px; line-height:22px">3</div>
+                        <div>
+                            <h6>Configurar Tiempo</h6>
+                            <p class="small text-muted mb-2">Establecer .tiempo(min)</p>
+                            <button id="btn-3" class="btn-step" onclick="step3()" disabled>Definir Minutos</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-4" class="step-item">
+                    <div class="d-flex gap-3">
+                        <div class="badge bg-secondary rounded-circle" style="width:30px; height:30px; line-height:22px">4</div>
+                        <div>
+                            <h6>Agregar Pasos</h6>
+                            <p class="small text-muted mb-2">Encadenar .paso(desc)</p>
+                            <button id="btn-4" class="btn-step" onclick="step4()" disabled>Añadir Instrucción</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-5" class="step-item">
+                    <div class="d-flex gap-3">
+                        <div class="badge bg-secondary rounded-circle" style="width:30px; height:30px; line-height:22px">5</div>
+                        <div>
+                            <h6>Generar Resultado</h6>
+                            <p class="small text-muted mb-2">Finalizar con .build()</p>
+                            <button id="btn-5" class="btn-step" onclick="step5()" disabled>Renderizar Receta</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline-danger w-100 mt-3" onclick="location.reload()">Reiniciar Proceso</button>
             </div>
         </div>
 
-        <!-- SweetAlert2 Demo Section -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card-custom">
-                    <div class="card-title">
-                        <i class="fas fa-bell text-warning"></i>
-                        Demo: SweetAlert2 con Method Chaining
-                    </div>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
-                        SweetAlert2 usa el patrón de Method Chaining para configurar alertas. Observa cómo encadenamos métodos:
-                    </p>
-                    
-                    <div class="code-container mb-3">
-<pre><span class="code-keyword">const</span> <span class="code-method">Swal</span> = <span class="code-method">swal</span>;
-
-<span class="code-comment">// Sin chaining (verbose)</span>
-<span class="code-method">Swal</span>.fire(<span class="code-string">"Título"</span>);
-<span class="code-method">Swal</span>.setTitle(<span class="code-string">"Nuevo título"</span>);
-<span class="code-method">Swal</span>.showConfirmButton(<span class="code-keyword">false</span>);
-
-<span class="code-comment">// Con Method Chaining (SweetAlert2 estilo)</span>
-<span class="code-method">Swal</span>.fire({
-  title: <span class="code-string">"¡Hola!"</span>,
-  text: <span class="code-string">"Mensaje con chaining"</span>,
-  icon: <span class="code-string">"success"</span>,
-  confirmButtonText: <span class="code-string">"Aceptar"</span>
-})</pre>
-                    </div>
-
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn-primary-custom" onclick="demoAlert()">
-                            <i class="fas fa-play"></i> Alerta Básica
-                        </button>
-                        <button class="btn-primary-custom" onclick="demoSuccess()">
-                            <i class="fas fa-check"></i> Éxito
-                        </button>
-                        <button class="btn-primary-custom" onclick="demoConfirm()">
-                            <i class="fas fa-question"></i> Confirmación
-                        </button>
-                        <button class="btn-primary-custom" onclick="demoInput()">
-                            <i class="fas fa-edit"></i> Con Input
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Analysis Section -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card-custom">
-                    <div class="card-title">
-                        <i class="fas fa-chart-pie text-primary"></i>
-                        Análisis del Patrón
-                    </div>
-                    
-                    <div class="analysis-grid">
-                        <div class="analysis-card">
-                            <div class="analysis-card-title positive">
-                                <i class="fas fa-thumbs-up me-1"></i> Ventajas
-                            </div>
-                            <ul>
-                                <li> Código más limpio</li>
-                                <li> Menos variables</li>
-                                <li> Flujo intuitivo</li>
-                            </ul>
-                        </div>
-                        <div class="analysis-card">
-                            <div class="analysis-card-title caution">
-                                <i class="fas fa-exclamation-triangle me-1"></i> Consideraciones
-                            </div>
-                            <ul>
-                                <li> Debugging complejo</li>
-                                <li> Acoplamiento</li>
-                                <li> Errores en cadena</li>
-                            </ul>
-                        </div>
-                        <div class="analysis-card">
-                            <div class="analysis-card-title use-case">
-                                <i class="fas fa-cogs me-1"></i> Casos de Uso
-                            </div>
-                            <ul>
-                                <li> SweetAlert2</li>
-                                <li> jQuery</li>
-                                <li> Query Builders</li>
-                            </ul>
-                        </div>
-                    </div>
+        <div class="col-lg-5">
+            <div class="card-custom">
+                <h5><i class="fas fa-terminal text-success"></i> Estado del Objeto</h5>
+                <pre id="object-state" class="state-display mt-3">// Esperando inicialización...</pre>
+                
+                <h5 class="mt-4"><i class="fas fa-utensils text-warning"></i> Vista Previa</h5>
+                <div id="recipe-result" class="output-box mt-3 text-center text-muted">
+                    No hay receta construida aún.
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        class Receta {
-            constructor(nombre) {
-                this.nombre = nombre;
-                this.items = [];
-                this.tiempo = 0;
-                this.pasos = [];
-                this.cadena = `new Receta("${nombre}")`;
-                return this;
-            }
-
-            agregar(item, cantidad) {
-                this.items.push({item, cantidad});
-                this.cadena += `\n  .agregar("${item}", "${cantidad}")`;
-                return this;
-            }
-
-            tiempo(min) {
-                this.tiempo = min;
-                this.cadena += `\n  .tiempo(${min})`;
-                return this;
-            }
-
-            paso(instruccion) {
-                this.pasos.push(instruccion);
-                this.cadena += `\n  .paso("${instruccion.substring(0, 15)}...")`;
-                return this;
-            }
-
-            build() {
-                this.cadena += `\n  .build()`;
-                return this;
-            }
-
-            generarHTML() {
-                let html = `<div class="result-title"><i class="fas fa-bread-slice"></i> ${this.nombre}</div>`;
-                
-                html += `<div class="result-section"><div class="result-label">Ingredientes</div>`;
-                html += `<div class="d-flex flex-wrap">`;
-                this.items.forEach(item => {
-                    html += `<span class="ingredient-tag">${item.cantidad} ${item.item}</span>`;
-                });
-                html += `</div></div>`;
-
-                html += `<div class="result-section"><div class="result-label">Tiempo de Horneado</div>`;
-                html += `<div>${this.tiempo} minutos</div></div>`;
-
-                html += `<div class="result-section"><div class="result-label">Pasos</div><ol class="result-list">`;
-                this.pasos.forEach(paso => {
-                    html += `<li>${paso}</li>`;
-                });
-                html += `</ol></div>`;
-
-                return html;
-            }
+<script>
+    class Receta {
+        constructor(nombre) {
+            this.nombre = nombre;
+            this.items = [];
+            this.minutos = 0;
+            this.instrucciones = [];
         }
 
-        let recetaActual = null;
-
-        async function executeStep(step) {
-            const stepEl = document.getElementById('step' + step);
-            if (!stepEl) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se encontró el paso ' + step,
-                    icon: 'error',
-                    background: '#16213e',
-                    color: '#eaeaea'
-                });
-                return;
-            }
-            
-            const btn = stepEl.querySelector('button');
-            if (!btn) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se encontró el botón del paso ' + step,
-                    icon: 'error',
-                    background: '#16213e',
-                    color: '#eaeaea'
-                });
-                return;
-            }
-            
-            if (btn.disabled) {
-                Swal.fire({
-                    title: '⏳ Espera',
-                    text: 'Debes completar los pasos anteriores primero',
-                    icon: 'warning',
-                    background: '#16213e',
-                    color: '#eaeaea'
-                });
-                return;
-            }
-            
-            if (stepEl.classList.contains('completed')) {
-                Swal.fire({
-                    title: '✓ Paso completado',
-                    text: 'Ya has completado este paso. Usa "Reiniciar" para empezar de nuevo.',
-                    icon: 'info',
-                    background: '#16213e',
-                    color: '#eaeaea'
-                });
-                return;
-            }
-            
-            switch(step) {
-                case 1:
-                    const { value: nombreReceta } = await Swal.fire({
-                        title: '🍞 Paso 1: Inicializar Receta',
-                        html: `
-                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa el nombre de tu receta</p>
-                            <input type="text" id="swal-nombre" class="swal2-input" placeholder="Ej: Pan Artesanal">
-                        `,
-                        focusConfirm: false,
-                        showCancelButton: true,
-                        confirmButtonText: 'Crear Receta',
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonColor: '#667eea',
-                        cancelButtonColor: '#e94560',
-                        background: '#16213e',
-                        color: '#eaeaea',
-                        preConfirm: () => {
-                            const nombre = document.getElementById('swal-nombre').value;
-                            if (!nombre) {
-                                Swal.showValidationMessage('¡Debes ingresar un nombre!');
-                                return false;
-                            }
-                            return nombre;
-                        }
-                    });
-
-                    if (!nombreReceta) return;
-                    
-                    recetaActual = new Receta(nombreReceta);
-                    stepEl.classList.add('completed');
-                    btn.classList.add('completed');
-                    btn.disabled = true;
-                    updateState();
-                    document.getElementById('recipeOutput').innerHTML = `
-                        <div class="text-center text-info">
-                            <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>Objeto creado: <strong>${nombreReceta}</strong></p>
-                            <small class="text-muted">new Receta("${nombreReceta}")</small>
-                        </div>`;
-                    enableStep(2);
-                    break;
-                    
-                case 2:
-                    if (!recetaActual) {
-                        Swal.fire({
-                            title: '¡Primero inicializa!',
-                            text: 'Debes ejecutar el Paso 1 primero',
-                            icon: 'error',
-                            background: '#16213e',
-                            color: '#eaeaea'
-                        });
-                        return;
-                    }
-
-                    const { value: ingredientes } = await Swal.fire({
-                        title: '🥣 Paso 2: Agregar Ingredientes',
-                        html: `
-                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa los ingredientes (uno por línea)</p>
-                            <textarea id="swal-ingredientes" class="swal2-textarea" placeholder="Harina, 500g&#10;Agua, 350ml&#10;Sal, 10g&#10;Levadura, 5g"></textarea>
-                        `,
-                        focusConfirm: false,
-                        showCancelButton: true,
-                        confirmButtonText: 'Agregar Ingredientes',
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonColor: '#667eea',
-                        cancelButtonColor: '#e94560',
-                        background: '#16213e',
-                        color: '#eaeaea',
-                        preConfirm: () => {
-                            const texto = document.getElementById('swal-ingredientes').value;
-                            if (!texto.trim()) {
-                                Swal.showValidationMessage('¡Debes ingresar al menos un ingrediente!');
-                                return false;
-                            }
-                            return texto;
-                        }
-                    });
-
-                    if (!ingredientes) return;
-
-                    const lines = ingredientes.split('\n').filter(line => line.trim());
-                    lines.forEach(line => {
-                        const [item, cantidad] = line.split(',').map(s => s.trim());
-                        if (item && cantidad) {
-                            recetaActual.agregar(item, cantidad);
-                        } else if (item) {
-                            recetaActual.agregar(item, 'cantidad');
-                        }
-                    });
-
-                    stepEl.classList.add('completed');
-                    btn.classList.add('completed');
-                    btn.disabled = true;
-                    updateState();
-                    document.getElementById('recipeOutput').innerHTML = `
-                        <div class="text-center text-info">
-                            <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>${lines.length} ingredientes agregados mediante chaining</p>
-                            <small class="text-muted">${recetaActual.items.map(i => '.' + i.item).join('')}</small>
-                        </div>`;
-                    enableStep(3);
-                    break;
-                    
-                case 3:
-                    if (!recetaActual) {
-                        Swal.fire({
-                            title: '¡Primero inicializa!',
-                            text: 'Debes ejecutar el Paso 1 primero',
-                            icon: 'error',
-                            background: '#16213e',
-                            color: '#eaeaea'
-                        });
-                        return;
-                    }
-
-                    const { value: tiempo } = await Swal.fire({
-                        title: '⏱️ Paso 3: Configurar Tiempo',
-                        html: `
-                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa el tiempo de horneado (en minutos)</p>
-                            <input type="number" id="swal-tiempo" class="swal2-input" placeholder="Ej: 45" min="1">
-                        `,
-                        focusConfirm: false,
-                        showCancelButton: true,
-                        confirmButtonText: 'Establecer Tiempo',
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonColor: '#667eea',
-                        cancelButtonColor: '#e94560',
-                        background: '#16213e',
-                        color: '#eaeaea',
-                        preConfirm: () => {
-                            const tiempo = document.getElementById('swal-tiempo').value;
-                            if (!tiempo || tiempo <= 0) {
-                                Swal.showValidationMessage('¡Debes ingresar un tiempo válido!');
-                                return false;
-                            }
-                            return tiempo;
-                        }
-                    });
-
-                    if (!tiempo) return;
-
-                    recetaActual.tiempo(parseInt(tiempo));
-                    stepEl.classList.add('completed');
-                    btn.classList.add('completed');
-                    btn.disabled = true;
-                    updateState();
-                    document.getElementById('recipeOutput').innerHTML = `
-                        <div class="text-center text-info">
-                            <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>Tiempo configurado: <strong>${tiempo} minutos</strong></p>
-                            <small class="text-muted">.tiempo(${tiempo})</small>
-                        </div>`;
-                    enableStep(4);
-                    break;
-                    
-                case 4:
-                    if (!recetaActual) {
-                        Swal.fire({
-                            title: '¡Primero inicializa!',
-                            text: 'Debes ejecutar el Paso 1 primero',
-                            icon: 'error',
-                            background: '#16213e',
-                            color: '#eaeaea'
-                        });
-                        return;
-                    }
-
-                    const { value: pasos } = await Swal.fire({
-                        title: '📝 Paso 4: Agregar Pasos',
-                        html: `
-                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa los pasos de preparación (uno por línea)</p>
-                            <textarea id="swal-pasos" class="swal2-textarea" placeholder="Mezclar ingredientes secos&#10;Añadir agua tibia&#10;Amasar por 10 minutos&#10;Fermentar 1 hora&#10;Hornear a 200°C"></textarea>
-                        `,
-                        focusConfirm: false,
-                        showCancelButton: true,
-                        confirmButtonText: 'Agregar Pasos',
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonColor: '#667eea',
-                        cancelButtonColor: '#e94560',
-                        background: '#16213e',
-                        color: '#eaeaea',
-                        preConfirm: () => {
-                            const texto = document.getElementById('swal-pasos').value;
-                            if (!texto.trim()) {
-                                Swal.showValidationMessage('¡Debes ingresar al menos un paso!');
-                                return false;
-                            }
-                            return texto;
-                        }
-                    });
-
-                    if (!pasos) return;
-
-                    const pasosList = pasos.split('\n').filter(p => p.trim());
-                    pasosList.forEach(paso => {
-                        recetaActual.paso(paso.trim());
-                    });
-
-                    stepEl.classList.add('completed');
-                    btn.classList.add('completed');
-                    btn.disabled = true;
-                    updateState();
-                    document.getElementById('recipeOutput').innerHTML = `
-                        <div class="text-center text-info">
-                            <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>${pasosList.length} pasos añadidos mediante chaining</p>
-                            <small class="text-muted">${pasosList.map(() => '.paso()').join('')}</small>
-                        </div>`;
-                    enableStep(5);
-                    break;
-                    
-                case 5:
-                    if (!recetaActual) {
-                        Swal.fire({
-                            title: '¡Primero inicializa!',
-                            text: 'Debes ejecutar el Paso 1 primero',
-                            icon: 'error',
-                            background: '#16213e',
-                            color: '#eaeaea'
-                        });
-                        return;
-                    }
-
-                    stepEl.classList.add('completed');
-                    btn.classList.add('completed');
-                    btn.disabled = true;
-                    recetaActual.build();
-                    document.getElementById('recipeOutput').innerHTML = recetaActual.generarHTML();
-                    showFinalState();
-
-                    Swal.fire({
-                        title: '🎉 ¡Receta Completa!',
-                        html: `
-                            <strong>Method Chaining completado</strong><br><br>
-                            <div style="text-align: left; font-size: 13px;">
-                                <p><i class="fas fa-check"></i> Receta: <strong>${recetaActual.nombre}</strong></p>
-                                <p><i class="fas fa-check"></i> Ingredientes: ${recetaActual.items.length}</p>
-                                <p><i class="fas fa-check"></i> Tiempo: ${recetaActual.tiempo} min</p>
-                                <p><i class="fas fa-check"></i> Pasos: ${recetaActual.pasos.length}</p>
-                            </div>
-                        `,
-                        icon: 'success',
-                        confirmButtonText: '¡Excelente!',
-                        confirmButtonColor: '#00b894',
-                        background: '#16213e',
-                        color: '#eaeaea'
-                    });
-                    break;
-            }
+        agregar(item, cant) {
+            this.items.push({ item, cant });
+            return this; // Permite chaining
         }
 
-        function enableStep(step) {
-            const stepEl = document.getElementById('step' + step);
-            if (stepEl) {
-                stepEl.style.opacity = '1';
-                const btn = stepEl.querySelector('button');
-                if (btn) {
-                    btn.disabled = false;
-                }
-            }
+        tiempo(min) {
+            this.minutos = min;
+            return this; // Permite chaining
         }
 
-        async function runFullChain() {
-            resetRecipe();
-            
-            Swal.fire({
-                title: '🚀 Ejecutando Cadena Completa',
-                html: 'Se ejecutarán todos los pasos automáticamente...',
-                timer: 2000,
-                showConfirmButton: false,
-                background: '#16213e',
-                color: '#eaeaea',
-                didOpen: async () => {
-                    Swal.showLoading();
-                    
-                    await new Promise(r => setTimeout(r, 500));
-                    
-                    recetaActual = new Receta("Pan Automático");
-                    document.getElementById('step1').classList.add('completed');
-                    document.getElementById('btnStep1').classList.add('completed');
-                    document.getElementById('btnStep1').disabled = true;
-                    updateState();
-                    
-                    await new Promise(r => setTimeout(r, 800));
-                    
-                    recetaActual.agregar("Harina", "500g").agregar("Agua", "350ml").agregar("Sal", "10g");
-                    document.getElementById('step2').style.opacity = '1';
-                    document.getElementById('step2').classList.add('completed');
-                    document.getElementById('btnStep2').classList.add('completed');
-                    document.getElementById('btnStep2').disabled = true;
-                    updateState();
-                    
-                    await new Promise(r => setTimeout(r, 800));
-                    
-                    recetaActual.tiempo(30);
-                    document.getElementById('step3').style.opacity = '1';
-                    document.getElementById('step3').classList.add('completed');
-                    document.getElementById('btnStep3').classList.add('completed');
-                    document.getElementById('btnStep3').disabled = true;
-                    updateState();
-                    
-                    await new Promise(r => setTimeout(r, 800));
-                    
-                    recetaActual.paso("Mezclar").paso("Amasar").paso("Hornear");
-                    document.getElementById('step4').style.opacity = '1';
-                    document.getElementById('step4').classList.add('completed');
-                    document.getElementById('btnStep4').classList.add('completed');
-                    document.getElementById('btnStep4').disabled = true;
-                    updateState();
-                    
-                    await new Promise(r => setTimeout(r, 800));
-                    
-                    recetaActual.build();
-                    document.getElementById('step5').style.opacity = '1';
-                    document.getElementById('step5').classList.add('completed');
-                    document.getElementById('btnStep5').classList.add('completed');
-                    document.getElementById('btnStep5').disabled = true;
-                    document.getElementById('recipeOutput').innerHTML = recetaActual.generarHTML();
-                    showFinalState();
-                    
-                    Swal.fire({
-                        title: '🎉 ¡Completado!',
-                        text: 'Method Chaining ejecutado automáticamente',
-                        icon: 'success',
-                        confirmButtonColor: '#00b894',
-                        background: '#16213e',
-                        color: '#eaeaea'
-                    });
-                }
-            });
+        paso(desc) {
+            this.instrucciones.push(desc);
+            return this; // Permite chaining
         }
 
-        function resetRecipe() {
-            recetaActual = null;
-            
-            document.getElementById('recipeOutput').innerHTML = `
-                <div class="output-placeholder">
-                    <i class="fas fa-bread-slice"></i>
-                    <p>La receta aparecerá aquí...</p>
-                </div>`;
-            
-            document.getElementById('objectState').innerHTML = '// Objeto no inicializado';
-            
-            for (let i = 1; i <= 5; i++) {
-                const stepEl = document.getElementById(`step${i}`);
-                const btn = stepEl.querySelector('button');
-                
-                stepEl.classList.remove('completed');
-                if (i === 1) {
-                    stepEl.classList.add('active');
-                    stepEl.style.opacity = '1';
-                } else {
-                    stepEl.style.opacity = '0.5';
-                }
-                btn.classList.remove('completed');
-                btn.disabled = i > 1;
-            }
+        build() {
+            let html = `<h3 class="text-info">${this.nombre}</h3><hr>`;
+            html += `<div class="text-start"><strong>Ingredientes:</strong><br>`;
+            this.items.forEach(i => html += `<span class="ingredient-badge">${i.cant} ${i.item}</span>`);
+            html += `<br><br><strong>Tiempo total:</strong> ${this.minutos} minutos<br>`;
+            html += `<br><strong>Instrucciones:</strong><ol>`;
+            this.instrucciones.forEach(p => html += `<li>${p}</li>`);
+            html += `</ol></div>`;
+            return html;
         }
+    }
 
-        function updateState() {
-            if (!recetaActual) return;
-            
-            let html = `<span class="code-method">Receta</span> {\n`;
-            html += `  nombre: <span class="code-string">"${recetaActual.nombre}"</span>,\n`;
-            html += `  items: <span class="code-method">Array</span>(${recetaActual.items.length}),\n`;
-            html += `  tiempo: ${recetaActual.tiempo},\n`;
-            html += `  pasos: <span class="code-method">Array</span>(${recetaActual.pasos.length})\n}`;
-            
-            document.getElementById('objectState').innerHTML = html;
-        }
+    let miReceta = null;
 
-        function showFinalState() {
-            let html = `<span class="code-method">Receta</span> {\n`;
-            html += `  nombre: <span class="code-string">"${recetaActual.nombre}"</span>,\n`;
-            html += `  items: <span class="code-method">Array</span>(${recetaActual.items.length}),\n`;
-            html += `  tiempo: ${recetaActual.tiempo},\n`;
-            html += `  pasos: <span class="code-method">Array</span>(${recetaActual.pasos.length})\n`;
-            html += `\n<span class="code-comment">// Cadena ejecutada:</span>\n`;
-            html += `<span style="color: #636e72;">${recetaActual.cadena.replace(/\n/g, '<br>')}</span>`;
-            
-            document.getElementById('objectState').innerHTML = html;
-        }
+    // Estilo común de Swal
+    const swalConfig = { background: '#16213e', color: '#fff', confirmButtonColor: '#667eea' };
 
-        // SweetAlert2 Demo Functions
-        function demoAlert() {
-            Swal.fire({
-                title: '¡Bienvenido!',
-                text: 'Esta es una alerta básica de SweetAlert2',
-                icon: 'info',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#667eea'
-            });
-        }
+    async function step1() {
+        const { value: nombre } = await Swal.fire({
+            ...swalConfig,
+            title: 'Paso 1: Inicializar',
+            input: 'text',
+            inputLabel: 'Nombre de la receta',
+            inputPlaceholder: 'Ej: Pan Casero',
+            inputValidator: (v) => !v && '¡Necesitas un nombre!'
+        });
 
-        function demoSuccess() {
-            Swal.fire({
-                title: '¡Éxito!',
-                text: 'La operación se completó correctamente',
-                icon: 'success',
-                confirmButtonText: 'Perfecto',
-                confirmButtonColor: '#00b894',
-                timer: 3000,
-                timerProgressBar: true
-            });
+        if (nombre) {
+            miReceta = new Receta(nombre);
+            markCompleted(1, 2);
+            updateState();
         }
+    }
 
-        function demoConfirm() {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: 'Esta acción no se puede deshacer',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, continuar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#667eea',
-                cancelButtonColor: '#e94560'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: '¡Confirmado!',
-                        text: 'Has confirmado la acción',
-                        icon: 'success',
-                        confirmButtonColor: '#00b894'
-                    });
-                }
-            });
-        }
+    async function step2() {
+        const { value: formValues } = await Swal.fire({
+            ...swalConfig,
+            title: 'Paso 2: Ingrediente',
+            html:
+                '<input id="swal-input1" class="swal2-input" placeholder="Ingrediente">' +
+                '<input id="swal-input2" class="swal2-input" placeholder="Cantidad">',
+            focusConfirm: false,
+            preConfirm: () => [
+                document.getElementById('swal-input1').value,
+                document.getElementById('swal-input2').value
+            ]
+        });
 
-        function demoInput() {
-            Swal.fire({
-                title: 'Ingresa tu nombre',
-                input: 'text',
-                inputPlaceholder: 'Tu nombre aquí',
-                showCancelButton: true,
-                confirmButtonText: 'Enviar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#667eea',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return '¡Debes ingresar un nombre!';
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: '¡Hola, ' + result.value + '!',
-                        text: 'Bienvenido al taller de alertas',
-                        icon: 'success',
-                        confirmButtonColor: '#00b894'
-                    });
-                }
-            });
+        if (formValues[0]) {
+            miReceta.agregar(formValues[0], formValues[1]);
+            markCompleted(2, 3); // Habilitamos tiempo, pero step 2 sigue activo para más ingredientes
+            document.getElementById('step-2').classList.add('completed');
+            updateState();
         }
-    </script>
+    }
+
+    async function step3() {
+        const { value: mins } = await Swal.fire({
+            ...swalConfig,
+            title: 'Paso 3: Tiempo',
+            input: 'number',
+            inputLabel: 'Minutos de preparación',
+            inputValidator: (v) => !v && 'Ingresa los minutos'
+        });
+
+        if (mins) {
+            miReceta.tiempo(mins);
+            markCompleted(3, 4);
+            updateState();
+        }
+    }
+
+    async function step4() {
+        const { value: p } = await Swal.fire({
+            ...swalConfig,
+            title: 'Paso 4: Instrucción',
+            input: 'textarea',
+            inputLabel: 'Describe un paso de la receta',
+            inputPlaceholder: 'Ej: Mezclar la harina con el agua...',
+            inputValidator: (v) => !v && 'Escribe algo'
+        });
+
+        if (p) {
+            miReceta.paso(p);
+            markCompleted(4, 5);
+            updateState();
+        }
+    }
+
+    function step5() {
+        const resultado = miReceta.build();
+        document.getElementById('recipe-result').innerHTML = resultado;
+        document.getElementById('recipe-result').classList.remove('text-muted');
+        document.getElementById('step-5').classList.add('completed');
+        Swal.fire({ ...swalConfig, icon: 'success', title: '¡Receta Generada!' });
+    }
+
+    function markCompleted(curr, next) {
+        document.getElementById(`step-${curr}`).classList.add('completed');
+        const nextBtn = document.getElementById(`btn-${next}`);
+        if(nextBtn) {
+            nextBtn.disabled = false;
+            document.getElementById(`step-${next}`).classList.add('active');
+        }
+    }
+
+    function updateState() {
+        document.getElementById('object-state').innerText = JSON.stringify(miReceta, null, 2);
+    }
+</script>
+
 </body>
 </html>
