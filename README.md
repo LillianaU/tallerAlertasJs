@@ -78,3 +78,10 @@ Es como un **interruptor con opciones fijas**. En lugar de escribir texto a mano
 
 ## 🏆 Reto Final (Opcional)
 **¡Crea algo nuevo!** Intenta añadir un **Slider** (una barrita de volumen) dentro de una alerta de SwiftyAlert para que el usuario elija un número del 1 al 100.
+
+
+## 😎intalar node😎##
+** esto es para el menu!**
+npm init -y **
+npm install
+npm start
