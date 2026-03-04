@@ -776,44 +776,92 @@
 
         let recetaActual = null;
 
-        function executeStep(step) {
-            const stepEl = document.getElementById(`step${step}`);
+        async function executeStep(step) {
+            const stepEl = document.getElementById('step' + step);
+            if (!stepEl) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se encontró el paso ' + step,
+                    icon: 'error',
+                    background: '#16213e',
+                    color: '#eaeaea'
+                });
+                return;
+            }
+            
             const btn = stepEl.querySelector('button');
+            if (!btn) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se encontró el botón del paso ' + step,
+                    icon: 'error',
+                    background: '#16213e',
+                    color: '#eaeaea'
+                });
+                return;
+            }
             
-            if (btn.disabled) return;
+            if (btn.disabled) {
+                Swal.fire({
+                    title: '⏳ Espera',
+                    text: 'Debes completar los pasos anteriores primero',
+                    icon: 'warning',
+                    background: '#16213e',
+                    color: '#eaeaea'
+                });
+                return;
+            }
             
-            stepEl.classList.add('completed');
-            btn.classList.add('completed');
-            btn.disabled = true;
-
+            if (stepEl.classList.contains('completed')) {
+                Swal.fire({
+                    title: '✓ Paso completado',
+                    text: 'Ya has completado este paso. Usa "Reiniciar" para empezar de nuevo.',
+                    icon: 'info',
+                    background: '#16213e',
+                    color: '#eaeaea'
+                });
+                return;
+            }
+            
             switch(step) {
                 case 1:
-                    if (recetaActual) {
-                        Swal.fire({
-                            title: '¡Ya inicializado!',
-                            text: 'El objeto ya fue creado. Continúa con el siguiente paso.',
-                            icon: 'warning',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                        return;
-                    }
-                    recetaActual = new Receta("Pan Artesanal");
+                    const { value: nombreReceta } = await Swal.fire({
+                        title: '🍞 Paso 1: Inicializar Receta',
+                        html: `
+                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa el nombre de tu receta</p>
+                            <input type="text" id="swal-nombre" class="swal2-input" placeholder="Ej: Pan Artesanal">
+                        `,
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Crear Receta',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#e94560',
+                        background: '#16213e',
+                        color: '#eaeaea',
+                        preConfirm: () => {
+                            const nombre = document.getElementById('swal-nombre').value;
+                            if (!nombre) {
+                                Swal.showValidationMessage('¡Debes ingresar un nombre!');
+                                return false;
+                            }
+                            return nombre;
+                        }
+                    });
+
+                    if (!nombreReceta) return;
+                    
+                    recetaActual = new Receta(nombreReceta);
+                    stepEl.classList.add('completed');
+                    btn.classList.add('completed');
+                    btn.disabled = true;
                     updateState();
                     document.getElementById('recipeOutput').innerHTML = `
                         <div class="text-center text-info">
                             <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>Objeto creado: Receta { nombre: "Pan Artesanal" }</p>
+                            <p>Objeto creado: <strong>${nombreReceta}</strong></p>
+                            <small class="text-muted">new Receta("${nombreReceta}")</small>
                         </div>`;
-                    Swal.fire({
-                        title: '✓ Paso 1: Inicialización',
-                        text: 'new Receta("Pan Artesanal") - Se crea el objeto con return this',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: '#16213e',
-                        color: '#eaeaea'
-                    });
                     enableStep(2);
                     break;
                     
@@ -823,32 +871,58 @@
                             title: '¡Primero inicializa!',
                             text: 'Debes ejecutar el Paso 1 primero',
                             icon: 'error',
-                            timer: 1500,
-                            showConfirmButton: false
+                            background: '#16213e',
+                            color: '#eaeaea'
                         });
                         return;
                     }
-                    recetaActual
-                        .agregar("Harina", "500g")
-                        .agregar("Agua", "350ml")
-                        .agregar("Sal", "10g")
-                        .agregar("Levadura", "5g");
+
+                    const { value: ingredientes } = await Swal.fire({
+                        title: '🥣 Paso 2: Agregar Ingredientes',
+                        html: `
+                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa los ingredientes (uno por línea)</p>
+                            <textarea id="swal-ingredientes" class="swal2-textarea" placeholder="Harina, 500g&#10;Agua, 350ml&#10;Sal, 10g&#10;Levadura, 5g"></textarea>
+                        `,
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Agregar Ingredientes',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#e94560',
+                        background: '#16213e',
+                        color: '#eaeaea',
+                        preConfirm: () => {
+                            const texto = document.getElementById('swal-ingredientes').value;
+                            if (!texto.trim()) {
+                                Swal.showValidationMessage('¡Debes ingresar al menos un ingrediente!');
+                                return false;
+                            }
+                            return texto;
+                        }
+                    });
+
+                    if (!ingredientes) return;
+
+                    const lines = ingredientes.split('\n').filter(line => line.trim());
+                    lines.forEach(line => {
+                        const [item, cantidad] = line.split(',').map(s => s.trim());
+                        if (item && cantidad) {
+                            recetaActual.agregar(item, cantidad);
+                        } else if (item) {
+                            recetaActual.agregar(item, 'cantidad');
+                        }
+                    });
+
+                    stepEl.classList.add('completed');
+                    btn.classList.add('completed');
+                    btn.disabled = true;
                     updateState();
                     document.getElementById('recipeOutput').innerHTML = `
                         <div class="text-center text-info">
                             <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>4 ingredientes agregados mediante chaining</p>
-                            <small class="text-muted">.agregar().agregar().agregar().agregar()</small>
+                            <p>${lines.length} ingredientes agregados mediante chaining</p>
+                            <small class="text-muted">${recetaActual.items.map(i => '.' + i.item).join('')}</small>
                         </div>`;
-                    Swal.fire({
-                        title: '✓ Paso 2: Method Chaining',
-                        text: 'Cada .agregar() retorna this, permitiendo encadenar múltiples llamadas',
-                        icon: 'info',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: '#16213e',
-                        color: '#eaeaea'
-                    });
                     enableStep(3);
                     break;
                     
@@ -858,28 +932,49 @@
                             title: '¡Primero inicializa!',
                             text: 'Debes ejecutar el Paso 1 primero',
                             icon: 'error',
-                            timer: 1500,
-                            showConfirmButton: false
+                            background: '#16213e',
+                            color: '#eaeaea'
                         });
                         return;
                     }
-                    recetaActual.tiempo(45);
+
+                    const { value: tiempo } = await Swal.fire({
+                        title: '⏱️ Paso 3: Configurar Tiempo',
+                        html: `
+                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa el tiempo de horneado (en minutos)</p>
+                            <input type="number" id="swal-tiempo" class="swal2-input" placeholder="Ej: 45" min="1">
+                        `,
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Establecer Tiempo',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#e94560',
+                        background: '#16213e',
+                        color: '#eaeaea',
+                        preConfirm: () => {
+                            const tiempo = document.getElementById('swal-tiempo').value;
+                            if (!tiempo || tiempo <= 0) {
+                                Swal.showValidationMessage('¡Debes ingresar un tiempo válido!');
+                                return false;
+                            }
+                            return tiempo;
+                        }
+                    });
+
+                    if (!tiempo) return;
+
+                    recetaActual.tiempo(parseInt(tiempo));
+                    stepEl.classList.add('completed');
+                    btn.classList.add('completed');
+                    btn.disabled = true;
                     updateState();
                     document.getElementById('recipeOutput').innerHTML = `
                         <div class="text-center text-info">
                             <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>Tiempo configurado: 45 minutos</p>
-                            <small class="text-muted">.tiempo(45)</small>
+                            <p>Tiempo configurado: <strong>${tiempo} minutos</strong></p>
+                            <small class="text-muted">.tiempo(${tiempo})</small>
                         </div>`;
-                    Swal.fire({
-                        title: '✓ Paso 3: Configuración',
-                        text: '.tiempo(45) - Establecemos el tiempo de horneado',
-                        icon: 'info',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: '#16213e',
-                        color: '#eaeaea'
-                    });
                     enableStep(4);
                     break;
                     
@@ -889,33 +984,53 @@
                             title: '¡Primero inicializa!',
                             text: 'Debes ejecutar el Paso 1 primero',
                             icon: 'error',
-                            timer: 1500,
-                            showConfirmButton: false
+                            background: '#16213e',
+                            color: '#eaeaea'
                         });
                         return;
                     }
-                    recetaActual
-                        .paso("Mezclar ingredientes secos")
-                        .paso("Añadir agua tibia")
-                        .paso("Amasar por 10 minutos")
-                        .paso("Fermentar 1 hora")
-                        .paso("Hornear a 200°C");
+
+                    const { value: pasos } = await Swal.fire({
+                        title: '📝 Paso 4: Agregar Pasos',
+                        html: `
+                            <p style="font-size: 14px; color: #a0a0a0;">Ingresa los pasos de preparación (uno por línea)</p>
+                            <textarea id="swal-pasos" class="swal2-textarea" placeholder="Mezclar ingredientes secos&#10;Añadir agua tibia&#10;Amasar por 10 minutos&#10;Fermentar 1 hora&#10;Hornear a 200°C"></textarea>
+                        `,
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Agregar Pasos',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#e94560',
+                        background: '#16213e',
+                        color: '#eaeaea',
+                        preConfirm: () => {
+                            const texto = document.getElementById('swal-pasos').value;
+                            if (!texto.trim()) {
+                                Swal.showValidationMessage('¡Debes ingresar al menos un paso!');
+                                return false;
+                            }
+                            return texto;
+                        }
+                    });
+
+                    if (!pasos) return;
+
+                    const pasosList = pasos.split('\n').filter(p => p.trim());
+                    pasosList.forEach(paso => {
+                        recetaActual.paso(paso.trim());
+                    });
+
+                    stepEl.classList.add('completed');
+                    btn.classList.add('completed');
+                    btn.disabled = true;
                     updateState();
                     document.getElementById('recipeOutput').innerHTML = `
                         <div class="text-center text-info">
                             <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <p>5 pasos añadidos mediante chaining</p>
-                            <small class="text-muted">.paso().paso().paso().paso().paso()</small>
+                            <p>${pasosList.length} pasos añadidos mediante chaining</p>
+                            <small class="text-muted">${pasosList.map(() => '.paso()').join('')}</small>
                         </div>`;
-                    Swal.fire({
-                        title: '✓ Paso 4: Encadenamiento',
-                        text: '¡Mira cómo encadenamos 5 llamadas .paso() en una sola línea!',
-                        icon: 'info',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: '#16213e',
-                        color: '#eaeaea'
-                    });
                     enableStep(5);
                     break;
                     
@@ -925,18 +1040,30 @@
                             title: '¡Primero inicializa!',
                             text: 'Debes ejecutar el Paso 1 primero',
                             icon: 'error',
-                            timer: 1500,
-                            showConfirmButton: false
+                            background: '#16213e',
+                            color: '#eaeaea'
                         });
                         return;
                     }
+
+                    stepEl.classList.add('completed');
+                    btn.classList.add('completed');
+                    btn.disabled = true;
                     recetaActual.build();
                     document.getElementById('recipeOutput').innerHTML = recetaActual.generarHTML();
                     showFinalState();
+
                     Swal.fire({
                         title: '🎉 ¡Receta Completa!',
-                        html: '<strong>Method Chaining completado exitosamente</strong><br><br>' +
-                              '<small>Has visto cómo cada método retorna <code>this</code><br>permitiendo el encadenamiento de llamadas</small>',
+                        html: `
+                            <strong>Method Chaining completado</strong><br><br>
+                            <div style="text-align: left; font-size: 13px;">
+                                <p><i class="fas fa-check"></i> Receta: <strong>${recetaActual.nombre}</strong></p>
+                                <p><i class="fas fa-check"></i> Ingredientes: ${recetaActual.items.length}</p>
+                                <p><i class="fas fa-check"></i> Tiempo: ${recetaActual.tiempo} min</p>
+                                <p><i class="fas fa-check"></i> Pasos: ${recetaActual.pasos.length}</p>
+                            </div>
+                        `,
                         icon: 'success',
                         confirmButtonText: '¡Excelente!',
                         confirmButtonColor: '#00b894',
@@ -948,21 +1075,84 @@
         }
 
         function enableStep(step) {
-            const stepEl = document.getElementById(`step${step}`);
+            const stepEl = document.getElementById('step' + step);
             if (stepEl) {
                 stepEl.style.opacity = '1';
                 const btn = stepEl.querySelector('button');
-                if (btn) btn.disabled = false;
+                if (btn) {
+                    btn.disabled = false;
+                }
             }
         }
 
-        function runFullChain() {
+        async function runFullChain() {
             resetRecipe();
-            setTimeout(() => executeStep(1), 150);
-            setTimeout(() => executeStep(2), 600);
-            setTimeout(() => executeStep(3), 1100);
-            setTimeout(() => executeStep(4), 1600);
-            setTimeout(() => executeStep(5), 2100);
+            
+            Swal.fire({
+                title: '🚀 Ejecutando Cadena Completa',
+                html: 'Se ejecutarán todos los pasos automáticamente...',
+                timer: 2000,
+                showConfirmButton: false,
+                background: '#16213e',
+                color: '#eaeaea',
+                didOpen: async () => {
+                    Swal.showLoading();
+                    
+                    await new Promise(r => setTimeout(r, 500));
+                    
+                    recetaActual = new Receta("Pan Automático");
+                    document.getElementById('step1').classList.add('completed');
+                    document.getElementById('btnStep1').classList.add('completed');
+                    document.getElementById('btnStep1').disabled = true;
+                    updateState();
+                    
+                    await new Promise(r => setTimeout(r, 800));
+                    
+                    recetaActual.agregar("Harina", "500g").agregar("Agua", "350ml").agregar("Sal", "10g");
+                    document.getElementById('step2').style.opacity = '1';
+                    document.getElementById('step2').classList.add('completed');
+                    document.getElementById('btnStep2').classList.add('completed');
+                    document.getElementById('btnStep2').disabled = true;
+                    updateState();
+                    
+                    await new Promise(r => setTimeout(r, 800));
+                    
+                    recetaActual.tiempo(30);
+                    document.getElementById('step3').style.opacity = '1';
+                    document.getElementById('step3').classList.add('completed');
+                    document.getElementById('btnStep3').classList.add('completed');
+                    document.getElementById('btnStep3').disabled = true;
+                    updateState();
+                    
+                    await new Promise(r => setTimeout(r, 800));
+                    
+                    recetaActual.paso("Mezclar").paso("Amasar").paso("Hornear");
+                    document.getElementById('step4').style.opacity = '1';
+                    document.getElementById('step4').classList.add('completed');
+                    document.getElementById('btnStep4').classList.add('completed');
+                    document.getElementById('btnStep4').disabled = true;
+                    updateState();
+                    
+                    await new Promise(r => setTimeout(r, 800));
+                    
+                    recetaActual.build();
+                    document.getElementById('step5').style.opacity = '1';
+                    document.getElementById('step5').classList.add('completed');
+                    document.getElementById('btnStep5').classList.add('completed');
+                    document.getElementById('btnStep5').disabled = true;
+                    document.getElementById('recipeOutput').innerHTML = recetaActual.generarHTML();
+                    showFinalState();
+                    
+                    Swal.fire({
+                        title: '🎉 ¡Completado!',
+                        text: 'Method Chaining ejecutado automáticamente',
+                        icon: 'success',
+                        confirmButtonColor: '#00b894',
+                        background: '#16213e',
+                        color: '#eaeaea'
+                    });
+                }
+            });
         }
 
         function resetRecipe() {
@@ -990,16 +1180,6 @@
                 btn.classList.remove('completed');
                 btn.disabled = i > 1;
             }
-            
-            Swal.fire({
-                title: '🔄 Reiniciado',
-                text: 'El constructor ha sido reiniciado',
-                icon: 'info',
-                timer: 1200,
-                showConfirmButton: false,
-                background: '#16213e',
-                color: '#eaeaea'
-            });
         }
 
         function updateState() {
