@@ -1,0 +1,17 @@
+app:
+  nombre: "Sistema de Inventario Pro"
+  version: "1.0.0"
+  
+tema:
+  color_primario: "#0d6efd"
+  color_secundario: "#6c757d"
+  modo_oscuro: false
+  
+roles:
+  - administrador
+  - editor
+  - visualizador
+  
+descuentos:
+  por_defecto: 10
+  maximo: 50

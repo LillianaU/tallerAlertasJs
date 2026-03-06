@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "fecha_procesamiento": "2024-01-15T10:30:00.000Z",
+    "version": "1.0.0",
+    "total_registros": 6
+  },
+  "configuracion": {
+    "app": {
+      "nombre": "Sistema de Inventario Pro",
+      "version": "1.0.0"
+    },
+    "descuentos": {
+      "por_defecto": 10
+    }
+  },
+  "productos": [
+    {
+      "id": "1",
+      "nombre": "LAPTOP DELL XPS",
+      "categoria": "Computación",
+      "precio_original": 1200.5,
+      "precio_final": 1080.45,
+      "stock": 15,
+      "activo": true
+    }
+  ]
+}

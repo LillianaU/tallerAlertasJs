@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 2: Destructuring & Spread</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; padding-bottom: 40px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; overflow-x: auto; font-size: 0.85em; }
+        .result { background: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        h1 { color: #0d6efd; }
+        .method-title { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Ejemplo 2: Destructuring & Spread</h1>
+        
+        <div class="section">
+            <h3>Definición</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Destructuring</h5>
+                    <p>Permite extraer valores de arrays u objetos en variables individuales con una sintaxis concisa.</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Spread Operator (...)</h5>
+                    <p>Permite expandir elementos de un iterable (arrays, objetos) en lugares donde se esperan múltiples elementos.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destructuring de Arrays -->
+        <div class="section">
+            <h4 class="method-title">1. Destructuring de Arrays</h4>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Básico</h5>
+                    <div class="code-block">
+const colores = ['rojo', 'verde', 'azul'];
+const [primero, segundo, tercero] = colores;
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="destructArray1()">Ejecutar</button>
+                    <div class="result" id="resDestructArr1"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Saltar elementos</h5>
+                    <div class="code-block">
+const nums = [1, 2, 3, 4, 5];
+const [a, , , d] = nums;
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="destructArray2()">Ejecutar</button>
+                    <div class="result" id="resDestructArr2"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Valores por defecto</h5>
+                    <div class="code-block">
+const [a, b, c = 10] = [1, 2];
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="destructArray3()">Ejecutar</button>
+                    <div class="result" id="resDestructArr3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destructuring de Objetos -->
+        <div class="section">
+            <h4 class="method-title">2. Destructuring de Objetos</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Básico</h5>
+                    <div class="code-block">
+const persona = { 
+  nombre: 'Ana', 
+  edad: 30, 
+  ciudad: 'Madrid' 
+};
+const { nombre, edad } = persona;
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="destructObj1()">Ejecutar</button>
+                    <div class="result" id="resDestructObj1"></div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Renombrar variables</h5>
+                    <div class="code-block">
+const persona = { nombre: 'Ana', edad: 30 };
+const { nombre: nombreCompleto, edad: años } = persona;
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="destructObj2()">Ejecutar</button>
+                    <div class="result" id="resDestructObj2"></div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Valores por defecto</h5>
+                    <div class="code-block">
+const { nombre, pais = 'España' } = { nombre: 'Juan' };
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="destructObj3()">Ejecutar</button>
+                    <div class="result" id="resDestructObj3"></div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Objetos anidados</h5>
+                    <div class="code-block">
+const data = {
+  usuario: {
+    perfil: { edad: 25 }
+  }
+};
+const { usuario: { perfil: { edad } } } = data;
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="destructObj4()">Ejecutar</button>
+                    <div class="result" id="resDestructObj4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spread en Arrays -->
+        <div class="section">
+            <h4 class="method-title">3. Spread en Arrays</h4>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Combinar arrays</h5>
+                    <div class="code-block">
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combinado = [...arr1, ...arr2];
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="spreadArray1()">Ejecutar</button>
+                    <div class="result" id="resSpreadArr1"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Copiar array</h5>
+                    <div class="code-block">
+const original = [1, 2, 3];
+const copia = [...original];
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="spreadArray2()">Ejecutar</button>
+                    <div class="result" id="resSpreadArr2"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Agregar elementos</h5>
+                    <div class="code-block">
+const base = [2, 3, 4];
+const nuevo = [1, ...base, 5];
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="spreadArray3()">Ejecutar</button>
+                    <div class="result" id="resSpreadArr3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spread en Objetos -->
+        <div class="section">
+            <h4 class="method-title">4. Spread en Objetos</h4>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Combinar objetos</h5>
+                    <div class="code-block">
+const obj1 = { a: 1, b: 2 };
+const obj2 = { b: 3, c: 4 };
+const merged = { ...obj1, ...obj2 };
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="spreadObj1()">Ejecutar</button>
+                    <div class="result" id="resSpreadObj1"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Copiar objeto</h5>
+                    <div class="code-block">
+const original = { nombre: 'Ana', edad: 30 };
+const copia = { ...original };
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="spreadObj2()">Ejecutar</button>
+                    <div class="result" id="resSpreadObj2"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Actualizar propiedades</h5>
+                    <div class="code-block">
+const usuario = { nombre: 'Ana', edad: 30 };
+const actualizado = { ...usuario, edad: 31, ciudad: 'Madrid' };
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="spreadObj3()">Ejecutar</button>
+                    <div class="result" id="resSpreadObj3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parámetros Rest -->
+        <div class="section">
+            <h4 class="method-title">5. Parámetros Rest (...args)</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Función con argumentos variables</h5>
+                    <div class="code-block">
+function suma(...numeros) {
+    return numeros.reduce((a, b) => a + b, 0);
+}
+suma(1, 2, 3, 4, 5);
+                    </div>
+                    <button class="btn btn-info mt-2" onclick="ejemploRest1()">Ejecutar</button>
+                    <div class="result" id="resRest1"></div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Destructuring con rest</h5>
+                    <div class="code-block">
+const nums = [1, 2, 3, 4, 5];
+const [primero, segundo, ...resto] = nums;
+                    </div>
+                    <button class="btn btn-info mt-2" onclick="ejemploRest2()">Ejecutar</button>
+                    <div class="result" id="resRest2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplos de Vida Real -->
+        <div class="section">
+            <h4 class="method-title">6. Ejemplos de Vida Real</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Gestión de configuración</h5>
+                    <div class="code-block">
+const configDefault = {
+    theme: 'light',
+    lang: 'es',
+    timeout: 3000
+};
+const userConfig = { theme: 'dark' };
+const finalConfig = { ...configDefault, ...userConfig };
+                    </div>
+                    <button class="btn btn-warning mt-2" onclick="ejemploReal1()">Ver con SweetAlert</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Actualizar estado de React</h5>
+                    <div class="code-block">
+const estado = { usuario: 'Ana', rol: 'admin' };
+const nuevoEstado = { ...estado, rol: 'superadmin' };
+                    </div>
+                    <button class="btn btn-warning mt-2" onclick="ejemploReal2()">Ver con SweetAlert</button>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Form con datos de usuario</h5>
+                    <div class="code-block">
+const formData = { nombre: '', email: '' };
+const update = (field, value) => ({
+    ...formData, [field]: value
+});
+                    </div>
+                    <button class="btn btn-warning mt-2" onclick="ejemploReal3()">Ver con SweetAlert</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Carrito de compras</h5>
+                    <div class="code-block">
+const carrito = [{ id: 1, cantidad: 2 }];
+const agregar = (producto) => [...carrito, producto];
+const actualizar = (id, cant) => 
+    carrito.map(p => p.id === id ? {...p, cantidad: cant} : p);
+                    </div>
+                    <button class="btn btn-warning mt-2" onclick="ejemploReal4()">Ver con SweetAlert</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de Ejemplo -->
+        <div class="section">
+            <h4 class="method-title">7. Formulario con Destructuring & Spread</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Registro de Usuario</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="registroForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre completo</label>
+                                    <input type="text" class="form-control" id="regNombre" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="regEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="regTelefono">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ciudad</label>
+                                    <select class="form-select" id="regCiudad">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="Madrid">Madrid</option>
+                                        <option value="Barcelona">Barcelona</option>
+                                        <option value="Sevilla">Sevilla</option>
+                                        <option value="Valencia">Valencia</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Intereses (separados por coma)</label>
+                                    <input type="text" class="form-control" id="regIntereses" placeholder="deportes, música, tecnología">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Registrar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Usuarios Registrados</h5>
+                        </div>
+                        <div class="card-body" style="max-height: 350px; overflow-y: auto;">
+                            <div id="listaUsuarios">
+                                <p class="text-muted">No hay usuarios registrados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRUD con Destructuring -->
+        <div class="section">
+            <h4 class="method-title">8. CRUD usando Destructuring & Spread</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" onclick="cargarUsuariosCRUD()">Cargar Datos Iniciales</button>
+                    <button class="btn btn-success me-2" onclick="agregarUsuarioCRUD()">+ Agregar</button>
+                    <button class="btn btn-info me-2" onclick="listarUsuariosCRUD()">Listar</button>
+                    <button class="btn btn-warning me-2" onclick="actualizarUsuarioCRUD()">Actualizar</button>
+                    <button class="btn btn-danger" onclick="eliminarUsuarioCRUD()">Eliminar</button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="tablaCRUD">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Ciudad</th>
+                            <th>Intereses</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyCRUD">
+                        <tr><td colspan="6" class="text-center">Cargue los datos primero</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let usuariosCRUD = [];
+
+        // Destructuring Arrays
+        function destructArray1() {
+            const colores = ['rojo', 'verde', 'azul'];
+            const [primero, segundo, tercero] = colores;
+            document.getElementById('resDestructArr1').innerHTML = `<strong>Primero:</strong> ${primero}, <strong>Segundo:</strong> ${segundo}, <strong>Tercero:</strong> ${tercero}`;
+        }
+
+        function destructArray2() {
+            const nums = [1, 2, 3, 4, 5];
+            const [a, , , d] = nums;
+            document.getElementById('resDestructArr2').innerHTML = `<strong>a:</strong> ${a}, <strong>d:</strong> ${d}`;
+        }
+
+        function destructArray3() {
+            const [a, b, c = 10] = [1, 2];
+            document.getElementById('resDestructArr3').innerHTML = `<strong>a:</strong> ${a}, <strong>b:</strong> ${b}, <strong>c:</strong> ${c} (valor por defecto)`;
+        }
+
+        // Destructuring Objetos
+        function destructObj1() {
+            const persona = { nombre: 'Ana', edad: 30, ciudad: 'Madrid' };
+            const { nombre, edad } = persona;
+            document.getElementById('resDestructObj1').innerHTML = `<strong>Nombre:</strong> ${nombre}, <strong>Edad:</strong> ${edad}`;
+        }
+
+        function destructObj2() {
+            const persona = { nombre: 'Ana', edad: 30 };
+            const { nombre: nombreCompleto, edad: años } = persona;
+            document.getElementById('resDestructObj2').innerHTML = `<strong>nombreCompleto:</strong> ${nombreCompleto}, <strong>años:</strong> ${años}`;
+        }
+
+        function destructObj3() {
+            const { nombre, pais = 'España' } = { nombre: 'Juan' };
+            document.getElementById('resDestructObj3').innerHTML = `<strong>Nombre:</strong> ${nombre}, <strong>País:</strong> ${pais}`;
+        }
+
+        function destructObj4() {
+            const data = { usuario: { perfil: { edad: 25 } } };
+            const { usuario: { perfil: { edad } } } = data;
+            document.getElementById('resDestructObj4').innerHTML = `<strong>Edad (de objeto anidado):</strong> ${edad}`;
+        }
+
+        // Spread Arrays
+        function spreadArray1() {
+            const arr1 = [1, 2, 3];
+            const arr2 = [4, 5, 6];
+            const combinado = [...arr1, ...arr2];
+            document.getElementById('resSpreadArr1').innerHTML = `<strong>Resultado:</strong> [${combinado.join(', ')}]`;
+        }
+
+        function spreadArray2() {
+            const original = [1, 2, 3];
+            const copia = [...original];
+            document.getElementById('resSpreadArr2').innerHTML = `<strong>Original:</strong> [${original}], <strong>Copia:</strong> [${copia}]`;
+        }
+
+        function spreadArray3() {
+            const base = [2, 3, 4];
+            const nuevo = [1, ...base, 5];
+            document.getElementById('resSpreadArr3').innerHTML = `<strong>Resultado:</strong> [${nuevo.join(', ')}]`;
+        }
+
+        // Spread Objetos
+        function spreadObj1() {
+            const obj1 = { a: 1, b: 2 };
+            const obj2 = { b: 3, c: 4 };
+            const merged = { ...obj1, ...obj2 };
+            document.getElementById('resSpreadObj1').innerHTML = `<strong>Resultado:</strong> ${JSON.stringify(merged)}`;
+        }
+
+        function spreadObj2() {
+            const original = { nombre: 'Ana', edad: 30 };
+            const copia = { ...original };
+            document.getElementById('resSpreadObj2').innerHTML = `<strong>Copia:</strong> ${JSON.stringify(copia)}`;
+        }
+
+        function spreadObj3() {
+            const usuario = { nombre: 'Ana', edad: 30 };
+            const actualizado = { ...usuario, edad: 31, ciudad: 'Madrid' };
+            document.getElementById('resSpreadObj3').innerHTML = `<strong>Actualizado:</strong> ${JSON.stringify(actualizado)}`;
+        }
+
+        // Rest
+        function ejemploRest1() {
+            function suma(...numeros) {
+                return numeros.reduce((a, b) => a + b, 0);
+            }
+            const result = suma(1, 2, 3, 4, 5);
+            document.getElementById('resRest1').innerHTML = `<strong>Suma de 1,2,3,4,5:</strong> ${result}`;
+        }
+
+        function ejemploRest2() {
+            const nums = [1, 2, 3, 4, 5];
+            const [primero, segundo, ...resto] = nums;
+            document.getElementById('resRest2').innerHTML = `<strong>Primero:</strong> ${primero}, <strong>Segundo:</strong> ${segundo}, <strong>Resto:</strong> [${resto.join(', ')}]`;
+        }
+
+        // Ejemplos Vida Real
+        function ejemploReal1() {
+            const configDefault = { theme: 'light', lang: 'es', timeout: 3000 };
+            const userConfig = { theme: 'dark' };
+            const finalConfig = { ...configDefault, ...userConfig };
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'Configuración',
+                html: `<strong>Default:</strong> ${JSON.stringify(configDefault)}<br>
+                       <strong>Usuario:</strong> ${JSON.stringify(userConfig)}<br>
+                       <strong>Final:</strong> ${JSON.stringify(finalConfig)}`
+            });
+        }
+
+        function ejemploReal2() {
+            const estado = { usuario: 'Ana', rol: 'admin' };
+            const nuevoEstado = { ...estado, rol: 'superadmin' };
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Estado Actualizado',
+                html: `<strong>Anterior:</strong> ${JSON.stringify(estado)}<br>
+                       <strong>Nuevo:</strong> ${JSON.stringify(nuevoEstado)}`
+            });
+        }
+
+        function ejemploReal3() {
+            const formData = { nombre: '', email: '' };
+            const update = (field, value) => ({ ...formData, [field]: value });
+            
+            let data = { ...formData };
+            data = update('nombre', 'Juan');
+            data = update('email', 'juan@email.com');
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'Formulario Actualizado',
+                html: `<strong>Datos actuales:</strong><br>${JSON.stringify(data, null, 2)}`
+            });
+        }
+
+        function ejemploReal4() {
+            let carrito = [{ id: 1, nombre: 'Laptop', cantidad: 2, precio: 1000 }];
+            
+            // Agregar
+            const agregar = (producto) => [...carrito, producto];
+            carrito = agregar({ id: 2, nombre: 'Mouse', cantidad: 1, precio: 25 });
+            
+            // Actualizar
+            const actualizar = (id, cant) => 
+                carrito.map(p => p.id === id ? {...p, cantidad: cant} : p);
+            carrito = actualizar(1, 3);
+            
+            const total = carrito.reduce((acc, p) => acc + (p.precio * p.cantidad), 0);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Carrito de Compras',
+                html: `${carrito.map(p => `${p.nombre}: ${p.cantidad} x $${p.precio}`).join('<br>')}<br><br><strong>Total: $${total}</strong>`
+            });
+        }
+
+        // CRUD Functions
+        function cargarUsuariosCRUD() {
+            usuariosCRUD = [
+                { id: 1, nombre: 'Juan Pérez', email: 'juan@email.com', telefono: '555-1234', ciudad: 'Madrid', intereses: ['deportes', 'música'] },
+                { id: 2, nombre: 'María García', email: 'maria@email.com', telefono: '555-2345', ciudad: 'Barcelona', intereses: ['lectura', 'arte'] },
+                { id: 3, nombre: 'Pedro López', email: 'pedro@email.com', telefono: '555-3456', ciudad: 'Sevilla', intereses: ['tecnología', 'gaming'] }
+            ];
+            renderizarCRUD();
+            Swal.fire('Cargado', 'Datos cargados correctamente', 'success');
+        }
+
+        function renderizarCRUD() {
+            const tbody = document.getElementById('tbodyCRUD');
+            if (usuariosCRUD.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay usuarios</td></tr>';
+                return;
+            }
+            tbody.innerHTML = usuariosCRUD.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.nombre}</td>
+                    <td>${u.email}</td>
+                    <td>${u.telefono}</td>
+                    <td>${u.ciudad}</td>
+                    <td>${u.intereses.join(', ')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function agregarUsuarioCRUD() {
+            if (usuariosCRUD.length === 0) {
+                cargarUsuariosCRUD();
+                return;
+            }
+            
+            const { value: formValues } = Swal.fire({
+                title: 'Agregar Usuario',
+                html: `
+                    <input id="swal-nombre" class="swal2-input" placeholder="Nombre">
+                    <input id="swal-email" class="swal2-input" placeholder="Email">
+                    <input id="swal-telefono" class="swal2-input" placeholder="Teléfono">
+                    <select id="swal-ciudad" class="swal2-select">
+                        <option value="">Seleccionar ciudad</option>
+                        <option value="Madrid">Madrid</option>
+                        <option value="Barcelona">Barcelona</option>
+                        <option value="Sevilla">Sevilla</option>
+                        <option value="Valencia">Valencia</option>
+                    </select>
+                    <input id="swal-intereses" class="swal2-input" placeholder="Intereses (separados por coma)">
+                `,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const nombre = document.getElementById('swal-nombre').value;
+                    const email = document.getElementById('swal-email').value;
+                    if (!nombre || !email) {
+                        Swal.showValidationMessage('Nombre y email son requeridos');
+                        return false;
+                    }
+                    return {
+                        nombre,
+                        email,
+                        telefono: document.getElementById('swal-telefono').value,
+                        ciudad: document.getElementById('swal-ciudad').value,
+                        intereses: document.getElementById('swal-intereses').value.split(',').map(i => i.trim()).filter(i => i)
+                    };
+                }
+            }).then(result => {
+                if (result.isConfirmed && result.value) {
+                    const nuevo = { ...result.value, id: Math.max(...usuariosCRUD.map(u => u.id)) + 1 };
+                    usuariosCRUD = [...usuariosCRUD, nuevo];
+                    renderizarCRUD();
+                    Swal.fire('Agregado', 'Usuario agregado correctamente', 'success');
+                }
+            });
+        }
+
+        function listarUsuariosCRUD() {
+            if (usuariosCRUD.length === 0) {
+                Swal.fire('Sin datos', 'Cargue los datos primero', 'warning');
+                return;
+            }
+            
+            const lista = usuariosCRUD.map(u => `<strong>${u.nombre}</strong> - ${u.email} (${u.ciudad})`).join('<br>');
+            Swal.fire({ icon: 'info', title: 'Lista de Usuarios', html: lista });
+        }
+
+        function actualizarUsuarioCRUD() {
+            if (usuariosCRUD.length === 0) {
+                cargarUsuariosCRUD();
+                return;
+            }
+            
+            const options = {};
+            usuariosCRUD.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Seleccionar usuario',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione un usuario',
+                showCancelButton: true
+            }).then(result => {
+                if (result.isConfirmed && result.value) {
+                    const usuario = usuariosCRUD.find(u => u.id === parseInt(result.value));
+                    const { value: nuevosDatos } = Swal.fire({
+                        title: 'Actualizar Usuario',
+                        html: `
+                            <input id="swal-nombre" class="swal2-input" value="${usuario.nombre}">
+                            <input id="swal-email" class="swal2-input" value="${usuario.email}">
+                            <input id="swal-telefono" class="swal2-input" value="${usuario.telefono}">
+                            <select id="swal-ciudad" class="swal2-select">
+                                <option value="Madrid" ${usuario.ciudad === 'Madrid' ? 'selected' : ''}>Madrid</option>
+                                <option value="Barcelona" ${usuario.ciudad === 'Barcelona' ? 'selected' : ''}>Barcelona</option>
+                                <option value="Sevilla" ${usuario.ciudad === 'Sevilla' ? 'selected' : ''}>Sevilla</option>
+                                <option value="Valencia" ${usuario.ciudad === 'Valencia' ? 'selected' : ''}>Valencia</option>
+                            </select>
+                        `,
+                        focusConfirm: false,
+                        preConfirm: () => ({
+                            nombre: document.getElementById('swal-nombre').value,
+                            email: document.getElementById('swal-email').value,
+                            telefono: document.getElementById('swal-telefono').value,
+                            ciudad: document.getElementById('swal-ciudad').value
+                        })
+                    });
+                    
+                    if (nuevosDatos) {
+                        usuariosCRUD = usuariosCRUD.map(u => 
+                            u.id === parseInt(result.value) 
+                                ? { ...u, ...nuevosDatos } 
+                                : u
+                        );
+                        renderizarCRUD();
+                        Swal.fire('Actualizado', 'Usuario modificado correctamente', 'success');
+                    }
+                }
+            });
+        }
+
+        function eliminarUsuarioCRUD() {
+            if (usuariosCRUD.length === 0) {
+                Swal.fire('Sin datos', 'Cargue los datos primero', 'warning');
+                return;
+            }
+            
+            const options = {};
+            usuariosCRUD.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Eliminar Usuario',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione un usuario',
+                showCancelButton: true,
+                icon: 'warning'
+            }).then(result => {
+                if (result.isConfirmed && result.value) {
+                    const usuario = usuariosCRUD.find(u => u.id === parseInt(result.value));
+                    Swal.fire({
+                        title: `¿Eliminar a ${usuario.nombre}?`,
+                        text: 'Esta acción no se puede deshacer',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then(confirm => {
+                        if (confirm.isConfirmed) {
+                            usuariosCRUD = usuariosCRUD.filter(u => u.id !== parseInt(result.value));
+                            renderizarCRUD();
+                            Swal.fire('Eliminado', 'Usuario eliminado', 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Formulario de registro
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                nombre: document.getElementById('regNombre').value,
+                email: document.getElementById('regEmail').value,
+                telefono: document.getElementById('regTelefono').value,
+                ciudad: document.getElementById('regCiudad').value,
+                intereses: document.getElementById('regIntereses').value.split(',').map(i => i.trim()).filter(i => i)
+            };
+            
+            // Usar destructuring
+            const { nombre, email, telefono, ciudad, intereses } = formData;
+            
+            const lista = document.getElementById('listaUsuarios');
+            lista.innerHTML += `
+                <div class="border-bottom pb-2 mb-2">
+                    <strong>${nombre}</strong><br>
+                    <small>${email} | ${telefono} | ${ciudad}</small><br>
+                    <small class="text-muted">Intereses: ${intereses.join(', ')}</small>
+                </div>
+            `;
+            
+            this.reset();
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Registrado',
+                text: `Usuario ${nombre} registrado correctamente`,
+                timer: 1500
+            });
+        });
+    </script>
+</body>
+</html>

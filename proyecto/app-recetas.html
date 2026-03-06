@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Recetas - CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --accent: #e94560;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --dark: #1a1a2e;
+            --dark-card: #16213e;
+            --light: #eaeaea;
+            --text-muted: #a0a0a0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+        }
+
+        .header-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--success) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .search-box {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .search-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--light);
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .search-input:focus {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+            color: var(--light);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .recipe-card {
+            background: var(--dark-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border-color: var(--primary);
+        }
+
+        .recipe-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recipe-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .recipe-body {
+            padding: 1.25rem;
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .badge-facil { background: rgba(0, 184, 148, 0.2); color: #00b894; }
+        .badge-media { background: rgba(253, 203, 110, 0.2); color: #fdcb6e; }
+        .badge-alta { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+
+        .recipe-ingredients {
+            margin-bottom: 1rem;
+        }
+
+        .ingredient-tag {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            padding: 0.25rem 0.6rem;
+            margin: 0.2rem;
+            font-size: 0.75rem;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .btn-action {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-edit {
+            background: rgba(253, 203, 110, 0.2);
+            color: #fdcb6e;
+        }
+
+        .btn-delete {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.05);
+        }
+
+        .table-container {
+            background: var(--dark-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .custom-table {
+            width: 100%;
+            margin: 0;
+            color: var(--light);
+        }
+
+        .custom-table thead {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .custom-table th {
+            padding: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border: none;
+        }
+
+        .custom-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            vertical-align: middle;
+        }
+
+        .custom-table tbody tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .category-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .modal-content-custom {
+            background: var(--dark-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+        }
+
+        .form-control-custom {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--light);
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .form-control-custom:focus {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+            color: var(--light);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .nav-pills-custom .nav-link {
+            color: var(--text-muted);
+            border-radius: 25px;
+            padding: 0.5rem 1.25rem;
+        }
+
+        .nav-pills-custom .nav-link.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-card { margin-bottom: 1rem; }
+            .recipe-card { margin-bottom: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header-bg text-center">
+        <div class="container">
+            <h1 class="mb-2"><i class="fas fa-utensils me-2"></i>App de Recetas</h1>
+            <p class="mb-0 opacity-75">Gestión de recetas con JavaScript Intermedio II</p>
+        </div>
+    </header>
+
+    <div class="container pb-5">
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4" id="statsRow">
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalRecetas">0</div>
+                    <div class="stats-label">Total Recetas</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="tiempoPromedio">0</div>
+                    <div class="stats-label">Min Promedio</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="recetasFaciles">0</div>
+                    <div class="stats-label">Fáciles</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalTiempo">0</div>
+                    <div class="stats-label">Min Totales</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-8">
+                <div class="search-box">
+                    <input type="text" class="form-control search-input" id="buscador" 
+                           placeholder="🔍 Buscar receta por nombre, categoría o ingrediente...">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="search-box">
+                    <select class="form-select form-control-custom" id="filtroDificultad">
+                        <option value="todas">Todas las dificultades</option>
+                        <option value="Baja">Fácil</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <ul class="nav nav-pills-custom nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-view="cards">
+                        <i class="fas fa-th-large me-1"></i> Tarjetas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-view="table">
+                        <i class="fas fa-table me-1"></i> Tabla
+                    </a>
+                </li>
+            </ul>
+            <button class="btn" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;" onclick="mostrarModalAgregar()">
+                <i class="fas fa-plus me-1"></i> Nueva Receta
+            </button>
+        </div>
+
+        <!-- Cards View -->
+        <div class="row g-4" id="cardsView"></div>
+
+        <!-- Table View -->
+        <div class="table-container d-none" id="tableView">
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Tiempo</th>
+                        <th>Dificultad</th>
+                        <th>Categoría</th>
+                        <th>Ingredientes</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Receta -->
+    <div class="modal fade" id="recetaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="modalTitle">Ver Receta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Editar Receta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control form-control-custom" id="editNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tiempo (minutos)</label>
+                            <input type="number" class="form-control form-control-custom" id="editTiempo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dificultad</label>
+                            <select class="form-select form-control-custom" id="editDificultad">
+                                <option value="Baja">Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Categoría</label>
+                            <input type="text" class="form-control form-control-custom" id="editCategoria" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ingredientes (uno por línea, formato: item, cantidad)</label>
+                            <textarea class="form-control form-control-custom" id="editIngredientes" rows="4"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pasos (uno por línea)</label>
+                            <textarea class="form-control form-control-custom" id="editPasos" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn w-100" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+                            <i class="fas fa-save me-1"></i> Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================
+        // DATOS INICIALES (simulando datos procesados)
+        // ============================================
+        let recetas = [
+            { id: 1, nombre: "Paella Valenciana", tiempo: 60, dificultad: "Media", categoria: "Española", ingredientes: [{item: "Arroz", cantidad: "4 tasas"}, {item: "Azafrán", cantidad: "1 pizca"}, {item: "Pollo", cantidad: "500g"}], pasos: ["Sofríe el pollo", "Añade el marisco", "Agrega el arroz"] },
+            { id: 2, nombre: "Tacos al Pastor", tiempo: 30, dificultad: "Alta", categoria: "Mexicana", ingredientes: [{item: "Carne de cerdo", cantidad: "1kg"}, {item: "Cilantro", cantidad: "1 manojo"}], pasos: ["Marina la carne", "Asa en trompo", "Arma los tacos"] },
+            { id: 3, nombre: "Sushi Roll", tiempo: 45, dificultad: "Alta", categoria: "Japonesa", ingredientes: [{item: "Arroz", cantidad: "2 tasas"}, {item: "Salmón", cantidad: "200g"}, {item: "Nori", cantidad: "4 hojas"}], pasos: ["Cuece el arroz", "Extiende nori", "Enrolla y corta"] },
+            { id: 4, nombre: "Pasta Carbonara", tiempo: 25, dificultad: "Baja", categoria: "Italiana", ingredientes: [{item: "Espagueti", cantidad: "400g"}, {item: "Guanciale", cantidad: "200g"}, {item: "Huevos", cantidad: "4 unidades"}], pasos: ["Cuece pasta", "Fríe guanciale", "Mezcla huevos con queso"] },
+            { id: 5, nombre: "Ensalada César", tiempo: 15, dificultad: "Baja", categoria: "Americana", ingredientes: [{item: "Lechuga romana", cantidad: "1 unidad"}, {item: "Pollo", cantidad: "300g"}], pasos: ["Lava y trocea lechuga", "Ase el pollo", "Agrega aderezo"] },
+            { id: 6, nombre: "Curry de Pollo", tiempo: 40, dificultad: "Media", categoria: "India", ingredientes: [{item: "Pollo", cantidad: "500g"}, {item: "Curry", cantidad: "2 cucharadas"}], pasos: ["Sofríe cebollas", "Añade pollo", "Sirve con arroz"] },
+            { id: 7, nombre: "Crepe de Nutella", tiempo: 15, dificultad: "Baja", categoria: "Francesa", ingredientes: [{item: "Harina", cantidad: "200g"}, {item: "Huevos", cantidad: "2 unidades"}, {item: "Nutella", cantidad: "100g"}], pasos: ["Mezcla ingredientes", "Cocina crepes", "Unta Nutella"] },
+            { id: 8, nombre: "Lasaña Bolognesa", tiempo: 90, dificultad: "Media", categoria: "Italiana", ingredientes: [{item: "Placas de lasaña", cantidad: "12 unidades"}, {item: "Carne molida", cantidad: "500g"}], pasos: ["Prepara ragú", "Alterna capas", "Hornea 30 min"] },
+            { id: 9, nombre: "Gazpacho Andaluz", tiempo: 20, dificultad: "Baja", categoria: "Española", ingredientes: [{item: "Tomates maduros", cantidad: "1kg"}, {item: "Pimiento verde", cantidad: "1 unidad"}], pasos: ["Lava verduras", "Tritura todo", "Refrigera"] },
+            { id: 10, nombre: "Ramen Casero", tiempo: 60, dificultad: "Media", categoria: "Japonesa", ingredientes: [{item: "Fideos ramen", cantidad: "400g"}, {item: "Caldo de pollo", cantidad: "1L"}], pasos: ["Prepara caldo", "Cuece fideos", "Decora con nori"] }
+        ];
+
+        // Historial para demostrar inmutabilidad
+        let historialRecetas = [];
+
+        // ============================================
+        // ESTADÍSTICAS CON REDUCE
+        // ============================================
+        function actualizarEstadisticas() {
+            const total = recetas.length;
+            const tiempoTotal = recetas.reduce((acum, r) => acum + r.tiempo, 0);
+            const tiempoPromedio = total > 0 ? Math.round(tiempoTotal / total) : 0;
+            const faciles = recetas.filter(r => r.dificultad === 'Baja').length;
+
+            document.getElementById('totalRecetas').textContent = total;
+            document.getElementById('tiempoPromedio').textContent = tiempoPromedio;
+            document.getElementById('recetasFaciles').textContent = facile;
+            document.getElementById('totalTiempo').textContent = tiempoTotal;
+        }
+
+        // ============================================
+        // RENDERIZADO CON TEMPLATE LITERALS
+        // ============================================
+        function renderizarCards(recetasFiltradas) {
+            const container = document.getElementById('cardsView');
+            
+            if (recetasFiltradas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state col-12">
+                        <i class="fas fa-search"></i>
+                        <h4>No se encontraron recetas</h4>
+                        <p>Intenta con otros términos de búsqueda</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = recetasFiltradas.map(r => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="recipe-card">
+                        <div class="recipe-header">
+                            <h5 class="recipe-title">${r.nombre}</h5>
+                            <span class="badge bg-light text-dark">${r.id}</span>
+                        </div>
+                        <div class="recipe-body">
+                            <div class="recipe-meta">
+                                <span class="meta-badge">
+                                    <i class="fas fa-clock"></i> ${r.tiempo} min
+                                </span>
+                                <span class="meta-badge badge-${r.dificultad === 'Baja' ? 'facil' : r.dificultad === 'Media' ? 'media' : 'alta'}">
+                                    ${r.dificultad}
+                                </span>
+                                <span class="meta-badge">
+                                    <i class="fas fa-globe"></i> ${r.categoria}
+                                </span>
+                            </div>
+                            <div class="recipe-ingredients">
+                                <small class="text-muted">Ingredientes:</small>
+                                <div>${r.ingredientes.slice(0, 3).map(i => `<span class="ingredient-tag">${i.item}</span>`).join('')}
+                                ${r.ingredientes.length > 3 ? `<span class="ingredient-tag">+${r.ingredientes.length - 3}</span>` : ''}</div>
+                            </div>
+                            <div class="recipe-actions">
+                                <button class="btn-action btn-view" onclick="verReceta(${r.id})">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <button class="btn-action btn-edit" onclick="editarReceta(${r.id})">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn-action btn-delete" onclick="eliminarReceta(${r.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderizarTabla(recetasFiltradas) {
+            const tbody = document.getElementById('tableBody');
+            
+            if (recetasFiltradas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No se encontraron recetas</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = recetasFiltradas.map(r => `
+                <tr>
+                    <td>${r.id}</td>
+                    <td><strong>${r.nombre}</strong></td>
+                    <td>${r.tiempo} min</td>
+                    <td><span class="badge badge-${r.dificultad === 'Baja' ? 'facil' : r.dificultad === 'Media' ? 'media' : 'alta'}">${r.dificultad}</span></td>
+                    <td>${r.categoria}</td>
+                    <td>${r.ingredientes.length}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info me-1" onclick="verReceta(${r.id})"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editarReceta(${r.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarReceta(${r.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================
+        // BUSCADOR CON FIND
+        // ============================================
+        function buscarRecetas() {
+            const termino = document.getElementById('buscador').value.toLowerCase();
+            const dificultad = document.getElementById('filtroDificultad').value;
+
+            // FILTER + FIND
+            let resultados = recetas.filter(r => {
+                const coincideTexto = r.nombre.toLowerCase().includes(termino) ||
+                    r.categoria.toLowerCase().includes(termino) ||
+                    r.ingredientes.some(i => i.item.toLowerCase().includes(termino));
+                
+                const coincideDificultad = dificultad === 'todas' || r.dificultad === dificultad;
+                
+                return coincideTexto && coincideDificultad;
+            });
+
+            renderizarCards(resultados);
+            renderizarTabla(resultados);
+        }
+
+        document.getElementById('buscador').addEventListener('input', buscarRecetas);
+        document.getElementById('filtroDificultad').addEventListener('change', buscarRecetas);
+
+        // ============================================
+        // CRUD - CREATE, READ, UPDATE, DELETE
+        // ============================================
+
+        // VER - READ
+        function verReceta(id) {
+            const receta = recetas.find(r => r.id === id);
+            if (!receta) return;
+
+            const modal = new bootstrap.Modal(document.getElementById('recetaModal'));
+            document.getElementById('modalTitle').textContent = receta.nombre;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 bg-light bg-opacity-10 rounded">
+                            <h6><i class="fas fa-clock me-2"></i>Tiempo</h6>
+                            <p class="mb-0">${receta.tiempo} minutos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 bg-light bg-opacity-10 rounded">
+                            <h6><i class="fas fa-signal me-2"></i>Dificultad</h6>
+                            <p class="mb-0"><span class="badge badge-${receta.dificultad === 'Baja' ? 'facil' : receta.dificultad === 'Media' ? 'media' : 'alta'}">${receta.dificultad}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 bg-light bg-opacity-10 rounded">
+                            <h6><i class="fas fa-globe me-2"></i>Categoría</h6>
+                            <p class="mb-0">${receta.categoria}</p>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <h6><i class="fas fa-shopping-basket me-2"></i>Ingredientes</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            ${receta.ingredientes.map(i => `<span class="ingredient-tag">${i.cantidad} ${i.item}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h6><i class="fas fa-list-ol me-2"></i>Pasos</h6>
+                        <ol class="ps-3">
+                            ${receta.pasos.map(p => `<li class="mb-2">${p}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `;
+            modal.show();
+        }
+
+        // AGREGAR - CREATE
+        function mostrarModalAgregar() {
+            const nuevoId = Math.max(...recetas.map(r => r.id), 0) + 1;
+            document.getElementById('editId').value = nuevoId;
+            document.getElementById('editNombre').value = '';
+            document.getElementById('editTiempo').value = '';
+            document.getElementById('editDificultad').value = 'Baja';
+            document.getElementById('editCategoria').value = '';
+            document.getElementById('editIngredientes').value = '';
+            document.getElementById('editPasos').value = '';
+
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        // EDITAR - UPDATE (con Spread Operator para inmutabilidad)
+        function editarReceta(id) {
+            const receta = recetas.find(r => r.id === id);
+            if (!receta) return;
+
+            // Destructuring
+            const { id: rId, nombre, tiempo, dificultad, categoria, ingredientes, pasos } = receta;
+
+            document.getElementById('editId').value = rId;
+            document.getElementById('editNombre').value = nombre;
+            document.getElementById('editTiempo').value = tiempo;
+            document.getElementById('editDificultad').value = dificultad;
+            document.getElementById('editCategoria').value = categoria;
+            document.getElementById('editIngredientes').value = ingredientes.map(i => `${i.item}, ${i.cantidad}`).join('\n');
+            document.getElementById('editPasos').value = pasos.join('\n');
+
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const id = parseInt(document.getElementById('editId').value);
+            const nombre = document.getElementById('editNombre').value;
+            const tiempo = parseInt(document.getElementById('editTiempo').value);
+            const dificultad = document.getElementById('editDificultad').value;
+            const categoria = document.getElementById('editCategoria').value;
+            
+            const ingredientesTexto = document.getElementById('editIngredientes').value.split('\n').filter(l => l.trim());
+            const ingredientes = ingredientesTexto.map(l => {
+                const [item, cantidad] = l.split(',').map(s => s.trim());
+                return { item: item || l.trim(), cantidad: cantidad || 'cantidad' };
+            });
+
+            const pasos = document.getElementById('editPasos').value.split('\n').filter(l => l.trim());
+
+            // Buscar si existe
+            const index = recetas.findIndex(r => r.id === id);
+            
+            // SPREAD OPERATOR - Nueva versión inmutable
+            const recetaActualizada = {
+                ...(index >= 0 ? recetas[index] : {}),
+                id,
+                nombre,
+                tiempo,
+                dificultad,
+                categoria,
+                ingredientes,
+                pasos
+            };
+
+            if (index >= 0) {
+                // Guardar versión anterior en historial (inmutabilidad)
+                historialRecetas.push({ ...recetas[index] });
+                
+                // Actualizar con spread
+                recetas = recetas.map(r => r.id === id ? recetaActualizada : r);
+                
+                Swal.fire({
+                    title: '✓ Actualizado',
+                    text: 'La receta ha sido actualizada',
+                    icon: 'success',
+                    background: '#16213e',
+                    color: '#eaeaea'
+                });
+            } else {
+                // Nueva receta
+                recetas.push(recetaActualizada);
+                
+                Swal.fire({
+                    title: '✓ Creado',
+                    text: 'Nueva receta agregada',
+                    icon: 'success',
+                    background: '#16213e',
+                    color: '#eaeaea'
+                });
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            buscarRecetas();
+            actualizarEstadisticas();
+        });
+
+        // ELIMINAR - DELETE
+        function eliminarReceta(id) {
+            const receta = recetas.find(r => r.id === id);
+            
+            Swal.fire({
+                title: '¿Eliminar receta?',
+                html: `¿Estás seguro de eliminar <strong>${receta.nombre}</strong>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#e94560',
+                background: '#16213e',
+                color: '#eaeaea'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Guardar en historial antes de eliminar (inmutabilidad)
+                    historialRecetas.push({ ...receta });
+                    
+                    // FILTER para eliminar
+                    recetas = recetas.filter(r => r.id !== id);
+                    
+                    buscarRecetas();
+                    actualizarEstadisticas();
+                    
+                    Swal.fire({
+                        title: '✓ Eliminado',
+                        text: 'La receta ha sido eliminada',
+                        icon: 'success',
+                        background: '#16213e',
+                        color: '#eaeaea'
+                    });
+                }
+            });
+        }
+
+        // ============================================
+        // CAMBIAR VISTA
+        // ============================================
+        document.querySelectorAll('.nav-link[data-view]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.dataset.view;
+                
+                if (view === 'cards') {
+                    document.getElementById('cardsView').classList.remove('d-none');
+                    document.getElementById('tableView').classList.add('d-none');
+                } else {
+                    document.getElementById('cardsView').classList.add('d-none');
+                    document.getElementById('tableView').classList.remove('d-none');
+                }
+            });
+        });
+
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        actualizarEstadisticas();
+        buscarRecetas();
+    </script>
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 1: map(), filter(), reduce()</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; padding-bottom: 40px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; overflow-x: auto; font-size: 0.9em; }
+        .result { background: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        h1 { color: #0d6efd; }
+        .method-title { color: #198754; font-weight: bold; }
+        .table-container { max-height: 400px; overflow-y: auto; }
+        .btn-group-custom { gap: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Ejemplo 1: .map(), .filter(), .reduce()</h1>
+        
+        <div class="section">
+            <h3>Definición</h3>
+            <p>Estos son métodos de array en JavaScript que permiten transformar, filtrar y acumular datos de forma funcional:</p>
+            <ul>
+                <li><strong>.map()</strong>: Transforma cada elemento de un array y devuelve un nuevo array con los resultados.</li>
+                <li><strong>.filter()</strong>: Crea un nuevo array con los elementos que cumplan una condición.</li>
+                <li><strong>.reduce()</strong>: Reduce el array a un único valor acumulando los elementos.</li>
+            </ul>
+        </div>
+
+        <!-- Sección de Ejemplos Básicos -->
+        <div class="section">
+            <h4 class="method-title">1. Ejemplos Básicos</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <h5>.map() - Duplicar números</h5>
+                    <div class="code-block">
+const numeros = [1, 2, 3, 4, 5];
+const duplicados = numeros.map(n => n * 2);
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="ejecutarMap()">Ejecutar</button>
+                    <div class="result" id="resultMap"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>.filter() - Números pares</h5>
+                    <div class="code-block">
+const numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const pares = numeros.filter(n => n % 2 === 0);
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="ejecutarFilter()">Ejecutar</button>
+                    <div class="result" id="resultFilter"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>.reduce() - Sumar números</h5>
+                    <div class="code-block">
+const numeros = [1, 2, 3, 4, 5];
+const suma = numeros.reduce((acc, n) => acc + n, 0);
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="ejecutarReduce()">Ejecutar</button>
+                    <div class="result" id="resultReduce"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplo Combinado -->
+        <div class="section">
+            <h4 class="method-title">2. Ejemplo Combinado</h4>
+            <p>Obtener la suma de los cuadrados de los números pares:</p>
+            <div class="code-block">
+const numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const resultado = numeros
+    .filter(n => n % 2 === 0)
+    .map(n => n * n)
+    .reduce((acc, n) => acc + n, 0);
+            </div>
+            <button class="btn btn-primary mt-2" onclick="ejecutarCombinado()">Ejecutar</button>
+            <div class="result" id="resultCombinado"></div>
+        </div>
+
+        <!-- Ejemplos de Uso Real -->
+        <div class="section">
+            <h4 class="method-title">3. Ejemplos de Uso en Vida Real</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Calcular precio total con descuento</h5>
+                    <div class="code-block">
+const productos = [
+    { nombre: "Laptop", precio: 1000, cantidad: 2 },
+    { nombre: "Mouse", precio: 25, cantidad: 5 },
+    { nombre: "Teclado", precio: 50, cantidad: 3 }
+];
+const total = productos
+    .map(p => p.precio * p.cantidad)
+    .reduce((acc, p) => acc + p, 0);
+const descuento = total * 0.1;
+const totalFinal = total - descuento;
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="ejemploVidaReal1()">Ver con SweetAlert</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Filtrar usuarios activos por ciudad</h5>
+                    <div class="code-block">
+const usuarios = [
+    { nombre: "Ana", ciudad: "Madrid", activo: true },
+    { nombre: "Carlos", ciudad: "Barcelona", activo: true },
+    { nombre: "Pedro", ciudad: "Madrid", activo: false },
+    { nombre: "María", ciudad: "Barcelona", activo: true }
+];
+const madridActivos = usuarios
+    .filter(u => u.ciudad === "Madrid" && u.activo);
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="ejemploVidaReal2()">Ver con SweetAlert</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplo con Objetos -->
+        <div class="section">
+            <h4 class="method-title">4. Transformación de Objetos</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Convertir nombres a mayúsculas</h5>
+                    <div class="code-block">
+const personas = [
+    { nombre: "juan", edad: 25 },
+    { nombre: "maría", edad: 30 },
+    { nombre: "pedro", edad: 28 }
+];
+const nombresMayus = personas
+    .map(p => p.nombre.toUpperCase());
+                    </div>
+                    <button class="btn btn-info mt-2" onclick="ejemploObjetos1()">Ejecutar</button>
+                    <div class="result" id="resultObj1"></div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Calcular promedio de edades</h5>
+                    <div class="code-block">
+const personas = [
+    { nombre: "Ana", edad: 25 },
+    { nombre: "Carlos", edad: 30 },
+    { nombre: "Pedro", edad: 28 },
+    { nombre: "María", edad: 35 }
+];
+const promedio = personas
+    .map(p => p.edad)
+    .reduce((acc, edad, i, arr) => {
+        acc += edad;
+        return i === arr.length - 1 ? acc / arr.length : acc;
+    }, 0);
+                    </div>
+                    <button class="btn btn-info mt-2" onclick="ejemploObjetos2()">Ejecutar</button>
+                    <div class="result" id="resultObj2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRUD con map, filter, reduce -->
+        <div class="section">
+            <h4 class="method-title">5. CRUD con .map(), .filter(), .reduce()</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h5>Agregar Usuario (map)</h5>
+                    <div class="code-block">
+const usuarios = [{ id: 1, nombre: "Juan" }];
+const nuevoUsuario = { id: 2, nombre: "María" };
+const usuariosActualizados = [...usuarios, nuevoUsuario];
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="agregarUsuario()">Agregar Usuario</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Listar con filter</h5>
+                    <div class="code-block">
+const activos = usuarios.filter(u => u.activo);
+                    </div>
+                    <button class="btn btn-info mt-2" onclick="listarUsuarios()">Listar Todos</button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Modificar Usuario (map)</h5>
+                    <div class="code-block">
+const actualizar = usuarios.map(u => 
+    u.id === id ? { ...u, nombre: nuevoNombre } : u
+);
+                    </div>
+                    <button class="btn btn-warning mt-2" onclick="modificarUsuario()">Modificar</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Eliminar Usuario (filter)</h5>
+                    <div class="code-block">
+const eliminar = usuarios.filter(u => u.id !== id);
+                    </div>
+                    <button class="btn btn-danger mt-2" onclick="eliminarUsuario()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla CRUD Completa -->
+        <div class="section">
+            <h4 class="method-title">6. Gestión de Usuarios (CRUD Completo)</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" onclick="cargarDatosIniciales()">Cargar Datos</button>
+                    <button class="btn btn-success me-2" onclick="mostrarFormularioAgregar()">+ Agregar Usuario</button>
+                    <button class="btn btn-info me-2" onclick="filtrarActivos()">Solo Activos</button>
+                    <button class="btn btn-secondary me-2" onclick="mostrarTodos()">Mostrar Todos</button>
+                    <button class="btn btn-dark" onclick="mostrarEstadisticas()">Estadísticas</button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table table-striped table-hover" id="tablaUsuarios">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Edad</th>
+                            <th>Ciudad</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyUsuarios">
+                        <tr><td colspan="7" class="text-center">No hay datos. Haga clic en "Cargar Datos"</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/modificar usuario -->
+    <div class="modal fade" id="usuarioModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Agregar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formUsuario">
+                        <input type="hidden" id="usuarioId">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="usuarioNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="usuarioEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Edad</label>
+                            <input type="number" class="form-control" id="usuarioEdad" required min="1" max="150">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ciudad</label>
+                            <select class="form-select" id="usuarioCiudad">
+                                <option value="Madrid">Madrid</option>
+                                <option value="Barcelona">Barcelona</option>
+                                <option value="Sevilla">Sevilla</option>
+                                <option value="Valencia">Valencia</option>
+                                <option value="Málaga">Málaga</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Activo</label>
+                            <select class="form-select" id="usuarioActivo">
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarUsuario()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Datos globales
+        let usuarios = [];
+        let modal;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            modal = new bootstrap.Modal(document.getElementById('usuarioModal'));
+        });
+
+        // Datos iniciales
+        const datosIniciales = [
+            { id: 1, nombre: "Juan Pérez", email: "juan@email.com", edad: 28, ciudad: "Madrid", activo: true },
+            { id: 2, nombre: "María García", email: "maria@email.com", edad: 32, ciudad: "Barcelona", activo: true },
+            { id: 3, nombre: "Pedro López", email: "pedro@email.com", edad: 25, ciudad: "Sevilla", activo: false },
+            { id: 4, nombre: "Ana Martínez", email: "ana@email.com", edad: 35, ciudad: "Valencia", activo: true },
+            { id: 5, nombre: "Carlos Sánchez", email: "carlos@email.com", edad: 29, ciudad: "Málaga", activo: true },
+            { id: 6, nombre: "Laura Rodríguez", email: "laura@email.com", edad: 31, ciudad: "Madrid", activo: true },
+            { id: 7, nombre: "David Fernández", email: "david@email.com", edad: 27, ciudad: "Barcelona", activo: false },
+            { id: 8, nombre: "Isabel Torres", email: "isabel@email.com", edad: 33, ciudad: "Sevilla", activo: true }
+        ];
+
+        function cargarDatosIniciales() {
+            usuarios = [...datosIniciales];
+            renderizarTabla(usuarios);
+            Swal.fire({
+                icon: 'success',
+                title: 'Datos cargados',
+                text: `Se cargaron ${usuarios.length} usuarios correctamente`,
+                timer: 2000
+            });
+        }
+
+        function renderizarTabla(datos) {
+            const tbody = document.getElementById('tbodyUsuarios');
+            if (datos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay usuarios</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = datos.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.nombre}</td>
+                    <td>${u.email}</td>
+                    <td>${u.edad}</td>
+                    <td>${u.ciudad}</td>
+                    <td><span class="badge ${u.activo ? 'bg-success' : 'bg-danger'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="editarUsuario(${u.id})">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${u.id})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Ejemplos básicos
+        function ejecutarMap() {
+            const numeros = [1, 2, 3, 4, 5];
+            const duplicados = numeros.map(n => n * 2);
+            document.getElementById('resultMap').innerHTML = `<strong>Resultado:</strong> [${duplicados.join(', ')}]`;
+        }
+
+        function ejecutarFilter() {
+            const numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const pares = numeros.filter(n => n % 2 === 0);
+            document.getElementById('resultFilter').innerHTML = `<strong>Resultado:</strong> [${pares.join(', ')}]`;
+        }
+
+        function ejecutarReduce() {
+            const numeros = [1, 2, 3, 4, 5];
+            const suma = numeros.reduce((acc, n) => acc + n, 0);
+            document.getElementById('resultReduce').innerHTML = `<strong>Resultado:</strong> ${suma}`;
+        }
+
+        function ejecutarCombinado() {
+            const numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const resultado = numeros
+                .filter(n => n % 2 === 0)
+                .map(n => n * n)
+                .reduce((acc, n) => acc + n, 0);
+            document.getElementById('resultCombinado').innerHTML = `<strong>Resultado:</strong> ${resultado} (suma de cuadrados de pares)`;
+        }
+
+        // Ejemplos de vida real con SweetAlert
+        function ejemploVidaReal1() {
+            const productos = [
+                { nombre: "Laptop", precio: 1000, cantidad: 2 },
+                { nombre: "Mouse", precio: 25, cantidad: 5 },
+                { nombre: "Teclado", precio: 50, cantidad: 3 }
+            ];
+            
+            const detalles = productos.map(p => `${p.nombre}: $${p.precio} x ${p.cantidad} = $${p.precio * p.cantidad}`).join('\n');
+            const total = productos.map(p => p.precio * p.cantidad).reduce((acc, p) => acc + p, 0);
+            const descuento = total * 0.1;
+            const totalFinal = total - descuento;
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'Carrito de Compras',
+                html: `<strong>Productos:</strong><br>${detalles}<br><br>
+                       <strong>Subtotal:</strong> $${total}<br>
+                       <strong>Descuento (10%):</strong> -$${descuento}<br>
+                       <strong>Total:</strong> $${totalFinal}`,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        function ejemploVidaReal2() {
+            const usuarios = [
+                { nombre: "Ana", ciudad: "Madrid", activo: true },
+                { nombre: "Carlos", ciudad: "Barcelona", activo: true },
+                { nombre: "Pedro", ciudad: "Madrid", activo: false },
+                { nombre: "María", ciudad: "Barcelona", activo: true }
+            ];
+            
+            const madridActivos = usuarios.filter(u => u.ciudad === "Madrid" && u.activo);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Usuarios de Madrid Activos',
+                html: madridActivos.length > 0 
+                    ? madridActivos.map(u => `• ${u.nombre}`).join('<br>')
+                    : 'No se encontraron usuarios',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        // Ejemplos con objetos
+        function ejemploObjetos1() {
+            const personas = [
+                { nombre: "juan", edad: 25 },
+                { nombre: "maría", edad: 30 },
+                { nombre: "pedro", edad: 28 }
+            ];
+            const nombresMayus = personas.map(p => p.nombre.toUpperCase());
+            document.getElementById('resultObj1').innerHTML = `<strong>Resultado:</strong> [${nombresMayus.join(', ')}]`;
+        }
+
+        function ejemploObjetos2() {
+            const personas = [
+                { nombre: "Ana", edad: 25 },
+                { nombre: "Carlos", edad: 30 },
+                { nombre: "Pedro", edad: 28 },
+                { nombre: "María", edad: 35 }
+            ];
+            const promedio = personas.map(p => p.edad).reduce((acc, edad, i, arr) => {
+                acc += edad;
+                return i === arr.length - 1 ? acc / arr.length : acc;
+            }, 0);
+            document.getElementById('resultObj2').innerHTML = `<strong>Promedio de edades:</strong> ${promedio.toFixed(1)} años`;
+        }
+
+        // CRUD Functions
+        function agregarUsuario() {
+            if (usuarios.length === 0) {
+                cargarDatosIniciales();
+                return;
+            }
+            mostrarFormularioAgregar();
+        }
+
+        function mostrarFormularioAgregar() {
+            document.getElementById('modalTitle').textContent = 'Agregar Usuario';
+            document.getElementById('formUsuario').reset();
+            document.getElementById('usuarioId').value = '';
+            modal.show();
+        }
+
+        function listarUsuarios() {
+            if (usuarios.length === 0) {
+                Swal.fire('No hay datos', 'Cargue los datos primero', 'warning');
+                return;
+            }
+            const lista = usuarios.map(u => `${u.nombre} (${u.email}) - ${u.ciudad}`).join('\n');
+            Swal.fire({
+                icon: 'info',
+                title: 'Lista de Usuarios',
+                html: `<pre style="text-align: left">${lista}</pre>`
+            });
+        }
+
+        function modificarUsuario() {
+            if (usuarios.length === 0) {
+                cargarDatosIniciales();
+            }
+            const ids = usuarios.map(u => u.id);
+            Swal.fire({
+                title: 'Modificar Usuario',
+                input: 'select',
+                inputOptions: Object.fromEntries(usuarios.map(u => [u.id, `${u.nombre} (ID: ${u.id})`])),
+                inputPlaceholder: 'Seleccione un usuario',
+                showCancelButton: true
+            }).then(result => {
+                if (result.isConfirmed && result.value) {
+                    editarUsuario(parseInt(result.value));
+                }
+            });
+        }
+
+        function eliminarUsuario(id) {
+            if (usuarios.length === 0) {
+                Swal.fire('No hay datos', 'Cargue los datos primero', 'warning');
+                return;
+            }
+            
+            const usuario = usuarios.find(u => u.id === id);
+            if (!usuario && id) {
+                // Si se pasó un ID directo
+                const ids = usuarios.map(u => u.id);
+                Swal.fire({
+                    title: 'Eliminar Usuario',
+                    input: 'select',
+                    inputOptions: Object.fromEntries(usuarios.map(u => [u.id, `${u.nombre} (ID: ${u.id})`])),
+                    inputPlaceholder: 'Seleccione un usuario',
+                    showCancelButton: true
+                }).then(result => {
+                    if (result.isConfirmed && result.value) {
+                        confirmarEliminacion(parseInt(result.value));
+                    }
+                });
+                return;
+            }
+            
+            if (id) {
+                confirmarEliminacion(id);
+            }
+        }
+
+        function confirmarEliminacion(id) {
+            const usuario = usuarios.find(u => u.id === id);
+            Swal.fire({
+                title: '¿Eliminar usuario?',
+                text: `¿Está seguro de eliminar a ${usuario.nombre}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    usuarios = usuarios.filter(u => u.id !== id);
+                    renderizarTabla(usuarios);
+                    Swal.fire('Eliminado', 'Usuario eliminado correctamente', 'success');
+                }
+            });
+        }
+
+        function editarUsuario(id) {
+            const usuario = usuarios.find(u => u.id === id);
+            if (!usuario) return;
+            
+            document.getElementById('modalTitle').textContent = 'Modificar Usuario';
+            document.getElementById('usuarioId').value = usuario.id;
+            document.getElementById('usuarioNombre').value = usuario.nombre;
+            document.getElementById('usuarioEmail').value = usuario.email;
+            document.getElementById('usuarioEdad').value = usuario.edad;
+            document.getElementById('usuarioCiudad').value = usuario.ciudad;
+            document.getElementById('usuarioActivo').value = usuario.activo.toString();
+            modal.show();
+        }
+
+        function guardarUsuario() {
+            const id = document.getElementById('usuarioId').value;
+            const nombre = document.getElementById('usuarioNombre').value;
+            const email = document.getElementById('usuarioEmail').value;
+            const edad = parseInt(document.getElementById('usuarioEdad').value);
+            const ciudad = document.getElementById('usuarioCiudad').value;
+            const activo = document.getElementById('usuarioActivo').value === 'true';
+            
+            if (!nombre || !email || !edad) {
+                Swal.fire('Error', 'Complete todos los campos', 'error');
+                return;
+            }
+            
+            if (id) {
+                // Modificar
+                usuarios = usuarios.map(u => u.id === parseInt(id) 
+                    ? { ...u, nombre, email, edad, ciudad, activo } 
+                    : u);
+                Swal.fire('Actualizado', 'Usuario modificado correctamente', 'success');
+            } else {
+                // Agregar
+                const nuevoId = usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
+                usuarios.push({ id: nuevoId, nombre, email, edad, ciudad, activo });
+                Swal.fire('Agregado', 'Usuario agregado correctamente', 'success');
+            }
+            
+            modal.hide();
+            renderizarTabla(usuarios);
+        }
+
+        // Filtros
+        function filtrarActivos() {
+            if (usuarios.length === 0) {
+                cargarDatosIniciales();
+            }
+            const activos = usuarios.filter(u => u.activo);
+            renderizarTabla(activos);
+            Swal.fire({
+                icon: 'info',
+                title: 'Filtrado',
+                text: `Se muestran ${activos.length} usuarios activos`,
+                timer: 1500
+            });
+        }
+
+        function mostrarTodos() {
+            if (usuarios.length === 0) {
+                cargarDatosIniciales();
+            }
+            renderizarTabla(usuarios);
+        }
+
+        function mostrarEstadisticas() {
+            if (usuarios.length === 0) {
+                cargarDatosIniciales();
+            }
+            
+            const total = usuarios.length;
+            const activos = usuarios.filter(u => u.activo).length;
+            const inactivos = total - activos;
+            const promedioEdad = usuarios.map(u => u.edad).reduce((acc, e) => acc + e, 0) / total;
+            const ciudades = [...new Set(usuarios.map(u => u.ciudad))];
+            const ciudadCounts = ciudades.map(c => ({
+                ciudad: c,
+                count: usuarios.filter(u => u.ciudad === c).length
+            }));
+            
+            const html = `
+                <strong>Total de usuarios:</strong> ${total}<br>
+                <strong>Usuarios activos:</strong> ${activos}<br>
+                <strong>Usuarios inactivos:</strong> ${inactivos}<br>
+                <strong>Promedio de edad:</strong> ${promedioEdad.toFixed(1)} años<br>
+                <strong>Ciudades:</strong> ${ciudades.join(', ')}<br>
+                <br><strong>Por ciudad:</strong><br>
+                ${ciudadCounts.map(c => `• ${c.ciudad}: ${c.count}`).join('<br>')}
+            `;
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'Estadísticas',
+                html: html
+            });
+        }
+    </script>
+</body>
+</html>

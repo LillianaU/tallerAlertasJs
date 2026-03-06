@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 7: fs & Buffer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; padding-bottom: 40px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; font-family: 'Consolas', monospace; overflow-x: auto; font-size: 0.85em; }
+        .result { background: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap; }
+        h1 { color: #0d6efd; }
+        .method-title { color: #198754; font-weight: bold; }
+        .node-badge { background: #339933; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.8em; }
+        .browser-badge { background: #4285f4; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.8em; }
+        .console-output { background: #0d0d0d; color: #00ff00; padding: 10px; border-radius: 5px; font-family: 'Consolas', monospace; font-size: 0.8em; max-height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Ejemplo 7: fs & Buffer</h1>
+        
+        <div class="alert alert-info">
+            <h5>¿Cómo ejecutar este ejemplo?</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="node-badge">NODE.JS</span>
+                    <p>Descarga el archivo <code>ejemplo7.js</code> y ejecútalo en terminal:</p>
+                    <code>node ejemplo7.js</code>
+                </div>
+                <div class="col-md-6">
+                    <span class="browser-badge">NAVEGADOR</span>
+                    <p>Haz clic en los botones de abajo para ver la simulación en el navegador.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Definición -->
+        <div class="section">
+            <h3>¿Qué es fs y Buffer?</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><strong>fs (File System)</strong> <span class="node-badge">Node.js</span></h5>
+                    <p>Módulo de Node.js para trabajar con archivos:</p>
+                    <ul>
+                        <li><code>fs.readFileSync()</code> - Leer archivos</li>
+                        <li><code>fs.writeFileSync()</code> - Escribir archivos</li>
+                        <li><code>fs.appendFileSync()</code> - Agregar contenido</li>
+                        <li><code>fs.unlinkSync()</code> - Eliminar archivos</li>
+                        <li><code>fs.mkdirSync()</code> - Crear carpetas</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5><strong>Buffer</strong> <span class="node-badge">Node.js</span></h5>
+                    <p>Clase para manejar datos binarios:</p>
+                    <ul>
+                        <li><code>Buffer.from(str)</code> - Crear desde texto</li>
+                        <li><code>Buffer.alloc(size)</code> - Crear buffer vacío</li>
+                        <li><code>buffer.write(str)</code> - Escribir en buffer</li>
+                        <li><code>buffer.toString()</code> - Convertir a texto</li>
+                        <li><code>buffer.toString('hex')</code> - Convertir a hex</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejercicio 1 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 1: Buffer Básico <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Crea un buffer desde texto y muestra los bytes (códigos ASCII).</p>
+            <div class="code-block">
+const buffer = Buffer.from('Hola Mundo', 'utf8');
+console.log(buffer);              // &lt;Buffer 48 6f 6c 61 20 4d 75 6e 64 6f&gt;
+console.log(buffer.toString());   // Hola Mundo
+console.log(buffer.length);       // 11
+
+const bufferVacio = Buffer.alloc(10);
+console.log(bufferVacio);        // &lt;Buffer 00 00 00 00 00 00 00 00 00 00&gt;
+            </div>
+            <button class="btn btn-primary mt-2" onclick="ejecutarE1()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e1"></div>
+        </div>
+
+        <!-- Ejercicio 2 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 2: Escribir en Buffer <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Escribe texto en posiciones específicas del buffer.</p>
+            <div class="code-block">
+const buf = Buffer.alloc(16);
+buf.write('Hello', 0, 'utf8');
+buf.write(' World', 5, 'utf8');
+
+console.log(buf.toString());           // Hello World
+console.log(buf.slice(0, 5).toString()); // Hello
+            </div>
+            <button class="btn btn-primary mt-2" onclick="ejecutarE2()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e2"></div>
+        </div>
+
+        <!-- Ejercicio 3 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 3: fs - Crear Archivo <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Crea un archivo en el sistema de archivos.</p>
+            <div class="code-block">
+const fs = require('fs');
+
+const contenido = 'Hola, esto es un archivo de prueba';
+fs.writeFileSync('mi_archivo.txt', contenido);
+console.log('Archivo creado');
+
+// Verificar
+const existe = fs.existsSync('mi_archivo.txt');
+console.log('Existe:', existe);
+
+const stats = fs.statSync('mi_archivo.txt');
+console.log('Tamaño:', stats.size, 'bytes');
+            </div>
+            <button class="btn btn-success mt-2" onclick="ejecutarE3()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e3"></div>
+        </div>
+
+        <!-- Ejercicio 4 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 4: fs - Leer Archivo <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Lee el contenido de un archivo.</p>
+            <div class="code-block">
+const fs = require('fs');
+
+// Síncrono
+const contenido = fs.readFileSync('mi_archivo.txt', 'utf8');
+console.log(contenido);
+
+// Como Buffer
+const buffer = fs.readFileSync('mi_archivo.txt');
+console.log(buffer);
+            </div>
+            <button class="btn btn-success mt-2" onclick="ejecutarE4()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e4"></div>
+        </div>
+
+        <!-- Ejercicio 5 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 5: Streams con Chunks <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Procesa archivos grandes en chunks (trozos) sin cargar todo en memoria.</p>
+            <div class="code-block">
+const fs = require('fs');
+
+const stream = fs.createReadStream('mi_archivo.txt', {
+    encoding: 'utf8',
+    highWaterMark: 1024
+});
+
+let chunks = 0;
+stream.on('data', (chunk) => {
+    chunks++;
+    console.log('Chunk:', chunk.length, 'bytes');
+});
+
+stream.on('end', () => {
+    console.log('Total chunks:', chunks);
+});
+            </div>
+            <button class="btn btn-warning mt-2" onclick="ejecutarE5()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e5"></div>
+        </div>
+
+        <!-- Ejercicio 6 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 6: fs - Agregar Contenido <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Agrega contenido a un archivo sin borrar lo anterior.</p>
+            <div class="code-block">
+const fs = require('fs');
+
+fs.writeFileSync('log.txt', 'Línea 1\n');
+fs.appendFileSync('log.txt', 'Línea 2\n');
+fs.appendFileSync('log.txt', 'Línea 3\n');
+
+const contenido = fs.readFileSync('log.txt', 'utf8');
+console.log(contenido);
+            </div>
+            <button class="btn btn-warning mt-2" onclick="ejecutarE6()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e6"></div>
+        </div>
+
+        <!-- Ejercicio 7 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 7: CRUD con Archivos <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Create, Read, Update, Delete con archivos JSON.</p>
+            <div class="code-block">
+const fs = require('fs');
+
+// CREATE
+let usuarios = [{id:1, nombre:'Juan'},{id:2, nombre:'María'}];
+fs.writeFileSync('usuarios.json', JSON.stringify(usuarios));
+
+// READ
+let datos = JSON.parse(fs.readFileSync('usuarios.json', 'utf8'));
+console.log('Leer:', datos);
+
+// UPDATE
+datos[0].nombre = 'Juan Actualizado';
+fs.writeFileSync('usuarios.json', JSON.stringify(datos));
+
+// DELETE
+fs.unlinkSync('usuarios.json');
+console.log('Eliminado');
+            </div>
+            <button class="btn btn-info mt-2" onclick="ejecutarE7()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e7"></div>
+        </div>
+
+        <!-- Ejercicio 8 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 8: fs - Directorios <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Crea, lista y gestiona directorios.</p>
+            <div class="code-block">
+const fs = require('fs');
+
+// Crear directorio
+if (!fs.existsSync('micarpeta')) {
+    fs.mkdirSync('micarpeta');
+}
+
+// Crear archivo dentro
+fs.writeFileSync('micarpeta/archivo.txt', 'contenido');
+
+// Listar
+const archivos = fs.readdirSync('micarpeta');
+console.log('Archivos:', archivos);
+
+// Info
+const stats = fs.statSync('micarpeta/archivo.txt');
+console.log('Tamaño:', stats.size);
+            </div>
+            <button class="btn btn-info mt-2" onclick="ejecutarE8()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e8"></div>
+        </div>
+
+        <!-- Ejercicio 9 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 9: Buffer - Bytes y Hex <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Convierte texto a bytes y hexadecimal.</p>
+            <div class="code-block">
+const buf = Buffer.from('Hola');
+
+// Bytes
+console.log('Bytes:', buf);           // [72, 111, 108, 97]
+
+// Hexadecimal
+console.log('Hex:', buf.toString('hex'));  // 486f6c61
+
+// Base64
+console.log('Base64:', buf.toString('base64'));  // SG9sYQ==
+
+// Desde hex
+const buf2 = Buffer.from('486f6c61', 'hex');
+console.log('Desde hex:', buf2.toString());  // Hola
+            </div>
+            <button class="btn btn-danger mt-2" onclick="ejecutarE9()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e9"></div>
+        </div>
+
+        <!-- Ejercicio 10 -->
+        <div class="section">
+            <h4 class="method-title">Ejercicio 10: Comparación String vs Buffer <span class="node-badge">Node.js</span></h4>
+            <p><strong>¿Qué hace?</strong> Compara la longitud de strings con buffers.</p>
+            <div class="code-block">
+const texto = 'A'.repeat(10000);
+const buffer = Buffer.from(texto);
+
+console.log('String length:', texto.length);    // 10000
+console.log('Buffer length:', buffer.length);    // 10000
+// En ASCII son iguales, pero en UTF-8 pueden variar
+            </div>
+            <button class="btn btn-danger mt-2" onclick="ejecutarE10()">Ejecutar en Navegador</button>
+            <div class="console-output" id="res-e10"></div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="section">
+            <h4 class="method-title">Resumen de Comandos</h4>
+            <table class="table table-bordered table-sm">
+                <thead class="table-dark"><tr><th>Categoría</th><th>Comando</th><th>Descripción</th></tr></thead>
+                <tbody>
+                    <tr><td rowspan="5"><strong>Buffer</strong></td><td><code>Buffer.from(str)</code></td><td>Crear buffer desde string</td></tr>
+                    <tr><td><code>Buffer.alloc(size)</code></td><td>Crear buffer vacío</td></tr>
+                    <tr><td><code>buffer.write(str, offset)</code></td><td>Escribir en buffer</td></tr>
+                    <tr><td><code>buffer.toString()</code></td><td>Convertir a string</td></tr>
+                    <tr><td><code>buffer.toString('hex')</code></td><td>Convertir a hexadecimal</td></tr>
+                    <tr><td rowspan="7"><strong>fs</strong></td><td><code>fs.readFileSync(path, enc)</code></td><td>Leer archivo</td></tr>
+                    <tr><td><code>fs.writeFileSync(path, data)</code></td><td>Escribir archivo</td></tr>
+                    <tr><td><code>fs.appendFileSync(path, data)</code></td><td>Agregar contenido</td></tr>
+                    <tr><td><code>fs.unlinkSync(path)</code></td><td>Eliminar archivo</td></tr>
+                    <tr><td><code>fs.existsSync(path)</code></td><td>Verificar existencia</td></tr>
+                    <tr><td><code>fs.mkdirSync(path)</code></td><td>Crear directorio</td></tr>
+                    <tr><td><code>fs.readdirSync(path)</code></td><td>Listar directorio</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simulación de Buffer para navegador
+        function bufferFrom(str, enc) {
+            const bytes = [];
+            for (let i = 0; i < str.length; i++) bytes.push(str.charCodeAt(i));
+            return bytes;
+        }
+
+        function bufferAlloc(size) {
+            return new Array(size).fill(0);
+        }
+
+        // Ejercicio 1
+        function ejecutarE1() {
+            const buffer = bufferFrom('Hola Mundo', 'utf8');
+            const bufferVacio = bufferAlloc(10);
+            const output = `
+> Buffer.from('Hola Mundo', 'utf8')
+[${buffer.join(', ')}]
+
+> buffer.toString()
+Hola Mundo
+
+> buffer.length
+${buffer.length}
+
+> Buffer.alloc(10)
+[${bufferVacio.join(', ')}]`;
+            document.getElementById('res-e1').textContent = output;
+        }
+
+        // Ejercicio 2
+        function ejecutarE2() {
+            const buf = bufferAlloc(16);
+            const texto1 = 'Hello';
+            const texto2 = ' World';
+            for (let i = 0; i < texto1.length; i++) buf[i] = texto1.charCodeAt(i);
+            for (let i = 0; i < texto2.length; i++) buf[5 + i] = texto2.charCodeAt(i);
+            
+            let result = '';
+            for (let b of buf) if (b > 0) result += String.fromCharCode(b);
+            let prim5 = '';
+            for (let i = 0; i < 5; i++) prim5 += String.fromCharCode(buf[i]);
+            
+            const output = `
+> const buf = Buffer.alloc(16)
+> buf.write('Hello', 0)
+> buf.write(' World', 5)
+> buf.toString()
+${result}
+
+> buf.slice(0, 5).toString()
+${prim5}`;
+            document.getElementById('res-e2').textContent = output;
+        }
+
+        // Ejercicio 3
+        function ejecutarE3() {
+            // Simular en navegador con Blob
+            const contenido = 'Hola, esto es un archivo de prueba';
+            const blob = new Blob([contenido], {type: 'text/plain'});
+            
+            const output = `
+> const fs = require('fs')
+> fs.writeFileSync('mi_archivo.txt', contenido)
+[Archivo creado en el sistema]
+
+> fs.existsSync('mi_archivo.txt')
+true
+
+> const stats = fs.statSync('mi_archivo.txt')
+> stats.size
+${blob.size} bytes
+
+[En el navegador simulamos con Blob]
+[Archivo: mi_archivo.txt]
+[Tamaño: ${blob.size} bytes]`;
+            document.getElementById('res-e3').textContent = output;
+        }
+
+        // Ejercicio 4
+        function ejecutarE4() {
+            const contenido = 'Hola, esto es un archivo de prueba';
+            const blob = new Blob([contenido], {type: 'text/plain'});
+            const bytes = bufferFrom(contenido, 'utf8');
+            
+            const output = `
+> const fs = require('fs')
+> fs.readFileSync('mi_archivo.txt', 'utf8')
+${contenido}
+
+> fs.readFileSync('mi_archivo.txt')
+Buffer.from([${bytes.slice(0,10).join(', ')}...])
+[Total: ${bytes.length} bytes]`;
+            document.getElementById('res-e4').textContent = output;
+        }
+
+        // Ejercicio 5
+        function ejecutarE5() {
+            const output = `
+> const fs = require('fs')
+> const stream = fs.createReadStream('mi_archivo.txt', {
+    encoding: 'utf8',
+    highWaterMark: 1024
+  })
+
+> stream.on('data', (chunk) => {
+    console.log('Chunk recibido:', chunk.length, 'bytes')
+  })
+
+> stream.on('end', () => {
+    console.log('Lectura completada')
+  })
+
+[En un archivo grande se procesa en chunks]
+[Simulación: chunks de 1024 bytes cada uno]`;
+            document.getElementById('res-e5').textContent = output;
+        }
+
+        // Ejercicio 6
+        function ejecutarE6() {
+            const output = `
+> const fs = require('fs')
+> fs.writeFileSync('log.txt', 'Línea 1\\\\n')
+> fs.appendFileSync('log.txt', 'Línea 2\\\\n')
+> fs.appendFileSync('log.txt', 'Línea 3\\\\n')
+> console.log(fs.readFileSync('log.txt', 'utf8'))
+Línea 1
+Línea 2
+Línea 3`;
+            document.getElementById('res-e6').textContent = output;
+        }
+
+        // Ejercicio 7
+        function ejecutarE7() {
+            const output = `
+> const fs = require('fs')
+
+// CREATE
+> usuarios = [{id:1, nombre:'Juan'},{id:2, nombre:'María'}]
+> fs.writeFileSync('usuarios.json', JSON.stringify(usuarios))
+[Archivo creado]
+
+// READ  
+> JSON.parse(fs.readFileSync('usuarios.json', 'utf8'))
+[{id:1, nombre:'Juan'}, {id:2, nombre:'María'}]
+
+// UPDATE
+> datos[0].nombre = 'Juan Actualizado'
+> fs.writeFileSync('usuarios.json', JSON.stringify(datos))
+[Archivo actualizado]
+
+// DELETE
+> fs.unlinkSync('usuarios.json')
+[Archivo eliminado]`;
+            document.getElementById('res-e7').textContent = output;
+        }
+
+        // Ejercicio 8
+        function ejecutarE8() {
+            const output = `
+> const fs = require('fs')
+
+// CREATE DIR
+> if (!fs.existsSync('micarpeta')) {
+    fs.mkdirSync('micarpeta')
+  }
+[Directorio creado]
+
+// CREATE FILE IN DIR  
+> fs.writeFileSync('micarpeta/archivo.txt', 'contenido')
+[Archivo creado]
+
+// READ DIR
+> fs.readdirSync('micarpeta')
+['archivo.txt']
+
+// STAT
+> fs.statSync('micarpeta/archivo.txt')
+FileDetails { size: 9, ... }`;
+            document.getElementById('res-e8').textContent = output;
+        }
+
+        // Ejercicio 9
+        function ejecutarE9() {
+            const buf = bufferFrom('Hola', 'utf8');
+            const hex = buf.map(b => b.toString(16).padStart(2,'0')).join('');
+            const output = `
+> const buf = Buffer.from('Hola')
+> buf
+[${buf.join(', ')}]
+
+> buf.toString('hex')
+${hex}
+
+> buf.toString('base64')
+${btoa('Hola')}
+
+> Buffer.from('${hex}', 'hex').toString()
+Hola`;
+            document.getElementById('res-e9').textContent = output;
+        }
+
+        // Ejercicio 10
+        function ejecutarE10() {
+            const texto = 'A'.repeat(10000);
+            const buffer = bufferFrom(texto, 'utf8');
+            const output = `
+> const texto = 'A'.repeat(10000)
+> const buffer = Buffer.from(texto)
+
+> texto.length
+${texto.length}
+
+> buffer.length
+${buffer.length}
+
+[En ASCII: caracteres = bytes]
+[En UTF-8: puede variar con caracteres especiales]`;
+            document.getElementById('res-e10').textContent = output;
+        }
+    </script>
+</body>
+</html>

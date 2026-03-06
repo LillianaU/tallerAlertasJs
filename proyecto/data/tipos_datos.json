@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "categoria": "JS Intermedio II",
+    "termino": ".map(), .filter(), .reduce()",
+    "aplicabilidad": "Generar reportes financieros, filtros de busqueda y transformacion de precios."
+  },
+  {
+    "id": 2,
+    "categoria": "JS Intermedio II",
+    "termino": "Destructuring & Spread",
+    "aplicabilidad": "Manejar el estado del formulario de forma limpia y segura."
+  },
+  {
+    "id": 3,
+    "categoria": "Formatos Texto",
+    "termino": "YAML / TOML",
+    "aplicabilidad": "Archivos de configuracion de la App (colores del tema, roles de acceso)."
+  },
+  {
+    "id": 4,
+    "categoria": "Formatos Texto",
+    "termino": "CSV / XML",
+    "aplicabilidad": "Importacion masiva de datos desde Excel o sistemas contables antiguos."
+  },
+  {
+    "id": 5,
+    "categoria": "Formatos Binario",
+    "termino": "MessagePack / BSON",
+    "aplicabilidad": "Guardar datos en el almacenamiento local ocupando el minimo espacio posible."
+  },
+  {
+    "id": 6,
+    "categoria": "Formatos Binario",
+    "termino": "Protobuf / Avro",
+    "aplicabilidad": "Definir reglas estrictas para que no falte ningun campo obligatorio en el registro."
+  },
+  {
+    "id": 7,
+    "categoria": "Node.js / CLI",
+    "termino": "fs & Buffer",
+    "aplicabilidad": "Lectura directa de archivos del sistema y manejo de datos crudos."
+  }
+]

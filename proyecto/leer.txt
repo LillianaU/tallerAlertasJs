@@ -1,0 +1,20 @@
+El proyecto es HTML puro y no necesita instalación. Solo necesitas abrir el archivo en tu navegador:
+
+Opción 1 - Directamente:
+
+Haz doble clic en index.html
+Opción 2 - Con servidor local (recomendado):
+
+Si tienes Node.js instalado:
+
+cd C:\Users\LILLYU\Documents\GitHub\tallerAlertasJs\proyecto
+npx serve
+O si prefieres, instala http-server:
+
+npm install -g http-server
+http-server
+Opción 3 - Con VS Code:
+
+Abre la carpeta del proyecto en VS Code
+Instala la extensión "Live Server"
+Haz clic derecho en index.html > "Open with Live Server"

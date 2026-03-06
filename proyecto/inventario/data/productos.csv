@@ -1,0 +1,9 @@
+id,nombre,categoria,precio,stock,activo
+1,Laptop Dell XPS,Computación,1200.50,15,true
+2,Mouse Logitech,Periféricos,25.99,150,true
+3,Teclado Mecánico,Periféricos,89.99,0,false
+4,Monitor 4K Samsung,Monitores,450.00,8,true
+5,Webcam HD,Cámaras,0,45,true
+6,Audífonos Sony,Audio,199.99,12,true
+7,,Categoría Vacía,50.00,10,true
+8,Tablet iPad,Tablets,800.00,20,true

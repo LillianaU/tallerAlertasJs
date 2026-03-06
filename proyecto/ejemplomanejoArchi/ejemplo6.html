@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 6: Protobuf / Avro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; padding-bottom: 40px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; overflow-x: auto; font-size: 0.8em; }
+        .result { background: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        h1 { color: #0d6efd; }
+        .method-title { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Ejemplo 6: Protobuf / Avro</h1>
+        
+        <div class="section">
+            <h3>Definición</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Protocol Buffers (Protobuf)</h5>
+                    <p>Sistema de serialización binaria de Google, requiere esquemas (.proto). Muy rápido y eficiente.</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Avro</h5>
+                    <p>Sistema de Apache, usa esquemas JSON. Permite evolución de esquemas dinámicamente.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protobuf -->
+        <div class="section">
+            <h4 class="method-title">1. Protobuf - Esquemas</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Definición de mensaje</h5>
+                    <div class="code-block">
+syntax = "proto3";
+
+message Persona {
+    string nombre = 1;
+    int32 edad = 2;
+    string email = 3;
+    repeated string telefonos = 4;
+}
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="verProtoSchema()">Ver esquema</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Mensajes anidados</h5>
+                    <div class="code-block">
+message Pedido {
+    int32 id = 1;
+    Persona cliente = 2;
+    repeated Item items = 3;
+}
+
+message Item {
+    string producto = 1;
+    int32 cantidad = 2;
+    double precio = 3;
+}
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="verProtoAnidado()">Ver</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avro -->
+        <div class="section">
+            <h4 class="method-title">2. Avro - Esquemas</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Esquema en JSON</h5>
+                    <div class="code-block">
+{
+    "type": "record",
+    "name": "Persona",
+    "fields": [
+        {"name": "nombre", "type": "string"},
+        {"name": "edad", "type": "int"},
+        {"name": "email", "type": ["string", "null"]}
+    ]
+}
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="verAvroSchema()">Ver</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Tipo array y map</h5>
+                    <div class="code-block">
+{
+    "type": "record",
+    "name": "Empresa",
+    "fields": [
+        {"name": "nombre", "type": "string"},
+        {"name": "empleados", 
+         "type": {"type": "array", "items": "string"}},
+        {"name": "config",
+         "type": {"type": "map", 
+                  "values": "string"}}
+    ]
+}
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="verAvroComplex()">Ver</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Serialización -->
+        <div class="section">
+            <h4 class="method-title">3. Serialización Simulada</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Datos a serializar</h5>
+                    <textarea class="form-control" id="datosSerialize" rows="6">{
+  "id": 1,
+  "nombre": "Juan Pérez",
+  "email": "juan@email.com",
+  "telefonos": ["555-1234", "555-5678"]
+}</textarea>
+                    <button class="btn btn-primary mt-2" onclick="serializarDatos()">Serializar</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Resultado (binario simulado)</h5>
+                    <textarea class="form-control" id="datosSerializados" rows="6" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparación -->
+        <div class="section">
+            <h4 class="method-title">4. Comparación</h4>
+            <button class="btn btn-info" onclick="compararFormatos()">Comparar</button>
+            <div class="result" id="resComparar"></div>
+        </div>
+
+        <!-- CRUD -->
+        <div class="section">
+            <h4 class="method-title">5. Gestión de Datos</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" onclick="cargarDatosPA()">Cargar Datos</button>
+                    <button class="btn btn-success me-2" onclick="agregarPA()">+ Agregar</button>
+                    <button class="btn btn-warning me-2" onclick="modificarPA()">Modificar</button>
+                    <button class="btn btn-danger me-2" onclick="eliminarPA()">Eliminar</button>
+                    <button class="btn btn-info" onclick="exportarPA()">Exportar</button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark"><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Edad</th><th>Ciudad</th><th>Activo</th></tr></thead>
+                    <tbody id="tbodyPA"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let datosPA = [
+            { id: 1, nombre: "Juan Pérez", email: "juan@email.com", edad: 28, ciudad: "Madrid", activo: true },
+            { id: 2, nombre: "María García", email: "maria@email.com", edad: 32, ciudad: "Barcelona", activo: true },
+            { id: 3, nombre: "Pedro López", email: "pedro@email.com", edad: 25, ciudad: "Sevilla", activo: false },
+            { id: 4, nombre: "Ana Martínez", email: "ana@email.com", edad: 35, ciudad: "Valencia", activo: true }
+        ];
+
+        function verProtoSchema() {
+            const schema = `syntax = "proto3";
+
+package ejemplo;
+
+message Persona {
+    string nombre = 1;
+    int32 edad = 2;
+    string email = 3;
+    repeated string telefonos = 4;
+}`;
+            Swal.fire({ icon: 'info', title: 'Esquema Protobuf', html: `<pre style="text-align:left">${schema}</pre>` });
+        }
+
+        function verProtoAnidado() {
+            const schema = `message Pedido {
+    int32 id = 1;
+    Persona cliente = 2;
+    repeated Item items = 3;
+}
+
+message Item {
+    string producto = 1;
+    int32 cantidad = 2;
+    double precio = 3;
+}`;
+            Swal.fire({ icon: 'info', title: 'Mensajes Anidados', html: `<pre style="text-align:left">${schema}</pre>` });
+        }
+
+        function verAvroSchema() {
+            const schema = `{
+    "type": "record",
+    "name": "Persona",
+    "fields": [
+        {"name": "nombre", "type": "string"},
+        {"name": "edad", "type": "int"},
+        {"name": "email", "type": ["string", "null"]},
+        {"name": "telefonos", 
+         "type": {"type": "array", "items": "string"}}
+    ]
+}`;
+            Swal.fire({ icon: 'success', title: 'Esquema Avro', html: `<pre style="text-align:left">${schema}</pre>` });
+        }
+
+        function verAvroComplex() {
+            const schema = `{
+    "type": "record", 
+    "name": "Empresa",
+    "fields": [
+        {"name": "nombre", "type": "string"},
+        {"name": "empleados", 
+         "type": {"type": "array", "items": "string"}},
+        {"name": "config",
+         "type": {"type": "map", "values": "string"}}
+    ]
+}`;
+            Swal.fire({ icon: 'success', title: 'Tipos Complejos Avro', html: `<pre style="text-align:left">${schema}</pre>` });
+        }
+
+        function serializarDatos() {
+            const json = document.getElementById('datosSerialize').value;
+            const data = JSON.parse(json);
+            
+            // Simulación de serialización
+            let binario = '';
+            const str = JSON.stringify(data);
+            for (let i = 0; i < Math.min(str.length, 30); i++) {
+                binario += str.charCodeAt(i).toString(16).padStart(2, '0') + ' ';
+            }
+            binario += '...';
+            
+            document.getElementById('datosSerializados').value = 
+                `=== Protobuf (simulado) ===\n` +
+                `Tamaño original: ${str.length} bytes\n` +
+                `Tamaño serializado: ~${Math.floor(str.length * 0.5)} bytes\n` +
+                `Binario: ${binario}\n\n` +
+                `=== Avro (simulado) ===\n` +
+                `Tamaño original: ${str.length} bytes\n` +
+                `Tamaño serializado: ~${Math.floor(str.length * 0.6)} bytes\n` +
+                `Requiere esquema para decodificar`;
+        }
+
+        function compararFormatos() {
+            const data = { id: 12345, nombre: "Usuario de prueba", activo: true, rol: "admin" };
+            const json = JSON.stringify(data);
+            
+            document.getElementById('resComparar').innerHTML = `
+                <table class="table table-bordered">
+                    <tr><th>Formato</th><th>Tamaño</th><th>Schema</th><th>Ventaja</th></tr>
+                    <tr><td>JSON</td><td>${json.length} bytes</td><td>No</td><td>Legible</td></tr>
+                    <tr><td>Protobuf</td><td>~${Math.floor(json.length * 0.5)} bytes</td><td>.proto</td><td>Rápido</td></tr>
+                    <tr><td>Avro</td><td>~${Math.floor(json.length * 0.6)} bytes</td><td>JSON</td><td>Esquemas dinámicos</td></tr>
+                </table>
+            `;
+        }
+
+        function renderPA() {
+            document.getElementById('tbodyPA').innerHTML = datosPA.map(d => 
+                `<tr><td>${d.id}</td><td>${d.nombre}</td><td>${d.email}</td><td>${d.edad}</td><td>${d.ciudad}</td><td><span class="badge ${d.activo ? 'bg-success' : 'bg-danger'}">${d.activo ? 'Activo' : 'Inactivo'}</span></td></tr>`
+            ).join('');
+        }
+
+        function cargarDatosPA() { renderPA(); Swal.fire('Cargado', '', 'success'); }
+
+        function agregarPA() {
+            if (datosPA.length === 0) cargarDatosPA();
+            
+            Swal.fire({
+                title: 'Agregar',
+                html: '<input id="sw-nombre" class="swal2-input" placeholder="Nombre"><input id="sw-email" class="swal2-input" placeholder="Email"><input id="sw-edad" class="swal2-input" placeholder="Edad"><input id="sw-ciudad" class="swal2-input" placeholder="Ciudad">',
+                preConfirm: () => ({
+                    nombre: document.getElementById('sw-nombre').value,
+                    email: document.getElementById('sw-email').value,
+                    edad: parseInt(document.getElementById('sw-edad').value),
+                    ciudad: document.getElementById('sw-ciudad').value,
+                    activo: true
+                })
+            }).then(result => {
+                if (result.isConfirmed) {
+                    datosPA = [...datosPA, { ...result.value, id: Date.now() }];
+                    renderPA();
+                    Swal.fire('Agregado', '', 'success');
+                }
+            });
+        }
+
+        function modificarPA() {
+            if (datosPA.length === 0) { cargarDatosPA(); return; }
+            
+            const options = {};
+            datosPA.forEach(d => options[d.id] = d.nombre);
+            
+            Swal.fire({
+                title: 'Modificar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const dato = datosPA.find(d => d.id === result.value);
+                    Swal.fire({
+                        title: 'Nuevo nombre',
+                        input: 'text',
+                        inputValue: dato.nombre
+                    }).then(nombre => {
+                        if (nombre.isConfirmed) {
+                            datosPA = datosPA.map(d => d.id === result.value ? { ...d, nombre: nombre.value } : d);
+                            renderPA();
+                            Swal.fire('Actualizado', '', 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        function eliminarPA() {
+            if (datosPA.length === 0) { cargarDatosPA(); return; }
+            
+            const options = {};
+            datosPA.forEach(d => options[d.id] = d.nombre);
+            
+            Swal.fire({
+                title: 'Eliminar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione',
+                icon: 'warning'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    datosPA = datosPA.filter(d => d.id !== result.value);
+                    renderPA();
+                    Swal.fire('Eliminado', '', 'success');
+                }
+            });
+        }
+
+        function exportarPA() {
+            if (datosPA.length === 0) cargarDatosPA();
+            
+            const json = JSON.stringify(datosPA, null, 2);
+            
+            // Simular schema Protobuf
+            const proto = `message Usuario {
+    int32 id = 1;
+    string nombre = 2;
+    string email = 3;
+    int32 edad = 4;
+    string ciudad = 5;
+    bool activo = 6;
+}`;
+            
+            // Simular schema Avro
+            const avro = `{
+    "type": "record",
+    "name": "Usuario",
+    "fields": [
+        {"name": "id", "type": "int"},
+        {"name": "nombre", "type": "string"},
+        {"name": "email", "type": "string"},
+        {"name": "edad", "type": "int"},
+        {"name": "ciudad", "type": "string"},
+        {"name": "activo", "type": "boolean"}
+    ]
+}`;
+            
+            Swal.fire({
+                title: 'Exportar',
+                html: `<h6>JSON:</h6><textarea class="form-control" rows="4">${json}</textarea>
+                       <h6 class="mt-2">Protobuf Schema:</h6><textarea class="form-control" rows="6">${proto}</textarea>
+                       <h6 class="mt-2">Avro Schema:</h6><textarea class="form-control" rows="8">${avro}</textarea>`
+            });
+        }
+
+        renderPA();
+    </script>
+</body>
+</html>

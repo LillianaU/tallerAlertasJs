@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 5: MessagePack / BSON</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; padding-bottom: 40px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; overflow-x: auto; font-size: 0.85em; }
+        .result { background: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        h1 { color: #0d6efd; }
+        .method-title { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Ejemplo 5: MessagePack / BSON</h1>
+        
+        <div class="section">
+            <h3>Definición</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>MessagePack</h5>
+                    <p>Formato binario eficiente para serialización, más compacto que JSON. Ideal para transmisión de datos.</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>BSON</h5>
+                    <p>Binary JSON usado por MongoDB, soporta más tipos de datos incluyendo fechas y binarios.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MessagePack -->
+        <div class="section">
+            <h4 class="method-title">1. MessagePack - Ejemplos</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Serialización básica</h5>
+                    <div class="code-block">
+const datos = { nombre: "Ana", edad: 30 };
+// Representación binaria simulada
+const bytes = stringToBytes(JSON.stringify(datos));
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="msgpack1()">Ejecutar</button>
+                    <div class="result" id="resMsgpack1"></div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Tipos soportados</h5>
+                    <div class="code-block">
+// integer, float, string, array, 
+// map, boolean, nil, binary
+const tipos = {
+    entero: 42,
+    cadena: "hola",
+    array: [1, 2, 3]
+};
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="msgpack2()">Ver Tipos</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BSON -->
+        <div class="section">
+            <h4 class="method-title">2. BSON - Ejemplos</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Tipos especiales BSON</h5>
+                    <div class="code-block">
+// ObjectId, Date, Binary, Regex, Code
+const doc = {
+    _id: ObjectId('...'),
+    fecha: ISODate('2024-01-01'),
+    binary: Binary('...'),
+    regex: Regex('pattern', 'i')
+};
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="bson1()">Ver Tipos</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Documento MongoDB</h5>
+                    <div class="code-block">
+{
+    _id: ObjectId("..."),
+    nombre: "Juan",
+    fecha_registro: ISODate("..."),
+    tags: ["admin", "user"]
+}
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="bson2()">Ver</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparación -->
+        <div class="section">
+            <h4 class="method-title">3. Comparación de Tamaños</h4>
+            <button class="btn btn-info" onclick="compararTamanios()">Comparar</button>
+            <div class="result" id="resComparar"></div>
+        </div>
+
+        <!-- Simulación de Serialización -->
+        <div class="section">
+            <h4 class="method-title">4. Simulación de Serialización</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Datos originales</h5>
+                    <textarea class="form-control" id="datosOriginales" rows="6">{
+  "usuarios": [
+    {"id": 1, "nombre": "Juan Pérez", "email": "juan@email.com", "edad": 28},
+    {"id": 2, "nombre": "María García", "email": "maria@email.com", "edad": 32},
+    {"id": 3, "nombre": "Pedro López", "email": "pedro@email.com", "edad": 25}
+  ]
+}</textarea>
+                    <button class="btn btn-primary mt-2" onclick="serializar()">Serializar</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Resultado</h5>
+                    <textarea class="form-control" id="datosSerializados" rows="6" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRUD con formatos binarios -->
+        <div class="section">
+            <h4 class="method-title">5. Gestión de Datos (Simulación)</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" onclick="cargarDatosBin()">Cargar Datos</button>
+                    <button class="btn btn-success me-2" onclick="agregarDato()">+ Agregar</button>
+                    <button class="btn btn-warning me-2" onclick="modificarDato()">Modificar</button>
+                    <button class="btn btn-danger me-2" onclick="eliminarDato()">Eliminar</button>
+                    <button class="btn btn-info" onclick="verEnSweetAlert()">Ver Todo</button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tablaBin">
+                    <thead class="table-dark"><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Edad</th><th>Ciudad</th></tr></thead>
+                    <tbody id="tbodyBin"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let datosBin = [
+            { id: 1, nombre: "Juan Pérez", email: "juan@email.com", edad: 28, ciudad: "Madrid" },
+            { id: 2, nombre: "María García", email: "maria@email.com", edad: 32, ciudad: "Barcelona" },
+            { id: 3, nombre: "Pedro López", email: "pedro@email.com", edad: 25, ciudad: "Sevilla" },
+            { id: 4, nombre: "Ana Martínez", email: "ana@email.com", edad: 35, ciudad: "Valencia" }
+        ];
+
+        function stringToBytes(str) {
+            const bytes = [];
+            for (let i = 0; i < str.length; i++) bytes.push(str.charCodeAt(i));
+            return bytes;
+        }
+
+        function msgpack1() {
+            const datos = { nombre: "Ana", edad: 30, activa: true };
+            const json = JSON.stringify(datos);
+            const bytes = stringToBytes(json);
+            
+            document.getElementById('resMsgpack1').innerHTML = `
+                <strong>JSON:</strong> ${json.length} bytes<br>
+                <strong>MessagePack (simulado):</strong> ~${Math.floor(bytes.length * 0.7)} bytes<br>
+                <strong>Bytes:</strong> [${bytes.slice(0, 10).join(', ')}...]
+            `;
+        }
+
+        function msgpack2() {
+            const tipos = [
+                { tipo: 'integer', ejemplo: '42, -17' },
+                { tipo: 'float', ejemplo: '3.14159' },
+                { tipo: 'string', ejemplo: '"hola"' },
+                { tipo: 'array', ejemplo: '[1, 2, 3]' },
+                { tipo: 'map', ejemplo: '{"a": 1}' },
+                { tipo: 'boolean', ejemplo: 'true, false' },
+                { tipo: 'nil', ejemplo: 'null' },
+                { tipo: 'binary', ejemplo: '[0x01, 0x02]' }
+            ];
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'Tipos MessagePack',
+                html: tipos.map(t => `<strong>${t.tipo}:</strong> ${t.ejemplo}<br>`).join('')
+            });
+        }
+
+        function bson1() {
+            const tipos = [
+                { tipo: 'ObjectId', ejemplo: 'ObjectId("507f1f77bcf86cd799439011")' },
+                { tipo: 'Date', ejemplo: 'ISODate("2024-01-15T10:30:00Z")' },
+                { tipo: 'Binary', ejemplo: 'Binary("AQIDBA==")' },
+                { tipo: 'Regex', ejemplo: 'Regex("^[a-z]+$", "i")' },
+                { tipo: 'Code', ejemplo: 'Code("function() { return 1; }")' },
+                { tipo: 'Decimal128', ejemplo: 'Decimal128("123.45")' },
+                { tipo: 'Timestamp', ejemplo: 'Timestamp(1234567890, 1)' }
+            ];
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Tipos BSON',
+                html: tipos.map(t => `<strong>${t.tipo}:</strong><br><code>${t.ejemplo}</code><br>`).join('')
+            });
+        }
+
+        function bson2() {
+            const doc = `{
+    _id: ObjectId("507f1f77bcf86cd799439011"),
+    nombre: "Juan Pérez",
+    email: "juan@email.com",
+    fecha_registro: ISODate("2024-01-15T10:30:00Z"),
+    edad: 28,
+    roles: ["admin", "usuario"],
+    preferences: { tema: "oscuro", idioma: "es" }
+}`;
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'Documento BSON (MongoDB)',
+                html: `<pre style="text-align:left; font-size:0.8em">${doc}</pre>`
+            });
+        }
+
+        function compararTamanios() {
+            const data = {
+                usuarios: [
+                    { nombre: "Desarrollador Full Stack", experiencia: 5, tecnologias: ["JavaScript", "Python", "Go", "Rust", "TypeScript"], proyectos: 25, disponible: true }
+                ]
+            };
+            
+            const jsonString = JSON.stringify(data);
+            
+            document.getElementById('resComparar').innerHTML = `
+                <table class="table table-bordered">
+                    <tr><th>Formato</th><th>Tamaño</th><th>Ventaja</th></tr>
+                    <tr><td>JSON</td><td>${jsonString.length} bytes</td><td>Legible, universal</td></tr>
+                    <tr><td>MessagePack</td><td>~${Math.floor(jsonString.length * 0.6)} bytes</td><td>30-40% más pequeño</td></tr>
+                    <tr><td>BSON</td><td>~${Math.floor(jsonString.length * 1.1)} bytes</td><td>Más tipos, MongoDB</td></tr>
+                </table>
+            `;
+        }
+
+        function serializar() {
+            const json = document.getElementById('datosOriginales').value;
+            const bytes = stringToBytes(json);
+            
+            // Simulación de MessagePack
+            let msgpack = '';
+            for (let i = 0; i < Math.min(bytes.length, 50); i++) {
+                msgpack += bytes[i].toString(16).padStart(2, '0') + ' ';
+            }
+            if (bytes.length > 50) msgpack += '...';
+            
+            document.getElementById('datosSerializados').value = 
+                `Tamaño JSON: ${json.length} bytes\n` +
+                `Tamaño MessagePack (simulado): ~${Math.floor(bytes.length * 0.7)} bytes\n` +
+                `Bytes hex: ${msgpack}`;
+        }
+
+        function renderTablaBin() {
+            document.getElementById('tbodyBin').innerHTML = datosBin.map(d => 
+                `<tr><td>${d.id}</td><td>${d.nombre}</td><td>${d.email}</td><td>${d.edad}</td><td>${d.ciudad}</td></tr>`
+            ).join('');
+        }
+
+        function cargarDatosBin() {
+            renderTablaBin();
+            Swal.fire('Cargado', 'Datos cargados', 'success');
+        }
+
+        function agregarDato() {
+            if (datosBin.length === 0) cargarDatosBin();
+            
+            Swal.fire({
+                title: 'Agregar',
+                html: '<input id="sw-nombre" class="swal2-input" placeholder="Nombre"><input id="sw-email" class="swal2-input" placeholder="Email"><input id="sw-edad" class="swal2-input" placeholder="Edad"><input id="sw-ciudad" class="swal2-input" placeholder="Ciudad">',
+                preConfirm: () => ({
+                    nombre: document.getElementById('sw-nombre').value,
+                    email: document.getElementById('sw-email').value,
+                    edad: parseInt(document.getElementById('sw-edad').value),
+                    ciudad: document.getElementById('sw-ciudad').value
+                })
+            }).then(result => {
+                if (result.isConfirmed) {
+                    datosBin = [...datosBin, { ...result.value, id: Date.now() }];
+                    renderTablaBin();
+                    Swal.fire('Agregado', '', 'success');
+                }
+            });
+        }
+
+        function modificarDato() {
+            if (datosBin.length === 0) { cargarDatosBin(); return; }
+            
+            const options = {};
+            datosBin.forEach(d => options[d.id] = d.nombre);
+            
+            Swal.fire({
+                title: 'Modificar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const dato = datosBin.find(d => d.id === result.value);
+                    Swal.fire({
+                        title: 'Nuevo nombre',
+                        input: 'text',
+                        inputValue: dato.nombre
+                    }).then(nombre => {
+                        if (nombre.isConfirmed) {
+                            datosBin = datosBin.map(d => d.id === result.value ? { ...d, nombre: nombre.value } : d);
+                            renderTablaBin();
+                            Swal.fire('Actualizado', '', 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        function eliminarDato() {
+            if (datosBin.length === 0) { cargarDatosBin(); return; }
+            
+            const options = {};
+            datosBin.forEach(d => options[d.id] = d.nombre);
+            
+            Swal.fire({
+                title: 'Eliminar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione',
+                icon: 'warning'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    datosBin = datosBin.filter(d => d.id !== result.value);
+                    renderTablaBin();
+                    Swal.fire('Eliminado', '', 'success');
+                }
+            });
+        }
+
+        function verEnSweetAlert() {
+            if (datosBin.length === 0) cargarDatosBin();
+            
+            const lista = datosBin.map(d => `<strong>${d.nombre}</strong> - ${d.email} (${d.ciudad})`).join('<br>');
+            Swal.fire({ icon: 'info', title: 'Datos', html: lista });
+        }
+
+        renderTablaBin();
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+id,nombre,email,edad,telefono,ciudad
+1,Juan Pérez,juan@email.com,28,555-1234,Madrid
+2,María García,maria@email.com,32,555-2345,Barcelona
+3,Pedro López,pedro@email.com,25,555-3456,Sevilla
+4,Ana Martínez,ana@email.com,35,555-4567,Valencia
+5,Carlos Sánchez,carlos@email.com,29,555-5678,Málaga
+6,Laura Rodríguez,laura@email.com,31,555-6789,Madrid
+7,David Fernández,david@email.com,27,555-7890,Barcelona
+8,Isabel Torres,isabel@email.com,33,555-8901,Sevilla
+9,Antonio Gómez,antonio@email.com,26,555-9012,Valencia
+10,Marta Ruiz,marta@email.com,30,555-0123,Málaga

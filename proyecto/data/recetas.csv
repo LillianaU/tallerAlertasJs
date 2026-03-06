@@ -1,0 +1,11 @@
+id,nombre,tiempo,dificultad,categoria,ingredientes,pasos
+1,Paella Valenciana,60,Media,Española,"Arroz,4 tasas|Azafrán,1 pizca|Pollo,500g|Marisco,300g|Guisantes,100g",1. Sofríe el pollo|2. Añade el marisco|3. Agrega el arroz|4. Incorpora el azafrán|5. Cocina 20 min
+2,Tacos al Pastor,30,Alta,Mexicana,"Carne de cerdo,1kg|Cilantro,1 manojo|Cebolla,2 unidades|Limón,3 unidades|Tortillas,12 unidades",1. Marina la carne|2. Asa en trompo|3. Pica cebolla y cilantro|4. Calienta tortillas|5. Arma los tacos
+3,Sushi Roll,45,Alta,Japonesa,"Arroz,2 tasas|Salmón,200g|Nori,4 hojas|Aguacate,1 unidad|Pepino,1 unidad",1. Cuece el arroz|2. Extiende nori|3. Coloca arroz|4. Añade ingredientes|5. Enrolla y corta
+4,Pasta Carbonara,25,Baja,Italiana,"Espagueti,400g|Guanciale,200g|Huevos,4 unidades|Queso pecorino,100g|Pimienta negra,1 pizca",1. Cuece pasta|2. Fríe guanciale|3. Mezcla huevos con queso|4. Combina todo|5. Sirve caliente
+5,Ensalada César,15,Baja,Americana,"Lechuga romana,1 unidad|Pollo,300g|Croutones,100g|Parmesano,50g|Aderezo César,80ml",1. Lava y trocea lechuga|2. Ase el pollo|3. Prepara croutones|4. Mezcla ingredientes|5. Agrega aderezo
+6, Curry de Pollo,40,Media,India,"Pollo,500g|Curry,2 cucharadas|Coco,200ml|Cebollas,2 unidades|Arroz basmati,300g",1. Sofríe cebollas|2. Añade pollo|3. Incorpora curry|4. Vierte coco|5. Sirve con arroz
+7,Crepe de Nutella,15,Baja,Francesa,"Harina,200g|Huevos,2 unidades|Leche,300ml|Nutella,100g|Mantequilla,30g",1. Mezcla ingredientes líquidos|2. Agrega harina|3. Cocina crepes|4. Unta Nutella|5. Dobla y sirve
+8,Lasaña Bolognesa,90,Media,Italiana,"Placas de lasaña,12 unidades|Carne molida,500g|Tomate,400g|Queso mozzarella,200g|Béchamel,300ml",1. Prepara ragú|2. Cocina placas|3. Alterna capas|4. Agrega bechamel|5. Hornea 30 min
+9,Gazpacho Andaluz,20,Baja,Española,"Tomates maduros,1kg|Pimiento verde,1 unidad|Cucumber,1 unidad|Ajo,2 dientes|Vinagre,30ml",1. Lava verduras|2. Tritura todo|3. Cuela|4. Añade vinagre|5. Refrigera
+10,Ramen Casero,60,Media,Japonesa,"Fideos ramen,400g|Caldo de pollo,1L|Huevos,4 unidades|Cebolleta,4 tallos|Algas nori,4 hojas",1. Prepara caldo|2. Cuece fideos|3. Hierve huevos|4. Monta tazón|5. Decora con nori

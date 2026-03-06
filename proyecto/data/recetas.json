@@ -1,0 +1,214 @@
+{
+  "recetas": [
+    {
+      "id": 1,
+      "nombre": "Paella Valenciana",
+      "tiempo": 60,
+      "dificultad": "Media",
+      "categoria": "Española",
+      "ingredientes": [
+        {"item": "Arroz", "cantidad": "4 tasas"},
+        {"item": "Azafrán", "cantidad": "1 pizca"},
+        {"item": "Pollo", "cantidad": "500g"},
+        {"item": "Marisco", "cantidad": "300g"},
+        {"item": "Guisantes", "cantidad": "100g"}
+      ],
+      "pasos": [
+        "Sofríe el pollo",
+        "Añade el marisco",
+        "Agrega el arroz",
+        "Incorporo el azafrán",
+        "Cocina 20 min"
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "Tacos al Pastor",
+      "tiempo": 30,
+      "dificultad": "Alta",
+      "categoria": "Mexicana",
+      "ingredientes": [
+        {"item": "Carne de cerdo", "cantidad": "1kg"},
+        {"item": "Cilantro", "cantidad": "1 manojo"},
+        {"item": "Cebolla", "cantidad": "2 unidades"},
+        {"item": "Limón", "cantidad": "3 unidades"},
+        {"item": "Tortillas", "cantidad": "12 unidades"}
+      ],
+      "pasos": [
+        "Marina la carne",
+        "Asa en trompo",
+        "Pica cebolla y cilantro",
+        "Calienta tortillas",
+        "Arma los tacos"
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "Sushi Roll",
+      "tiempo": 45,
+      "dificultad": "Alta",
+      "categoria": "Japonesa",
+      "ingredientes": [
+        {"item": "Arroz", "cantidad": "2 tasas"},
+        {"item": "Salmón", "cantidad": "200g"},
+        {"item": "Nori", "cantidad": "4 hojas"},
+        {"item": "Aguacate", "cantidad": "1 unidad"},
+        {"item": "Pepino", "cantidad": "1 unidad"}
+      ],
+      "pasos": [
+        "Cuece el arroz",
+        "Extiende nori",
+        "Coloca arroz",
+        "Añade ingredientes",
+        "Enrolla y corta"
+      ]
+    },
+    {
+      "id": 4,
+      "nombre": "Pasta Carbonara",
+      "tiempo": 25,
+      "dificultad": "Baja",
+      "categoria": "Italiana",
+      "ingredientes": [
+        {"item": "Espagueti", "cantidad": "400g"},
+        {"item": "Guanciale", "cantidad": "200g"},
+        {"item": "Huevos", "cantidad": "4 unidades"},
+        {"item": "Queso pecorino", "cantidad": "100g"},
+        {"item": "Pimienta negra", "cantidad": "1 pizca"}
+      ],
+      "pasos": [
+        "Cuece pasta",
+        "Fríe guanciale",
+        "Mezcla huevos con queso",
+        "Combina todo",
+        "Sirve caliente"
+      ]
+    },
+    {
+      "id": 5,
+      "nombre": "Ensalada César",
+      "tiempo": 15,
+      "dificultad": "Baja",
+      "categoria": "Americana",
+      "ingredientes": [
+        {"item": "Lechuga romana", "cantidad": "1 unidad"},
+        {"item": "Pollo", "cantidad": "300g"},
+        {"item": "Croutones", "cantidad": "100g"},
+        {"item": "Parmesano", "cantidad": "50g"},
+        {"item": "Aderezo César", "cantidad": "80ml"}
+      ],
+      "pasos": [
+        "Lava y trocea lechuga",
+        "Ase el pollo",
+        "Prepara croutones",
+        "Mezcla ingredientes",
+        "Agrega aderezo"
+      ]
+    },
+    {
+      "id": 6,
+      "nombre": "Curry de Pollo",
+      "tiempo": 40,
+      "dificultad": "Media",
+      "categoria": "India",
+      "ingredientes": [
+        {"item": "Pollo", "cantidad": "500g"},
+        {"item": "Curry", "cantidad": "2 cucharadas"},
+        {"item": "Coco", "cantidad": "200ml"},
+        {"item": "Cebollas", "cantidad": "2 unidades"},
+        {"item": "Arroz basmati", "cantidad": "300g"}
+      ],
+      "pasos": [
+        "Sofríe cebollas",
+        "Añade pollo",
+        "Incorporo curry",
+        "Vierte coco",
+        "Sirve con arroz"
+      ]
+    },
+    {
+      "id": 7,
+      "nombre": "Crepe de Nutella",
+      "tiempo": 15,
+      "dificultad": "Baja",
+      "categoria": "Francesa",
+      "ingredientes": [
+        {"item": "Harina", "cantidad": "200g"},
+        {"item": "Huevos", "cantidad": "2 unidades"},
+        {"item": "Leche", "cantidad": "300ml"},
+        {"item": "Nutella", "cantidad": "100g"},
+        {"item": "Mantequilla", "cantidad": "30g"}
+      ],
+      "pasos": [
+        "Mezcla ingredientes líquidos",
+        "Agrega harina",
+        "Cocina crepes",
+        "Unta Nutella",
+        "Dobla y sirve"
+      ]
+    },
+    {
+      "id": 8,
+      "nombre": "Lasaña Bolognesa",
+      "tiempo": 90,
+      "dificultad": "Media",
+      "categoria": "Italiana",
+      "ingredientes": [
+        {"item": "Placas de lasaña", "cantidad": "12 unidades"},
+        {"item": "Carne molida", "cantidad": "500g"},
+        {"item": "Tomate", "cantidad": "400g"},
+        {"item": "Queso mozzarella", "cantidad": "200g"},
+        {"item": "Béchamel", "cantidad": "300ml"}
+      ],
+      "pasos": [
+        "Prepara ragú",
+        "Cocina placas",
+        "Alterna capas",
+        "Agrega bechamel",
+        "Hornea 30 min"
+      ]
+    },
+    {
+      "id": 9,
+      "nombre": "Gazpacho Andaluz",
+      "tiempo": 20,
+      "dificultad": "Baja",
+      "categoria": "Española",
+      "ingredientes": [
+        {"item": "Tomates maduros", "cantidad": "1kg"},
+        {"item": "Pimiento verde", "cantidad": "1 unidad"},
+        {"item": "Cucumber", "cantidad": "1 unidad"},
+        {"item": "Ajo", "cantidad": "2 dientes"},
+        {"item": "Vinagre", "cantidad": "30ml"}
+      ],
+      "pasos": [
+        "Lava verduras",
+        "Tritura todo",
+        "Cuela",
+        "Añade vinagre",
+        "Refrigera"
+      ]
+    },
+    {
+      "id": 10,
+      "nombre": "Ramen Casero",
+      "tiempo": 60,
+      "dificultad": "Media",
+      "categoria": "Japonesa",
+      "ingredientes": [
+        {"item": "Fideos ramen", "cantidad": "400g"},
+        {"item": "Caldo de pollo", "cantidad": "1L"},
+        {"item": "Huevos", "cantidad": "4 unidades"},
+        {"item": "Cebolleta", "cantidad": "4 tallos"},
+        {"item": "Algas nori", "cantidad": "4 hojas"}
+      ],
+      "pasos": [
+        "Prepara caldo",
+        "Cuece fideos",
+        "Hierve huevos",
+        "Montar tazón",
+        "Decora con nori"
+      ]
+    }
+  ]
+}

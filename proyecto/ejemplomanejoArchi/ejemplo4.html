@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 4: CSV / XML / JSON - CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; padding-bottom: 40px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; overflow-x: auto; font-size: 0.8em; }
+        .result { background: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        h1 { color: #0d6efd; }
+        .method-title { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Ejemplo 4: CSV / XML / JSON - CRUD</h1>
+        
+        <div class="section">
+            <h3>Definición</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>CSV</h5>
+                    <p>Valores separados por comas, ideal para tablas y datos tabulares.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>XML</h5>
+                    <p>Lenguaje de marcado para datos jerárquicos y estructurados.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>JSON</h5>
+                    <p>Formato ligero para intercambio de datos, nativo en JavaScript.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON CRUD -->
+        <div class="section">
+            <h4 class="method-title">1. JSON - CRUD Completo</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" onclick="jsonCRUDLoad()">Cargar Datos</button>
+                    <button class="btn btn-success me-2" onclick="jsonCreate()">Create</button>
+                    <button class="btn btn-info me-2" onclick="jsonRead()">Read</button>
+                    <button class="btn btn-warning me-2" onclick="jsonUpdate()">Update</button>
+                    <button class="btn btn-danger" onclick="jsonDelete()">Delete</button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm" id="jsonTable">
+                    <thead class="table-dark"><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Edad</th><th>Ciudad</th></tr></thead>
+                    <tbody id="jsonTbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CSV -->
+        <div class="section">
+            <h4 class="method-title">2. CSV - Parsear y Generar</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>CSV Original</h5>
+                    <textarea class="form-control font-monospace" id="csvInput" rows="6">id,nombre,email,edad,ciudad
+1,Juan,juan@email.com,28,Madrid
+2,María,maria@email.com,32,Barcelona
+3,Pedro,pedro@email.com,25,Sevilla</textarea>
+                    <button class="btn btn-primary mt-2" onclick="parseCSV()">Parsear CSV</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Resultado (Array)</h5>
+                    <textarea class="form-control font-monospace" id="csvOutput" rows="6" readonly></textarea>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <button class="btn btn-success" onclick="arrayToCSV()">Array → CSV</button>
+                <button class="btn btn-info" onclick="verCSVEnSweetAlert()">Ver en SweetAlert</button>
+            </div>
+        </div>
+
+        <!-- XML -->
+        <div class="section">
+            <h4 class="method-title">3. XML - Parsear y Generar</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>XML Original</h5>
+                    <textarea class="form-control font-monospace" id="xmlInput" rows="8"><?xml version="1.0"?>
+<usuarios>
+    <usuario id="1">
+        <nombre>Juan</nombre>
+        <email>juan@email.com</email>
+    </usuario>
+    <usuario id="2">
+        <nombre>María</nombre>
+        <email>maria@email.com</email>
+    </usuario>
+</usuarios></textarea>
+                    <button class="btn btn-primary mt-2" onclick="parseXML()">Parsear XML</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Resultado (Array)</h5>
+                    <textarea class="form-control font-monospace" id="xmlOutput" rows="8" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla CRUD General -->
+        <div class="section">
+            <h4 class="method-title">4. Gestión de Datos (CRUD)</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" onclick="cargarTodosDatos()">Cargar Todos</button>
+                    <button class="btn btn-success me-2" onclick="agregarRegistro()">+ Agregar</button>
+                    <button class="btn btn-warning me-2" onclick="editarRegistro()">Editar</button>
+                    <button class="btn btn-danger me-2" onclick="eliminarRegistro()">Eliminar</button>
+                    <button class="btn btn-info" onclick="exportarTodo()">Exportar Todo</button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="tablaCRUD">
+                    <thead class="table-dark">
+                        <tr><th>ID</th><th>Nombre</th><th>Email</th><th>Edad</th><th>Ciudad</th><th>Activo</th></tr>
+                    </thead>
+                    <tbody id="tbodyCRUD"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let usuarios = [];
+
+        // JSON CRUD
+        function jsonCRUDLoad() {
+            usuarios = [
+                { id: 1, nombre: "Juan Pérez", email: "juan@email.com", edad: 28, ciudad: "Madrid" },
+                { id: 2, nombre: "María García", email: "maria@email.com", edad: 32, ciudad: "Barcelona" },
+                { id: 3, nombre: "Pedro López", email: "pedro@email.com", edad: 25, ciudad: "Sevilla" }
+            ];
+            renderJsonTable();
+            Swal.fire('Cargado', 'Datos JSON cargados', 'success');
+        }
+
+        function renderJsonTable() {
+            document.getElementById('jsonTbody').innerHTML = usuarios.map(u => 
+                `<tr><td>${u.id}</td><td>${u.nombre}</td><td>${u.email}</td><td>${u.edad}</td><td>${u.ciudad}</td></tr>`
+            ).join('');
+        }
+
+        function jsonCreate() {
+            Swal.fire({
+                title: 'Crear Usuario',
+                html: '<input id="swal-nombre" class="swal2-input" placeholder="Nombre"><input id="swal-email" class="swal2-input" placeholder="Email"><input id="swal-edad" class="swal2-input" placeholder="Edad"><input id="swal-ciudad" class="swal2-input" placeholder="Ciudad">',
+                preConfirm: () => ({
+                    nombre: document.getElementById('swal-nombre').value,
+                    email: document.getElementById('swal-email').value,
+                    edad: parseInt(document.getElementById('swal-edad').value),
+                    ciudad: document.getElementById('swal-ciudad').value
+                })
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const nuevo = { ...result.value, id: Date.now() };
+                    usuarios = [...usuarios, nuevo];
+                    renderJsonTable();
+                    Swal.fire('Creado', 'Usuario creado', 'success');
+                }
+            });
+        }
+
+        function jsonRead() {
+            const lista = usuarios.map(u => `${u.nombre} - ${u.email} (${u.ciudad})`).join('<br>');
+            Swal.fire({ icon: 'info', title: 'Usuarios', html: lista || 'No hay datos' });
+        }
+
+        function jsonUpdate() {
+            if (usuarios.length === 0) { jsonCRUDLoad(); return; }
+            
+            const options = {};
+            usuarios.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Editar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const usuario = usuarios.find(u => u.id === result.value);
+                    Swal.fire({
+                        title: 'Nuevo nombre',
+                        input: 'text',
+                        inputValue: usuario.nombre
+                    }).then(nombre => {
+                        if (nombre.isConfirmed) {
+                            usuarios = usuarios.map(u => u.id === result.value ? { ...u, nombre: nombre.value } : u);
+                            renderJsonTable();
+                            Swal.fire('Actualizado', '', 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        function jsonDelete() {
+            if (usuarios.length === 0) { jsonCRUDLoad(); return; }
+            
+            const options = {};
+            usuarios.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Eliminar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione',
+                icon: 'warning'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    usuarios = usuarios.filter(u => u.id !== result.value);
+                    renderJsonTable();
+                    Swal.fire('Eliminado', '', 'success');
+                }
+            });
+        }
+
+        // CSV Functions
+        function csvToArray(csv) {
+            const lines = csv.trim().split('\n');
+            const headers = lines[0].split(',');
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                return headers.reduce((obj, header, i) => {
+                    obj[header] = values[i];
+                    return obj;
+                }, {});
+            });
+        }
+
+        function parseCSV() {
+            const csv = document.getElementById('csvInput').value;
+            const arr = csvToArray(csv);
+            document.getElementById('csvOutput').value = JSON.stringify(arr, null, 2);
+            Swal.fire('Parseado', 'CSV convertido a JSON', 'success');
+        }
+
+        function arrayToCSV() {
+            const json = document.getElementById('csvOutput').value;
+            if (!json) { parseCSV(); return; }
+            
+            const arr = JSON.parse(json);
+            if (arr.length === 0) return;
+            
+            const headers = Object.keys(arr[0]);
+            const csv = [headers.join(','), ...arr.map(obj => headers.map(h => obj[h]).join(','))].join('\n');
+            document.getElementById('csvOutput').value = csv;
+            Swal.fire('Convertido', 'Array convertido a CSV', 'success');
+        }
+
+        function verCSVEnSweetAlert() {
+            const csv = document.getElementById('csvInput').value;
+            Swal.fire({ icon: 'info', title: 'CSV', html: `<pre style="text-align:left">${csv}</pre>` });
+        }
+
+        // XML Functions
+        function parseXMLFunc(xml) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(xml, "text/xml");
+            const usuarios = [];
+            const nodes = doc.querySelectorAll('usuario');
+            nodes.forEach(node => {
+                usuarios.push({
+                    id: node.getAttribute('id'),
+                    nombre: node.querySelector('nombre')?.textContent,
+                    email: node.querySelector('email')?.textContent
+                });
+            });
+            return usuarios;
+        }
+
+        function parseXML() {
+            const xml = document.getElementById('xmlInput').value;
+            const arr = parseXMLFunc(xml);
+            document.getElementById('xmlOutput').value = JSON.stringify(arr, null, 2);
+            Swal.fire('Parseado', 'XML convertido a JSON', 'success');
+        }
+
+        // General CRUD
+        function cargarTodosDatos() {
+            usuarios = [
+                { id: 1, nombre: "Juan Pérez", email: "juan@email.com", edad: 28, ciudad: "Madrid", activo: true },
+                { id: 2, nombre: "María García", email: "maria@email.com", edad: 32, ciudad: "Barcelona", activo: true },
+                { id: 3, nombre: "Pedro López", email: "pedro@email.com", edad: 25, ciudad: "Sevilla", activo: false },
+                { id: 4, nombre: "Ana Martínez", email: "ana@email.com", edad: 35, ciudad: "Valencia", activo: true }
+            ];
+            renderCRUD();
+            Swal.fire('Cargado', 'Datos cargados', 'success');
+        }
+
+        function renderCRUD() {
+            document.getElementById('tbodyCRUD').innerHTML = usuarios.map(u => 
+                `<tr><td>${u.id}</td><td>${u.nombre}</td><td>${u.email}</td><td>${u.edad}</td><td>${u.ciudad}</td><td><span class="badge ${u.activo ? 'bg-success' : 'bg-danger'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td></tr>`
+            ).join('');
+        }
+
+        function agregarRegistro() {
+            if (usuarios.length === 0) cargarTodosDatos();
+            
+            Swal.fire({
+                title: 'Agregar Usuario',
+                html: '<input id="sw-nombre" class="swal2-input" placeholder="Nombre"><input id="sw-email" class="swal2-input" placeholder="Email"><input id="sw-edad" class="swal2-input" placeholder="Edad"><input id="sw-ciudad" class="swal2-input" placeholder="Ciudad">',
+                preConfirm: () => ({
+                    nombre: document.getElementById('sw-nombre').value,
+                    email: document.getElementById('sw-email').value,
+                    edad: parseInt(document.getElementById('sw-edad').value),
+                    ciudad: document.getElementById('sw-ciudad').value,
+                    activo: true
+                })
+            }).then(result => {
+                if (result.isConfirmed) {
+                    usuarios = [...usuarios, { ...result.value, id: Date.now() }];
+                    renderCRUD();
+                    Swal.fire('Agregado', '', 'success');
+                }
+            });
+        }
+
+        function editarRegistro() {
+            if (usuarios.length === 0) { cargarTodosDatos(); return; }
+            
+            const options = {};
+            usuarios.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Editar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const usuario = usuarios.find(u => u.id === result.value);
+                    Swal.fire({
+                        title: 'Editar',
+                        html: `<input id="sw-nombre" class="swal2-input" value="${usuario.nombre}"><input id="sw-email" class="swal2-input" value="${usuario.email}"><input id="sw-edad" class="swal2-input" value="${usuario.edad}"><input id="sw-ciudad" class="swal2-input" value="${usuario.ciudad}">`,
+                        preConfirm: () => ({
+                            nombre: document.getElementById('sw-nombre').value,
+                            email: document.getElementById('sw-email').value,
+                            edad: parseInt(document.getElementById('sw-edad').value),
+                            ciudad: document.getElementById('sw-ciudad').value,
+                            activo: usuario.activo
+                        })
+                    }).then(update => {
+                        if (update.isConfirmed) {
+                            usuarios = usuarios.map(u => u.id === result.value ? { ...u, ...update.value } : u);
+                            renderCRUD();
+                            Swal.fire('Actualizado', '', 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        function eliminarRegistro() {
+            if (usuarios.length === 0) { cargarTodosDatos(); return; }
+            
+            const options = {};
+            usuarios.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Eliminar',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione',
+                icon: 'warning'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    usuarios = usuarios.filter(u => u.id !== result.value);
+                    renderCRUD();
+                    Swal.fire('Eliminado', '', 'success');
+                }
+            });
+        }
+
+        function exportarTodo() {
+            const json = JSON.stringify(usuarios, null, 2);
+            const csv = 'id,nombre,email,edad,ciudad,activo\n' + 
+                usuarios.map(u => `${u.id},${u.nombre},${u.email},${u.edad},${u.ciudad},${u.activo}`).join('\n');
+            
+            let xml = '<?xml version="1.0"?>\n<usuarios>\n';
+            usuarios.forEach(u => {
+                xml += `    <usuario id="${u.id}">\n`;
+                xml += `        <nombre>${u.nombre}</nombre>\n`;
+                xml += `        <email>${u.email}</email>\n`;
+                xml += `    </usuario>\n`;
+            });
+            xml += '</usuarios>';
+            
+            Swal.fire({
+                title: 'Exportar',
+                html: `<h6>JSON:</h6><textarea class="form-control" rows="4">${json}</textarea>
+                       <h6 class="mt-2">CSV:</h6><textarea class="form-control" rows="4">${csv}</textarea>
+                       <h6 class="mt-2">XML:</h6><textarea class="form-control" rows="6">${xml}</textarea>`
+            });
+        }
+    </script>
+</body>
+</html>

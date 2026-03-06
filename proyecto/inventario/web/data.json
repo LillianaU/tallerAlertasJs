@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "fecha_procesamiento": "2026-03-05T05:52:47.994Z",
+    "version": "1.0.0",
+    "total_registros": 5
+  },
+  "configuracion": {
+    "app": {
+      "nombre": "Sistema de Inventario Pro",
+      "version": "1.0.0"
+    },
+    "tema": {
+      "color_primario": "#0d6efd",
+      "color_secundario": "#6c757d",
+      "modo_oscuro": false
+    },
+    "roles": [
+      "administrador",
+      "editor",
+      "visualizador"
+    ],
+    "descuentos": {
+      "por_defecto": 10,
+      "maximo": 50
+    }
+  },
+  "productos": [
+    {
+      "id": 6,
+      "nombre": "AUDÍFONOS SONY",
+      "categoria": "Audio",
+      "precio": 199.99,
+      "stock": 12,
+      "activo": true,
+      "precio_original": 199.99,
+      "precio_final": 179.99,
+      "descuento_aplicado": "10%",
+      "categoria_formateada": "[AUDIO]"
+    },
+    {
+      "id": 1,
+      "nombre": "LAPTOP DELL XPS",
+      "categoria": "Computación",
+      "precio": 1200.5,
+      "stock": 15,
+      "activo": true,
+      "precio_original": 1200.5,
+      "precio_final": 1080.45,
+      "descuento_aplicado": "10%",
+      "categoria_formateada": "[COMPUTACIÓN]"
+    },
+    {
+      "id": 4,
+      "nombre": "MONITOR 4K SAMSUNG",
+      "categoria": "Monitores",
+      "precio": 450,
+      "stock": 8,
+      "activo": true,
+      "precio_original": 450,
+      "precio_final": 405,
+      "descuento_aplicado": "10%",
+      "categoria_formateada": "[MONITORES]"
+    },
+    {
+      "id": 2,
+      "nombre": "MOUSE LOGITECH",
+      "categoria": "Periféricos",
+      "precio": 25.99,
+      "stock": 150,
+      "activo": true,
+      "precio_original": 25.99,
+      "precio_final": 23.39,
+      "descuento_aplicado": "10%",
+      "categoria_formateada": "[PERIFÉRICOS]"
+    },
+    {
+      "id": 8,
+      "nombre": "TABLET IPAD",
+      "categoria": "Tablets",
+      "precio": 800,
+      "stock": 20,
+      "activo": true,
+      "precio_original": 800,
+      "precio_final": 720,
+      "descuento_aplicado": "10%",
+      "categoria_formateada": "[TABLETS]"
+    }
+  ],
+  "estadisticas": {
+    "porCategoria": {
+      "Audio": 1,
+      "Computación": 1,
+      "Monitores": 1,
+      "Periféricos": 1,
+      "Tablets": 1
+    },
+    "totalStock": 205,
+    "valorInventario": 39515.130000000005,
+    "productoMasCaro": {
+      "nombre": "LAPTOP DELL XPS",
+      "precio": 1080.45
+    }
+  }
+}

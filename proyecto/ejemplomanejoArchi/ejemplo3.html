@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 3: YAML / TOML</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; padding-bottom: 40px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; overflow-x: auto; font-size: 0.85em; }
+        .result { background: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        h1 { color: #0d6efd; }
+        .method-title { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Ejemplo 3: YAML / TOML</h1>
+        
+        <div class="section">
+            <h3>Definición</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>YAML</h5>
+                    <p>Formato de serialización de datos legible por humanos, usa indentación. Ideal para archivos de configuración.</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>TOML</h5>
+                    <p>Formato de configuración simple, similar a INI pero con especificación estricta. Mejor para configuraciones complejas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- YAML Ejemplos -->
+        <div class="section">
+            <h4 class="method-title">1. YAML - Ejemplos</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Configuración de servidor</h5>
+                    <div class="code-block">
+servidor:
+  host: localhost
+  puerto: 8080
+  debug: true
+bd:
+  nombre: miapp
+  usuarios:
+    - admin
+    - guest
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="yaml1()">Ver</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Listas y objetos</h5>
+                    <div class="code-block">
+productos:
+  - nombre: Laptop
+    precio: 1000
+    stock: 5
+  - nombre: Mouse
+    precio: 25
+    stock: 100
+                    </div>
+                    <button class="btn btn-primary mt-2" onclick="yaml2()">Ver</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOML Ejemplos -->
+        <div class="section">
+            <h4 class="method-title">2. TOML - Ejemplos</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Configuración de app</h5>
+                    <div class="code-block">
+[server]
+host = "localhost"
+port = 8080
+
+[database]
+name = "miapp"
+enabled = true
+
+[database.options]
+timeout = 30
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="toml1()">Ver</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Arrays y tablas</h5>
+                    <div class="code-block">
+frutas = ["manzana", "banana"]
+
+[persona]
+nombre = "Juan"
+edad = 30
+
+[[usuarios]]
+nombre = "Ana"
+rol = "admin"
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="toml2()">Ver</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparación -->
+        <div class="section">
+            <h4 class="method-title">3. Comparación YAML vs TOML</h4>
+            <button class="btn btn-info mt-2" onclick="compararFormatos()">Comparar</button>
+            <div class="result" id="resComparar"></div>
+        </div>
+
+        <!-- CRUD con archivos -->
+        <div class="section">
+            <h4 class="method-title">4. Gestión de Datos (Simulación)</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" onclick="cargarDatosYAML()">Cargar YAML</button>
+                    <button class="btn btn-success me-2" onclick="cargarDatosTOML()">Cargar TOML</button>
+                    <button class="btn btn-info me-2" onclick="convertirYAMLaJSON()">YAML → JSON</button>
+                    <button class="btn btn-warning me-2" onclick="convertirTOMLaJSON()">TOML → JSON</button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Datos YAML</h5>
+                    <textarea class="form-control font-monospace" id="yamlInput" rows="8" style="font-size: 0.8em;">
+usuarios:
+  - id: 1
+    nombre: Juan Pérez
+    email: juan@email.com
+    activo: true
+  - id: 2
+    nombre: María García
+    email: maria@email.com
+    activo: true</textarea>
+                    <button class="btn btn-primary mt-2" onclick="procesarYAML()">Procesar YAML</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Datos JSON (Resultado)</h5>
+                    <textarea class="form-control font-monospace" id="jsonOutput" rows="8" style="font-size: 0.8em;" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de datos -->
+        <div class="section">
+            <h4 class="method-title">5. Lista de Usuarios</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-success me-2" onclick="agregarUsuarioDatos()">+ Agregar</button>
+                    <button class="btn btn-warning me-2" onclick="modificarUsuarioDatos()">Modificar</button>
+                    <button class="btn btn-danger me-2" onclick="eliminarUsuarioDatos()">Eliminar</button>
+                    <button class="btn btn-info" onclick="exportarDatos()">Exportar</button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="tablaDatos">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Ciudad</th>
+                            <th>Activo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyDatos">
+                        <tr><td colspan="5" class="text-center">Cargue los datos primero</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Archivos de datos -->
+        <div class="section">
+            <h4 class="method-title">6. Archivos de Datos Creadoss</h4>
+            <p>Se han creado los siguientes archivos de ejemplo:</p>
+            <ul>
+                <li><strong>datos.csv</strong> - Datos en formato CSV</li>
+                <li><strong>datos.json</strong> - Datos en formato JSON</li>
+                <li><strong>datos.txt</strong> - Datos en formato texto</li>
+                <li><strong>datos.yaml</strong> - Datos en formato YAML</li>
+                <li><strong>datos.toml</strong> - Datos en formato TOML</li>
+            </ul>
+            <button class="btn btn-primary" onclick="leerArchivos()">Leer Archivos con SweetAlert</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let datosUsuarios = [
+            { id: 1, nombre: "Juan Pérez", email: "juan@email.com", ciudad: "Madrid", activo: true },
+            { id: 2, nombre: "María García", email: "maria@email.com", ciudad: "Barcelona", activo: true },
+            { id: 3, nombre: "Pedro López", email: "pedro@email.com", ciudad: "Sevilla", activo: false },
+            { id: 4, nombre: "Ana Martínez", email: "ana@email.com", ciudad: "Valencia", activo: true }
+        ];
+
+        // YAML Functions
+        function yaml1() {
+            const yaml = `servidor:
+  host: localhost
+  puerto: 8080
+  debug: true
+bd:
+  nombre: miapp
+  usuarios:
+    - admin
+    - guest`;
+            Swal.fire({ icon: 'info', title: 'YAML - Servidor', html: `<pre style="text-align:left">${yaml}</pre>` });
+        }
+
+        function yaml2() {
+            const yaml = `productos:
+  - nombre: Laptop
+    precio: 1000
+    stock: 5
+  - nombre: Mouse
+    precio: 25
+    stock: 100`;
+            Swal.fire({ icon: 'info', title: 'YAML - Productos', html: `<pre style="text-align:left">${yaml}</pre>` });
+        }
+
+        // TOML Functions
+        function toml1() {
+            const toml = `[server]
+host = "localhost"
+port = 8080
+
+[database]
+name = "miapp"
+enabled = true
+
+[database.options]
+timeout = 30`;
+            Swal.fire({ icon: 'success', title: 'TOML - Configuración', html: `<pre style="text-align:left">${toml}</pre>` });
+        }
+
+        function toml2() {
+            const toml = `frutas = ["manzana", "banana"]
+
+[persona]
+nombre = "Juan"
+edad = 30
+
+[[usuarios]]
+nombre = "Ana"
+rol = "admin"`;
+            Swal.fire({ icon: 'success', title: 'TOML - Arrays y Tablas', html: `<pre style="text-align:left">${toml}</pre>` });
+        }
+
+        function compararFormatos() {
+            const yaml = `# YAML - Más legible para humanos
+servidor:
+  host: localhost
+  puerto: 8080
+  debug: true`;
+
+            const toml = `# TOML - Más estructurado
+[server]
+host = "localhost"
+port = 8080
+debug = true`;
+
+            document.getElementById('resComparar').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>YAML:</strong><br>${yaml.replace(/\n/g, '<br>').replace(/  /g, '&nbsp;')}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>TOML:</strong><br>${toml.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // CRUD Functions
+        function cargarDatosYAML() {
+            const yaml = `usuarios:
+  - id: 1
+    nombre: Juan Pérez
+    email: juan@email.com
+    ciudad: Madrid
+    activo: true
+  - id: 2
+    nombre: María García
+    email: maria@email.com
+    ciudad: Barcelona
+    activo: true
+  - id: 3
+    nombre: Pedro López
+    email: pedro@email.com
+    ciudad: Sevilla
+    activo: false`;
+            
+            document.getElementById('yamlInput').value = yaml;
+            procesarYAML();
+            Swal.fire('Cargado', 'Datos YAML cargados', 'success');
+        }
+
+        function cargarDatosTOML() {
+            const toml = `[[usuarios]]
+id = 1
+nombre = "Juan Pérez"
+email = "juan@email.com"
+ciudad = "Madrid"
+activo = true
+
+[[usuarios]]
+id = 2
+nombre = "María García"
+email = "maria@email.com"
+ciudad = "Barcelona"
+activo = true`;
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'Datos TOML',
+                html: `<pre style="text-align:left">${toml}</pre>`
+            });
+        }
+
+        function procesarYAML() {
+            const yaml = document.getElementById('yamlInput').value;
+            // Simulación de parseo YAML
+            const lineas = yaml.split('\n');
+            const usuarios = [];
+            let usuarioActual = {};
+            
+            lineas.forEach(linea => {
+                if (linea.includes(':')) {
+                    const [clave, valor] = linea.split(':').map(s => s.trim());
+                    if (clave && valor) {
+                        if (clave === 'id') usuarioActual.id = parseInt(valor);
+                        else if (clave === 'nombre') usuarioActual.nombre = valor;
+                        else if (clave === 'email') usuarioActual.email = valor;
+                        else if (clave === 'ciudad') usuarioActual.ciudad = valor;
+                        else if (clave === 'activo') usuarioActual.activo = valor === 'true';
+                    }
+                } else if (linea.trim() === '' && Object.keys(usuarioActual).length > 0) {
+                    usuarios.push(usuarioActual);
+                    usuarioActual = {};
+                }
+            });
+            if (Object.keys(usuarioActual).length > 0) usuarios.push(usuarioActual);
+            
+            datosUsuarios = usuarios;
+            renderizarTabla();
+            document.getElementById('jsonOutput').value = JSON.stringify(usuarios, null, 2);
+        }
+
+        function convertirYAMLaJSON() {
+            procesarYAML();
+            Swal.fire('Convertido', 'YAML convertido a JSON', 'success');
+        }
+
+        function convertirTOMLaJSON() {
+            const toml = `[[usuarios]]
+id = 1
+nombre = "Juan Pérez"
+email = "juan@email.com"
+
+[[usuarios]]
+id = 2
+nombre = "María García"
+email = "maria@email.com"`;
+            
+            const json = JSON.stringify([
+                { id: 1, nombre: "Juan Pérez", email: "juan@email.com" },
+                { id: 2, nombre: "María García", email: "maria@email.com" }
+            ], null, 2);
+            
+            document.getElementById('jsonOutput').value = json;
+            Swal.fire('Convertido', 'TOML convertido a JSON', 'success');
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById('tbodyDatos');
+            if (datosUsuarios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay datos</td></tr>';
+                return;
+            }
+            tbody.innerHTML = datosUsuarios.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.nombre}</td>
+                    <td>${u.email}</td>
+                    <td>${u.ciudad || '-'}</td>
+                    <td><span class="badge ${u.activo ? 'bg-success' : 'bg-danger'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function agregarUsuarioDatos() {
+            const { value: datos } = Swal.fire({
+                title: 'Agregar Usuario',
+                html: `
+                    <input id="swal-nombre" class="swal2-input" placeholder="Nombre">
+                    <input id="swal-email" class="swal2-input" placeholder="Email">
+                    <input id="swal-ciudad" class="swal2-input" placeholder="Ciudad">
+                `,
+                preConfirm: () => ({
+                    nombre: document.getElementById('swal-nombre').value,
+                    email: document.getElementById('swal-email').value,
+                    ciudad: document.getElementById('swal-ciudad').value
+                })
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const nuevo = { ...result.value, id: Date.now(), activo: true };
+                    datosUsuarios = [...datosUsuarios, nuevo];
+                    renderizarTabla();
+                    Swal.fire('Agregado', 'Usuario agregado', 'success');
+                }
+            });
+        }
+
+        function modificarUsuarioDatos() {
+            if (datosUsuarios.length === 0) {
+                Swal.fire('Sin datos', 'Cargue datos primero', 'warning');
+                return;
+            }
+            
+            const options = {};
+            datosUsuarios.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Modificar Usuario',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione'
+            }).then(result => {
+                if (result.isConfirmed && result.value) {
+                    const usuario = datosUsuarios.find(u => u.id === parseInt(result.value));
+                    Swal.fire({
+                        title: 'Nuevo nombre',
+                        input: 'text',
+                        inputValue: usuario.nombre
+                    }).then(nombre => {
+                        if (nombre.isConfirmed) {
+                            datosUsuarios = datosUsuarios.map(u => 
+                                u.id === parseInt(result.value) ? { ...u, nombre: nombre.value } : u
+                            );
+                            renderizarTabla();
+                            Swal.fire('Actualizado', 'Usuario modificado', 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        function eliminarUsuarioDatos() {
+            if (datosUsuarios.length === 0) {
+                Swal.fire('Sin datos', 'Cargue datos primero', 'warning');
+                return;
+            }
+            
+            const options = {};
+            datosUsuarios.forEach(u => options[u.id] = u.nombre);
+            
+            Swal.fire({
+                title: 'Eliminar Usuario',
+                input: 'select',
+                inputOptions: options,
+                inputPlaceholder: 'Seleccione',
+                icon: 'warning'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    datosUsuarios = datosUsuarios.filter(u => u.id !== parseInt(result.value));
+                    renderizarTabla();
+                    Swal.fire('Eliminado', 'Usuario eliminado', 'success');
+                }
+            });
+        }
+
+        function exportarDatos() {
+            const json = JSON.stringify(datosUsuarios, null, 2);
+            const yaml = `usuarios:
+${datosUsuarios.map(u => `  - id: ${u.id}
+    nombre: ${u.nombre}
+    email: ${u.email}
+    ciudad: ${u.ciudad || ''}
+    activo: ${u.activo}`).join('\n')}`;
+            
+            Swal.fire({
+                title: 'Exportar Datos',
+                html: `
+                    <h6>JSON:</h6>
+                    <textarea class="form-control" rows="4" readonly>${json}</textarea>
+                    <h6 class="mt-3">YAML:</h6>
+                    <textarea class="form-control" rows="8" readonly>${yaml}</textarea>
+                `
+            });
+        }
+
+        function leerArchivos() {
+            Swal.fire({
+                title: 'Archivos de Datos',
+                html: `
+                    <p>Archivos disponibles en el directorio:</p>
+                    <ul class="text-left">
+                        <li><strong>datos.csv</strong> - Datos CSV</li>
+                        <li><strong>datos.json</strong> - ${datosUsuarios.length} usuarios</li>
+                        <li><strong>datos.txt</strong> - Datos en texto plano</li>
+                        <li><strong>datos.yaml</strong> - Datos en YAML</li>
+                        <li><strong>datos.toml</strong> - Datos en TOML</li>
+                    </ul>
+                    <p class="text-muted">Todos contienen información de 10 usuarios de ejemplo.</p>
+                `,
+                icon: 'info'
+            });
+        }
+
+        // Inicializar
+        renderizarTabla();
+    </script>
+</body>
+</html>

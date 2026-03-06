@@ -1,0 +1,107 @@
+=====================================
+        LISTADO DE USUARIOS
+=====================================
+
+ID: 1
+Nombre: Juan Pérez
+Email: juan@email.com
+Edad: 28 años
+Teléfono: 555-1234
+Ciudad: Madrid
+Estado: Activo
+Fecha de Registro: 2024-01-15
+
+-------------------------------------
+ID: 2
+Nombre: María García
+Email: maria@email.com
+Edad: 32 años
+Teléfono: 555-2345
+Ciudad: Barcelona
+Estado: Activo
+Fecha de Registro: 2024-02-20
+
+-------------------------------------
+ID: 3
+Nombre: Pedro López
+Email: pedro@email.com
+Edad: 25 años
+Teléfono: 555-3456
+Ciudad: Sevilla
+Estado: Inactivo
+Fecha de Registro: 2024-03-10
+
+-------------------------------------
+ID: 4
+Nombre: Ana Martínez
+Email: ana@email.com
+Edad: 35 años
+Teléfono: 555-4567
+Ciudad: Valencia
+Estado: Activo
+Fecha de Registro: 2024-04-05
+
+-------------------------------------
+ID: 5
+Nombre: Carlos Sánchez
+Email: carlos@email.com
+Edad: 29 años
+Teléfono: 555-5678
+Ciudad: Málaga
+Estado: Activo
+Fecha de Registro: 2024-05-12
+
+-------------------------------------
+ID: 6
+Nombre: Laura Rodríguez
+Email: laura@email.com
+Edad: 31 años
+Teléfono: 555-6789
+Ciudad: Madrid
+Estado: Activo
+Fecha de Registro: 2024-06-18
+
+-------------------------------------
+ID: 7
+Nombre: David Fernández
+Email: david@email.com
+Edad: 27 años
+Teléfono: 555-7890
+Ciudad: Barcelona
+Estado: Inactivo
+Fecha de Registro: 2024-07-22
+
+-------------------------------------
+ID: 8
+Nombre: Isabel Torres
+Email: isabel@email.com
+Edad: 33 años
+Teléfono: 555-8901
+Ciudad: Sevilla
+Estado: Activo
+Fecha de Registro: 2024-08-30
+
+-------------------------------------
+ID: 9
+Nombre: Antonio Gómez
+Email: antonio@email.com
+Edad: 26 años
+Teléfono: 555-9012
+Ciudad: Valencia
+Estado: Activo
+Fecha de Registro: 2024-09-14
+
+-------------------------------------
+ID: 10
+Nombre: Marta Ruiz
+Email: marta@email.com
+Edad: 30 años
+Teléfono: 555-0123
+Ciudad: Málaga
+Estado: Activo
+Fecha de Registro: 2024-10-25
+
+=====================================
+Total de usuarios: 10
+Fecha de actualización: 2024-11-01
+=====================================

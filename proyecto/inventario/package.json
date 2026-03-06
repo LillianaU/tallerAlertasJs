@@ -1,0 +1,16 @@
+{
+  "name": "inventario-proyecto",
+  "version": "1.0.0",
+  "description": "Sistema de inventario con procesamiento multi-formato",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "fast-xml-parser": "^4.3.0",
+    "csv-parser": "^3.0.0",
+    "msgpack5": "^6.0.2"
+  }
+}

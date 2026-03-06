@@ -1,0 +1,106 @@
+# Archivo de datos TOML - Ejemplo de configuración de usuarios
+
+[[usuarios]]
+id = 1
+nombre = "Juan Pérez"
+email = "juan@email.com"
+edad = 28
+telefono = "555-1234"
+ciudad = "Madrid"
+activo = true
+fecha_registro = "2024-01-15"
+
+[[usuarios]]
+id = 2
+nombre = "María García"
+email = "maria@email.com"
+edad = 32
+telefono = "555-2345"
+ciudad = "Barcelona"
+activo = true
+fecha_registro = "2024-02-20"
+
+[[usuarios]]
+id = 3
+nombre = "Pedro López"
+email = "pedro@email.com"
+edad = 25
+telefono = "555-3456"
+ciudad = "Sevilla"
+activo = false
+fecha_registro = "2024-03-10"
+
+[[usuarios]]
+id = 4
+nombre = "Ana Martínez"
+email = "ana@email.com"
+edad = 35
+telefono = "555-4567"
+ciudad = "Valencia"
+activo = true
+fecha_registro = "2024-04-05"
+
+[[usuarios]]
+id = 5
+nombre = "Carlos Sánchez"
+email = "carlos@email.com"
+edad = 29
+telefono = "555-5678"
+ciudad = "Málaga"
+activo = true
+fecha_registro = "2024-05-12"
+
+[[usuarios]]
+id = 6
+nombre = "Laura Rodríguez"
+email = "laura@email.com"
+edad = 31
+telefono = "555-6789"
+ciudad = "Madrid"
+activo = true
+fecha_registro = "2024-06-18"
+
+[[usuarios]]
+id = 7
+nombre = "David Fernández"
+email = "david@email.com"
+edad = 27
+telefono = "555-7890"
+ciudad = "Barcelona"
+activo = false
+fecha_registro = "2024-07-22"
+
+[[usuarios]]
+id = 8
+nombre = "Isabel Torres"
+email = "isabel@email.com"
+edad = 33
+telefono = "555-8901"
+ciudad = "Sevilla"
+activo = true
+fecha_registro = "2024-08-30"
+
+[[usuarios]]
+id = 9
+nombre = "Antonio Gómez"
+email = "antonio@email.com"
+edad = 26
+telefono = "555-9012"
+ciudad = "Valencia"
+activo = true
+fecha_registro = "2024-09-14"
+
+[[usuarios]]
+id = 10
+nombre = "Marta Ruiz"
+email = "marta@email.com"
+edad = 30
+telefono = "555-0123"
+ciudad = "Málaga"
+activo = true
+fecha_registro = "2024-10-25"
+
+[metadatos]
+total = 10
+fecha_actualizacion = "2024-11-01T10:00:00Z"
+version = "1.0"
